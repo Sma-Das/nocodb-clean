@@ -24,6 +24,9 @@ See [Docker build and runtime configuration](docs/docker.md) for storage, databa
 configuration, caching, and platform builds. Upstream images do not include this
 checkout's changes.
 
+See [free demo hosting with Render and Neon](docs/demo-hosting.md) for the
+deployment Blueprint and database setup.
+
 ## Development
 
 The workspace uses pnpm and Node 24.14.0. Frontend and backend development commands
