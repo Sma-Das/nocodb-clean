@@ -4,7 +4,6 @@ import {
   type ColumnType,
   PermissionEntity,
   PermissionKey,
-  PlanLimitTypes,
   type TableType,
   UITypes,
   type ViewType,
@@ -177,7 +176,7 @@ const { metas, getMeta } = useMetas()
 
 const { withLoading } = useLoadingTrigger()
 
-const { showRecordPlanLimitExceededModal, navigateToPricing } = useEeConfig()
+const { showRecordPlanLimitExceededModal } = useEeConfig()
 
 const { isAiRecordContextEnabled, isAiChatPanelOpen, setAiRecordContext } = useAiRecordContext()
 
@@ -408,7 +407,6 @@ const {
   isContextMenuAllowed,
   isDataEditAllowed,
   removeInlineAddRecord,
-  upgradeModalInlineState,
   isRowDraggingEnabled,
   rowMetaColumnWidth,
   rowColouringBorderWidth,
@@ -2021,19 +2019,8 @@ async function handleMouseUp(e: MouseEvent, _elementMap: CanvasElement) {
     return
   }
 
-  if (removeInlineAddRecord.value) {
-    if (rowIndex >= EXTERNAL_SOURCE_VISIBLE_ROWS) {
-      return
-    } else {
-      if (upgradeModalInlineState.value.isHoveredLearnMore) {
-        window.open('https://nocodb.com/pricing', '_blank', 'noopener,noreferrer')
-        return
-      }
-
-      if (upgradeModalInlineState.value.isHoveredUpgrade) {
-        return navigateToPricing({ limitOrFeature: PlanLimitTypes.LIMIT_EXTERNAL_SOURCE_PER_WORKSPACE })
-      }
-    }
+  if (removeInlineAddRecord.value && rowIndex >= EXTERNAL_SOURCE_VISIBLE_ROWS) {
+    return
   }
 
   if (isAddNewRow && clickType === MouseClickType.SINGLE_CLICK && x < totalColumnsWidth.value - scrollLeft.value) {

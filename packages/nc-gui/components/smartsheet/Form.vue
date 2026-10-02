@@ -2079,7 +2079,7 @@ const { message: templatedMessage } = useTemplatedMessage(
                       </div>
                     </a-form>
 
-                    <div v-if="!parseProp(formViewData?.meta).hide_branding" class="px-8 lg:px-12">
+                    <div v-if="isWhiteLabelled && !parseProp(formViewData?.meta).hide_branding" class="px-8 lg:px-12">
                       <a-divider class="!my-8" />
                       <!-- NocoDB Branding  -->
                       <div class="inline-block">
@@ -2397,7 +2397,7 @@ const { message: templatedMessage } = useTemplatedMessage(
                             </div>
                           </div>
 
-                          <PaymentUpgradeBadgeProvider :feature="PlanFeatureTypes.FEATURE_HIDE_BRANDING">
+                          <PaymentUpgradeBadgeProvider v-if="isWhiteLabelled" :feature="PlanFeatureTypes.FEATURE_HIDE_BRANDING">
                             <template #default="{ click }">
                               <div class="flex items-center justify-between gap-3">
                                 <!-- Hide NocoDB Branding -->

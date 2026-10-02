@@ -10,7 +10,6 @@ import { EventEmitterModule } from '~/modules/event-emitter/event-emitter.module
 import { JobsModule } from '~/modules/jobs/jobs.module';
 
 /* Generic */
-import { SocketGateway } from '~/gateways/socket.gateway';
 import { GlobalGuard } from '~/guards/global/global.guard';
 import { InitMetaServiceProvider } from '~/providers/init-meta-service.provider';
 import { JwtStrategyProvider } from '~/providers/jwt-strategy.provider';
@@ -275,7 +274,6 @@ export const nocoModuleMetadata = {
     InitMetaServiceProvider,
     JwtStrategyProvider,
     GlobalGuard,
-    SocketGateway,
     AppHooksService,
     AppHooksListenerService,
     TelemetryService,

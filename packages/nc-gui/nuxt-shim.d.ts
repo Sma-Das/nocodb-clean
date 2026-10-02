@@ -7,11 +7,11 @@ import type { TabType } from './composables'
 declare module '#app' {
   interface NuxtApp {
     $api: BaseAPI<any>
-    /** {@link import('./plugins/tele') Telemetry} */
+    /** No-op instrumentation retained for existing call sites. */
     $tele: {
       emit: (event: string, data: any) => void
     }
-    /** {@link import('./plugins/tele') Telemetry} Emit telemetry event */
+    /** No-op event instrumentation. */
     $e: (event: string, data?: any, rootProps?: Record<string, any>) => void
     /** {@link import('./plugins/report') Error reporting} Error reporting */
     $report: (event: Error) => void

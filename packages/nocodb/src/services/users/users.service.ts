@@ -556,7 +556,7 @@ export class UsersService {
   }): Promise<any> {
     validatePayload('swagger.json#/components/schemas/SignUpReq', param.body);
 
-    const { email: rawEmail, token, ignore_subscribe } = param.req.body;
+    const { email: rawEmail, token } = param.req.body;
     const _email = sanitizeEmail(rawEmail);
 
     let { password } = param.req.body;
@@ -603,9 +603,6 @@ export class UsersService {
     password = await promisify(bcrypt.hash)(password, salt);
     const email_verification_token = uuidv4();
 
-    if (!ignore_subscribe) {
-      T.emit('evt_subscribe', email);
-    }
     let createdProject = undefined;
 
     if (user) {

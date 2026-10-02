@@ -1,0 +1,7 @@
+# Changelog
+
+## Unreleased
+
+- Add a production Docker build with cached dependency/SDK stages, separate frontend and backend builds, a slim runtime image, health checks, and persistent-storage Compose setup.
+- Remove cloud signup and gift promotions, newsletter signup, product feeds, purchase prompts, default form advertising, and automatic vendor telemetry/support-chat connections.
+- Reduce startup metadata work, reuse source-scoped table listings, load table/view metadata with bounded concurrency, and cache frozen-column widths during canvas rendering.

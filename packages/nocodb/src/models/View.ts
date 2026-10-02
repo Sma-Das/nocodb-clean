@@ -83,6 +83,7 @@ import { CustomUrl, LinkToAnotherRecordColumn } from '~/models';
 import { cleanCommandPaletteCache } from '~/helpers/commandPaletteHelpers';
 import { isEE } from '~/utils';
 import { cleanBaseSchemaCacheForBase } from '~/helpers/scriptHelper';
+import { NcConcurrent } from '~/utils/NcConcurrent';
 import {
   getModelContext,
   setModelContext,
@@ -1323,9 +1324,10 @@ export default class View implements ViewType {
     ncMeta = Noco.ncMeta,
   ) {
     const list = await this.list(context, id, false, ncMeta);
-    for (const item of list) {
-      await item.getViewWithInfo(ncMeta);
-    }
+    await NcConcurrent(
+      list.map((item) => () => item.getViewWithInfo(ncMeta)),
+      { concurrency: 4 },
+    );
     return list;
   }
 

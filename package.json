@@ -29,6 +29,9 @@
     "*.{ts,tsx,js,json}": []
   },
   "scripts": {
+    "docker:build": "docker build --target runtime -t nocodb-clean:local .",
+    "docker:up": "docker compose up --build -d",
+    "docker:down": "docker compose down",
     "bootstrap": "pnpm --filter=nocodb-sdk install && pnpm --filter=nocodb-sdk run build && pnpm --filter=nocodb --filter=nc-mail-templates --filter=nc-gui install && pnpm run integrations:build && pnpm run registerIntegrations",
     "integrations:build": "cd ./packages/noco-integrations/ && pnpm i && pnpm run build",
     "start:frontend": "pnpm --filter=nc-gui run dev",

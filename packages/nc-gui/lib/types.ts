@@ -444,17 +444,6 @@ interface NcTableColumnProps<T extends object = Record<string, any>> {
   [key: string]: any
 }
 
-interface ProductFeedItem {
-  Id: string
-  Title: string
-  Description: string
-  ['Feed Source']: 'Youtube' | 'Github' | 'All' | 'Cloud'
-  Url: string
-  Tags?: string
-  ['Published Time']: string
-  Image?: string | null
-}
-
 type SordDirectionType = 'asc' | 'desc' | undefined
 
 type NestedArray<T> = T | NestedArray<T>[]
@@ -1250,7 +1239,6 @@ export type {
   AuditLogsQuery,
   NcTableColumnProps,
   SordDirectionType,
-  ProductFeedItem,
   Attachment,
   NestedArray,
   ViewActionState,

@@ -43,18 +43,11 @@ onUnmounted(() => {
     <DashboardTreeViewProjectList>
       <template #footer>
         <div v-if="!isSharedBase" class="nc-sidebar-bottom-section">
-          <PaymentUpgradeSidebarBanner v-if="appInfo.ee" />
-
           <LazyGeneralMaintenanceAlert />
-
-          <GeneralGift v-if="!isEeUI" />
 
           <DashboardSidebarConnectAi />
 
           <DashboardSidebarBeforeUserInfo />
-          <div v-if="!isMobileMode && !appInfo.ee" class="flex flex-row w-full justify-between pt-0.5 truncate">
-            <GeneralJoinCloud />
-          </div>
           <DashboardSidebarVersion v-if="appInfo.isOnPrem" />
         </div>
       </template>
@@ -71,11 +64,8 @@ onUnmounted(() => {
 .nc-sidebar-bottom-section {
   @apply flex-none overflow-auto p-1 empty:hidden;
 
-  &:not(:has(.nc-maintenance-sidebar-banner)) &:not(:has(.nc-upgrade-sidebar-banner)) {
+  &:not(:has(.nc-maintenance-sidebar-banner)) {
     @apply border-t-1;
-  }
-  &:has(.nc-upgrade-sidebar-banner) {
-    @apply -mt-2.5 pointer-events-none;
   }
 
   & > * {

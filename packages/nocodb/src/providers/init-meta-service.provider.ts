@@ -1,17 +1,15 @@
-import { NcDebug } from 'nc-gui/utils/debug';
+import { NcDebug } from '~/utils/debug';
 import type { FactoryProvider } from '@nestjs/common';
 import type { IEventEmitter } from '~/modules/event-emitter/event-emitter.interface';
 import { verifyDefaultWorkspace } from '~/helpers/verifyDefaultWorkspace';
-import { isEE, T } from '~/utils';
+import { isEE } from '~/utils';
 import { populatePluginsForCloud } from '~/utils/cloud/populateCloudPlugins';
 import { MetaService } from '~/meta/meta.service';
 import Noco from '~/Noco';
 import NcPluginMgrv2 from '~/helpers/NcPluginMgrv2';
 import NcUpgrader from '~/version-upgrader/NcUpgrader';
 import NocoCache from '~/cache/NocoCache';
-import getInstance from '~/utils/getInstance';
 import initAdminFromEnv from '~/helpers/initAdminFromEnv';
-import { User } from '~/models';
 import { NcConfig, prepareEnv } from '~/utils/nc-config';
 import { MetaTable, RootScopes } from '~/utils/globals';
 import { updateMigrationJobsState } from '~/helpers/migrationJobs';
@@ -158,11 +156,6 @@ export const InitMetaServiceProvider: FactoryProvider = {
         if (process.env.NODE_ENV !== 'test') throw e;
       }
     }
-    T.init({
-      instance: getInstance,
-    });
-    T.emit('evt_app_started', await User.count());
-
     // decide base behavior based on env and database permissions
     await initBaseBehavior();
     NcDebug.log('Base behavior initialized');

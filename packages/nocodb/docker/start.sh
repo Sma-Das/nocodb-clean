@@ -1,3 +1,3 @@
 #!/bin/sh
 
-node docker/main.js
+exec node main.js

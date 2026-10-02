@@ -52,7 +52,7 @@ export interface AppInfo {
   allowEmailSigninWithSso: boolean
   samlAuthEnabled: boolean
   samlProviderName: string | null
-  giftUrl: string
+  giftUrl: string | null
   feedEnabled: boolean
   sentryDSN: string
   isOnPrem: boolean
@@ -103,7 +103,6 @@ export interface StoredState {
   }
   isAddNewRecordGridMode: boolean
   syncDataUpvotes: string[]
-  giftBannerDismissedCount: number
   isLeftSidebarOpen: boolean
   lastUsedAuthMethod: 'google' | 'oidc' | 'sso' | 'email' | null
 }

@@ -2,6 +2,8 @@
 import { UITypes, isVirtualCol } from 'nocodb-sdk'
 import { breakpointsTailwind } from '@vueuse/core'
 
+const { isWhiteLabelled } = useBranding()
+
 enum TransitionDirection {
   Left = 'left',
   Right = 'right',
@@ -523,7 +525,7 @@ const { message: templatedMessage } = useTemplatedMessage(
       </div>
       <div class="lg:(absolute bottom-0 right-0 px-4 pb-4) lg:px-10 lg:pb-10">
         <div class="flex justify-end items-center gap-4 nc-survey-form-branding">
-          <div class="flex justify-center">
+          <div v-if="isWhiteLabelled" class="flex justify-center">
             <GeneralFormBranding
               class="inline-flex mx-auto"
               :style="{

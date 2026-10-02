@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { encodeOnPremCheckoutState } from '~/lib/onPremCheckoutState'
-
 const { api, isLoading } = useApi()
 
 const { t } = useI18n()
@@ -29,21 +27,6 @@ const licenseStatus = computed(() => {
 
   return isEEActive.value ? 'active' : 'expired'
 })
-
-const buildBuyLicenseUrl = (seatCount?: number, instanceId?: string) => {
-  // Prefer the backend-computed site URL — it's derived from the actual
-  // request headers (incl. X-Forwarded-Host) and is more reliable behind
-  // proxies than window.location.origin.
-  const instanceUrl = appInfo.value.ncSiteUrl || window.location.origin
-  const licenseServerUrl = appInfo.value.licenseServerUrl || NC_CLOUD_URL
-  const state = encodeOnPremCheckoutState({
-    v: 1,
-    instance_url: instanceUrl,
-    ...(seatCount && seatCount > 0 ? { seat_count: seatCount } : {}),
-    ...(instanceId ? { instance_id: instanceId } : {}),
-  })
-  return `${licenseServerUrl}/account/self-hosted?state=${state}`
-}
 
 const loadLicense = async () => {
   try {
@@ -135,43 +118,26 @@ const copyLicenseKey = async () => {
   }
 }
 
-const onBuyLicense = async () => {
-  $e('c:account:license:buy')
+const onManageLicense = async () => {
+  if (licenseStatus.value === 'none') return
 
-  // Best-effort: fetch the seat-consuming user count (editor+, matching how
-  // billing reseats) and a stable instance_id so the cloud side can pre-fill
-  // seats on checkout and locate this instance's license when managing.
-  let seatCount: number | undefined
   let instanceId: string | undefined
   try {
-    const baseURL = $api.instance.defaults.baseURL
-    const status = await $fetch<{ seatCount?: number; instanceId?: string }>('/api/v1/license/status', {
-      baseURL,
-      method: 'GET',
+    const status = await $fetch<{ instanceId?: string }>('/api/v1/license/status', {
+      baseURL: $api.instance.defaults.baseURL,
       headers: { 'xc-auth': token.value as string },
     })
-    if (typeof status?.seatCount === 'number' && status.seatCount > 0) {
-      seatCount = status.seatCount
-    }
-    if (typeof status?.instanceId === 'string' && status.instanceId) {
-      instanceId = status.instanceId
-    }
+    instanceId = status.instanceId
   } catch {
-    // Ignore — fall back to the URL without instance hints.
+    // The account page remains available without an instance hint.
   }
 
-  // Manage license: skip checkout state and go straight to the cloud
-  // self-hosted page; instance_id deep-links to this license's detail.
-  if (licenseStatus.value !== 'none') {
-    const licenseServerUrl = appInfo.value.licenseServerUrl || NC_CLOUD_URL
-    window.open(
-      `${licenseServerUrl}/account/self-hosted${instanceId ? `?instance_id=${encodeURIComponent(instanceId)}` : ''}`,
-      '_blank',
-    )
-    return
-  }
-
-  window.open(buildBuyLicenseUrl(seatCount, instanceId), '_blank')
+  const licenseServerUrl = appInfo.value.licenseServerUrl || NC_CLOUD_URL
+  window.open(
+    `${licenseServerUrl}/account/self-hosted${instanceId ? `?instance_id=${encodeURIComponent(instanceId)}` : ''}`,
+    '_blank',
+    'noopener,noreferrer',
+  )
 }
 
 loadLicense()
@@ -208,13 +174,6 @@ loadLicense()
               <span class="font-bold text-base text-nc-content-gray">{{ $t('title.licenseKey') }}</span>
               <span class="text-sm text-nc-content-gray-subtle2">
                 {{ $t('labels.licenseKeyDescription') }}
-                <a
-                  href="https://nocodb.com/docs/product-docs/cloud-enterprise-edition/community-vs-paid-editions"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="!text-nc-content-brand !no-underline hover:underline"
-                  >{{ $t('msg.learnMore') }}</a
-                >
               </span>
             </div>
 
@@ -324,27 +283,26 @@ loadLicense()
 
           <AccountLicenseCredits v-if="isEeUI" />
 
-          <!-- Buy / Manage License card -->
-          <div class="flex flex-col border-1 rounded-2xl border-nc-border-gray-medium p-6 gap-4">
+          <div v-if="licenseStatus !== 'none'" class="flex flex-col border-1 rounded-2xl border-nc-border-gray-medium p-6 gap-4">
             <div class="flex flex-col gap-1">
               <span class="font-bold text-base text-nc-content-gray">
-                {{ licenseStatus === 'none' ? $t('labels.buyLicense') : $t('labels.manageLicense') }}
+                {{ $t('labels.manageLicense') }}
               </span>
               <span class="text-sm text-nc-content-gray-subtle2">
-                {{ licenseStatus === 'none' ? $t('labels.noLicenseYet') : $t('labels.manageLicenseOnCloud') }}
+                {{ $t('labels.manageLicenseOnCloud') }}
               </span>
             </div>
 
             <div>
               <NcButton
-                v-e="['c:account:license:buy']"
+                v-e="['c:account:license:manage']"
                 type="secondary"
                 size="small"
-                data-testid="nc-license-buy-btn"
-                @click="onBuyLicense"
+                data-testid="nc-license-manage-btn"
+                @click="onManageLicense"
               >
                 <div class="flex gap-2 items-center">
-                  {{ licenseStatus === 'none' ? $t('labels.buyLicense') : $t('labels.manageLicense') }}
+                  {{ $t('labels.manageLicense') }}
                   <GeneralIcon icon="ncExternalLink" />
                 </div>
               </NcButton>

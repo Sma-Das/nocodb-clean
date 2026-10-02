@@ -399,10 +399,10 @@ export const useEeConfig = createSharedComposable(() => {
 
   const isEEFeatureBlocked = computed(() => true)
 
-  const hideUpgradePrompts = ref(false)
-  const communityMode = computed(() => false)
+  const hideUpgradePrompts = ref(true)
+  const communityMode = computed(() => true)
 
-  const showUpgradeSurface = (_isBlocked: boolean) => true
+  const showUpgradeSurface = (isBlocked: boolean) => !isBlocked
 
   const showEEFeatures = computed(() => false)
 

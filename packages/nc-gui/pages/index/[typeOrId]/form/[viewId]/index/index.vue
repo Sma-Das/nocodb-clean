@@ -4,6 +4,8 @@ import { RelationTypes, UITypes, isVirtualCol } from 'nocodb-sdk'
 import { ref } from 'vue'
 import { StreamBarcodeReader } from 'vue-barcode-reader'
 
+const { isWhiteLabelled } = useBranding()
+
 const {
   sharedFormView,
   submitForm,
@@ -309,7 +311,7 @@ const { message: templatedMessage } = useTemplatedMessage(
               </div>
             </a-form>
           </div>
-          <div>
+          <div v-if="isWhiteLabelled">
             <a-divider class="!my-6 !md:my-8" />
             <div class="inline-block">
               <GeneralFormBranding />

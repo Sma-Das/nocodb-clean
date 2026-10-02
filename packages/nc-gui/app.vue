@@ -46,18 +46,10 @@ useUndoRedo()
 
 applyNonSelectable()
 
-const { chatwootInit } = useProvideChatwoot()
-
 onMounted(() => {
-  window.addEventListener('chatwoot:ready', chatwootInit)
-
   if (route.value.query.hideSharedBaseBtn === 'true') {
     hideSharedBaseBtn.value = true
   }
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('chatwoot:ready', chatwootInit)
 })
 
 useEventListener(document, 'keydown', async (e: KeyboardEvent) => {

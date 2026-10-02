@@ -15,7 +15,7 @@ export default defineNuxtConfig({
 
   ignore: [...(process.env.NODE_ENV === 'production' ? ['pages/playground/**/*'] : [])],
 
-  modules: ['@vueuse/nuxt', '@unocss/nuxt', '@nuxt/image', '@pinia/nuxt', '@productdevbook/chatwoot'],
+  modules: ['@vueuse/nuxt', '@unocss/nuxt', '@nuxt/image', '@pinia/nuxt'],
   ssr: false,
 
   // 'uno.css' is imported from the `css` array instead, so it keeps WindiCSS's position.
@@ -27,16 +27,6 @@ export default defineNuxtConfig({
   router: {
     options: {
       hashMode: false,
-    },
-  },
-  chatwoot: {
-    init: {
-      websiteToken: 'ke2YjiPnKw9gnz4PCq4RuQqR',
-      baseUrl: 'https://app.chatwoot.com',
-    },
-    settings: {
-      darkMode: 'light',
-      hideMessageBubble: true,
     },
   },
   spaLoadingTemplate: false,
@@ -104,18 +94,15 @@ export default defineNuxtConfig({
         {
           hid: 'og:description',
           property: 'og:description',
-          content:
-            'NocoDB provides an intuitive spreadsheet interface for creating online databases, either from scratch or by connecting to any Postgres/MySQL. Access your data through interactive UIs or via API and SQL. Get started for free.',
+          content: 'Manage database tables through a spreadsheet interface, API, and SQL.',
         },
-        { hid: 'og:url', property: 'og:url', content: 'https://nocodb.com' },
         // Twitter
         { hid: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
         { hid: 'twitter:title', name: 'twitter:title', content: 'NocoDB' },
         {
           hid: 'twitter:description',
           name: 'twitter:description',
-          content:
-            'NocoDB provides an intuitive spreadsheet interface for creating online databases, either from scratch or by connecting to any Postgres/MySQL. Access your data through interactive UIs or via API and SQL. Get started for free.',
+          content: 'Manage database tables through a spreadsheet interface, API, and SQL.',
         },
         {
           hid: 'twitter:image',
@@ -360,7 +347,6 @@ export default defineNuxtConfig({
         'vue-barcode-reader',
         'vuedraggable',
         'xlsx',
-        'youtube-vue3',
         'lru-cache',
         'qrcode',
         'validator',

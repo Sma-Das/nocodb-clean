@@ -39,15 +39,10 @@ const hasTableCreatePermission = computed(() => {
             data-testid="nc-workspace-menu"
             class="flex items-center nc-workspace-menu overflow-hidden py-1.25 pr-0.25 justify-center w-full"
           >
-            <a
-              class="w-24 min-w-10 transition-all duration-200 p-1 transform"
-              href="https://github.com/nocodb/nocodb"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <div class="w-24 min-w-10 p-1">
               <img v-if="isDark" width="96" alt="NocoDB" src="~/assets/img/brand/text.png" />
               <img v-else width="96" alt="NocoDB" src="~/assets/img/brand/nocodb.png" />
-            </a>
+            </div>
 
             <div class="flex flex-grow"></div>
           </div>

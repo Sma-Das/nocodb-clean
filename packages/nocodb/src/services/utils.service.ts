@@ -2,9 +2,8 @@ import process from 'process';
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { compareVersions, validate } from 'compare-versions';
-import { getCircularReplacer, OperationSource, ViewTypes } from 'nocodb-sdk';
+import { OperationSource, ViewTypes } from 'nocodb-sdk';
 import { ConfigService } from '@nestjs/config';
-import dayjs from 'dayjs';
 import type { ErrorReportReqType } from 'nocodb-sdk';
 import type { AppConfig, NcRequest } from '~/interface/config';
 import { getFilteredAgents } from '~/utils/ssrf';
@@ -21,8 +20,7 @@ import { Base, User } from '~/models';
 import Noco from '~/Noco';
 import { isCloud, isEE, isOnPrem, T } from '~/utils';
 import NcConnectionMgrv2 from '~/utils/common/NcConnectionMgrv2';
-import getInstance from '~/utils/getInstance';
-import { CacheScope, MetaTable, RootScopes } from '~/utils/globals';
+import { MetaTable, RootScopes } from '~/utils/globals';
 import { jdbcToXcConfig } from '~/utils/nc-config/helpers';
 import { NC_DISABLE_UNDO_REDO } from '~/utils/nc-config/constants';
 import { packageVersion } from '~/utils/packageVersion';
@@ -30,12 +28,7 @@ import {
   defaultGroupByLimitConfig,
   defaultLimitConfig,
 } from '~/helpers/extractLimitAndOffset';
-import {
-  DriverClient,
-  NC_DISABLE_GROUP_BY_AGG,
-  NC_DISABLE_SUPPORT_CHAT,
-} from '~/utils/nc-config';
-import NocoCache from '~/cache/NocoCache';
+import { DriverClient, NC_DISABLE_GROUP_BY_AGG } from '~/utils/nc-config';
 
 const versionCache = {
   releaseVersion: null,
@@ -89,8 +82,6 @@ export class UtilsService {
   protected logger = new Logger(UtilsService.name);
 
   constructor(protected readonly configService: ConfigService<AppConfig>) {}
-
-  lastSyncTime = null;
 
   async versionInfo() {
     if (
@@ -425,7 +416,6 @@ export class UtilsService {
 
   async appInfo(param: { req: { ncSiteUrl: string } }) {
     const baseHasAdmin = !(await User.isFirst());
-    const instance = await getInstance();
 
     const settings = await Noco.getAppSettings();
 
@@ -435,14 +425,6 @@ export class UtilsService {
     const oidcProviderName = oidcAuthEnabled
       ? process.env.NC_OIDC_PROVIDER_NAME ?? 'OpenID Connect'
       : null;
-
-    let giftUrl: string;
-
-    if (instance.impacted >= 5) {
-      giftUrl = `https://w21dqb1x.nocodb.com/#/nc/form/4d2e0e4b-df97-4c5e-ad8e-f8b8cca90330?Users=${
-        instance.impacted
-      }&Bases=${instance.projectsExt + instance.projectsMeta}`;
-    }
 
     const samlAuthEnabled = process.env.NC_SSO?.toLowerCase() === 'saml';
     const samlProviderName = samlAuthEnabled
@@ -473,7 +455,7 @@ export class UtilsService {
       defaultGroupByLimit: defaultGroupByLimitConfig,
       timezone: defaultConnectionConfig.timezone,
       ncMin: !!process.env.NC_MIN,
-      teleEnabled: process.env.NC_DISABLE_TELE !== 'true',
+      teleEnabled: false,
       errorReportingEnabled: process.env.NC_DISABLE_ERR_REPORTS !== 'true',
       sentryDSN:
         process.env.NC_DISABLE_ERR_REPORTS !== 'true'
@@ -494,7 +476,7 @@ export class UtilsService {
       disableEmailAuth: this.configService.get('auth.disableEmailAuth', {
         infer: true,
       }),
-      feedEnabled: process.env.NC_DISABLE_PRODUCT_FEED !== 'true',
+      feedEnabled: false,
       mainSubDomain: this.configService.get('mainSubDomain', { infer: true }),
       dashboardPath: this.configService.get('dashboardPath', { infer: true }),
       inviteOnlySignup: settings.invite_only_signup,
@@ -502,13 +484,13 @@ export class UtilsService {
       allowEmailSigninWithSso: settings.allow_email_signin_with_sso,
       samlProviderName,
       samlAuthEnabled,
-      giftUrl,
+      giftUrl: null,
       prodReady: Noco.getConfig()?.meta?.db?.client !== DriverClient.SQLITE,
       allowLocalUrl:
         process.env.NC_WEBHOOK_ALLOW_PRIVATE_NETWORK === 'true' ||
         process.env.NC_ALLOW_LOCAL_HOOKS === 'true',
       isOnPrem,
-      disableSupportChat: NC_DISABLE_SUPPORT_CHAT,
+      disableSupportChat: true,
       disableGroupByAggregation: NC_DISABLE_GROUP_BY_AGG,
       /**
        * Allow disabling onboarding flow based on env variable or development mode
@@ -553,117 +535,12 @@ export class UtilsService {
     }
   }
 
-  async feed(req: NcRequest) {
-    const {
-      type = 'all',
-      page = '1',
-      per_page = '10',
-    } = req.query as {
-      type: 'github' | 'youtube' | 'all' | 'twitter' | 'cloud';
-      page: string;
-      per_page: string;
-    };
-
-    const perPage = Math.min(Math.max(parseInt(per_page, 10) || 10, 1), 100);
-    const pageNum = Math.max(parseInt(page, 10) || 1, 1);
-
-    const cacheKey = `${CacheScope.PRODUCT_FEED}:${type}:${pageNum}:${perPage}`;
-
-    const cachedData = await NocoCache.get('root', cacheKey, 'json');
-
-    if (cachedData) {
-      try {
-        return JSON.parse(cachedData);
-      } catch (e) {
-        this.logger.error(e?.message, e);
-        await NocoCache.del('root', cacheKey);
-      }
-    }
-
-    let payload = null;
-    if (
-      !this.lastSyncTime ||
-      dayjs().isAfter(this.lastSyncTime.add(3, 'hours'))
-    ) {
-      payload = await T.payload();
-      this.lastSyncTime = dayjs();
-    }
-
-    let response;
-
-    try {
-      response = await axios.post(
-        'https://product-feed.nocodb.com/api/v1/social/feed',
-        payload,
-        {
-          params: {
-            per_page: perPage,
-            page: pageNum,
-            type,
-          },
-        },
-      );
-    } catch (e) {
-      this.logger.error(e?.message, e);
-      return [];
-    }
-
-    // The feed includes the attachments, which has the presigned URL
-    // So the cache should match the presigned URL cache
-    await NocoCache.setExpiring(
-      'root',
-      cacheKey,
-      JSON.stringify(response.data, getCircularReplacer),
-      Number.isNaN(parseInt(process.env.NC_ATTACHMENT_EXPIRE_SECONDS))
-        ? 2 * 60 * 60
-        : parseInt(process.env.NC_ATTACHMENT_EXPIRE_SECONDS),
-    );
-
-    return response.data;
+  // Keep existing API routes compatible without fetching promotional content.
+  async feed(_req: NcRequest) {
+    return [];
   }
 
   async cloudFeatures(_req: NcRequest) {
-    const cacheKey = `${CacheScope.CLOUD_FEATURES}`;
-
-    const cachedData = await NocoCache.get('root', cacheKey, 'json');
-
-    if (cachedData) {
-      try {
-        return JSON.parse(cachedData);
-      } catch (e) {
-        this.logger.error(e?.message, e);
-        await NocoCache.del('root', cacheKey);
-      }
-    }
-
-    let payload = null;
-    if (
-      !this.lastSyncTime ||
-      dayjs().isAfter(this.lastSyncTime.add(3, 'hours'))
-    ) {
-      payload = await T.payload();
-      this.lastSyncTime = dayjs();
-    }
-
-    let response;
-
-    try {
-      response = await axios.post(
-        'https://product-feed.nocodb.com/api/v1/cloud/features',
-        payload,
-      );
-    } catch (e) {
-      this.logger.error(e?.message, e);
-      return [];
-    }
-
-    await NocoCache.setExpiring(
-      'root',
-      cacheKey,
-      JSON.stringify(response.data, getCircularReplacer),
-      3 * 60 * 60,
-    );
-
-    return response.data;
+    return [];
   }
 }

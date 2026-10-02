@@ -1,4 +1,5 @@
 import dns from 'node:dns';
+import { createServer } from 'node:http';
 import express from 'express';
 import cors from 'cors';
 import Noco from '~/Noco';
@@ -15,7 +16,10 @@ server.use(cors());
 server.set('view engine', 'ejs');
 
 (async () => {
-  const httpServer = server.listen(process.env.PORT || 8080, async () => {
-    server.use(await Noco.init({}, httpServer, server));
-  });
-})().catch((e) => console.log(e));
+  const httpServer = createServer(server);
+  server.use(await Noco.init({}, httpServer, server));
+  httpServer.listen(process.env.PORT || 8080);
+})().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

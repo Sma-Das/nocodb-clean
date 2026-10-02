@@ -1,65 +1,6 @@
-<h1 align="center" style="border-bottom: none">
-    <div>
-        <a href="https://www.nocodb.com">
-            <img src="/packages/nc-gui/assets/img/icons/512x512.png" width="80" />
-            <br>
-            NocoDB
-        </a>
-        ✨ Free & Self-hostable Airtable alternative ✨ <br>
-    </div>
-</h1>
+# NocoDB backend
 
-<p align="center">
-NocoDB is the fastest and easiest way to build databases online.
-</p>
-
-<div align="center">
-
-[![Node version](https://img.shields.io/badge/node-%3E%3D%2016.14.0-brightgreen)](http://nodejs.org/download/)
-[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-green.svg)](https://conventionalcommits.org)
-
-</div>
-
-<p align="center">
-    <a href="http://www.nocodb.com"><b>Website</b></a> •
-    <a href="https://discord.gg/c7GEYrvFtT"><b>Discord</b></a> •
-    <a href="https://community.nocodb.com/"><b>Community</b></a> •
-    <a href="https://twitter.com/nocodb"><b>Twitter</b></a> •
-    <a href="https://www.reddit.com/r/NocoDB/"><b>Reddit</b></a> •
-    <a href="https://docs.nocodb.com/"><b>Documentation</b></a>
-</p>
-
-![All Views](https://user-images.githubusercontent.com/35857179/194825053-3aa3373d-3e0f-4b42-b3f1-42928332054a.gif)
-
-<div align="center">
-
-[<img height="38" src="https://user-images.githubusercontent.com/61551451/135263434-75fe793d-42af-49e4-b964-d70920e41655.png">](markdown/readme/languages/chinese.md)
-[<img height="38" src="https://user-images.githubusercontent.com/61551451/135263474-787d71e7-3a87-42a8-92a8-be1d1f55413d.png">](markdown/readme/languages/french.md)
-[<img height="38" src="https://user-images.githubusercontent.com/61551451/135263531-fae58600-6616-4b43-95a0-5891019dd35d.png">](markdown/readme/languages/german.md)
-[<img height="38" src="https://user-images.githubusercontent.com/61551451/135263589-3dbeda9a-0d2e-4bbd-b1fc-691404bb74fb.png">](markdown/readme/languages/spanish.md)
-[<img height="38" src="https://user-images.githubusercontent.com/61551451/135263669-f567196a-d4e8-4143-a80a-93d3be32ba90.png">](markdown/readme/languages/portuguese.md)
-[<img height="38" src="https://user-images.githubusercontent.com/61551451/135263707-ba4e04a4-268a-4626-91b8-048e572fd9f6.png">](markdown/readme/languages/italian.md)
-[<img height="38" src="https://user-images.githubusercontent.com/61551451/135263770-38e3e79d-11d4-472e-ac27-ae0f17cf65c4.png">](markdown/readme/languages/japanese.md)
-[<img height="38" src="https://user-images.githubusercontent.com/61551451/135263822-28fce9de-915a-44dc-962d-7a61d340e91d.png">](markdown/readme/languages/korean.md)
-[<img height="38" src="https://user-images.githubusercontent.com/61551451/135263888-151d4ad1-7084-4943-97c9-56f28cd40b80.png">](markdown/readme/languages/russian.md)
-
-</div>
-
-<p align="center"><a href="markdown/readme/languages/README.md"><b>See other languages »</b></a></p>
-
-<img src="https://static.scarf.sh/a.png?x-pxid=c12a77cc-855e-4602-8a0f-614b2d0da56a" />
-
-# Join Our Team
-
-<p align=""><a href="http://careers.nocodb.com" target="_blank"><img src="https://user-images.githubusercontent.com/61551451/169663818-45643495-e95b-48e2-be13-01d6a77dc2fd.png" width="250"/></a></p>
-
-# Join Our Community
-
-<a href="https://discord.gg/c7GEYrvFtT" target="_blank">
-<img src="https://discordapp.com/api/guilds/661905455894888490/widget.png?style=banner3" alt="">
-</a>
-
-[![Stargazers repo roster for @nocodb/nocodb](https://reporoster.com/stars/nocodb/nocodb)](https://github.com/nocodb/nocodb/stargazers)
+Database service for the spreadsheet interface and REST APIs.
 
 # Quick try
 
@@ -166,7 +107,6 @@ Access Dashboard using: [http://localhost:8080/dashboard](http://localhost:8080/
   - [Docker](#docker)
   - [Docker Compose](#docker-compose)
 - [GUI](#gui)
-- [Join Our Community](#join-our-community)
 - [Screenshots](#screenshots)
 - [Table of Contents](#table-of-contents)
 - [Features](#features)
@@ -179,10 +119,7 @@ Access Dashboard using: [http://localhost:8080/dashboard](http://localhost:8080/
   - [Environment variables](#environment-variables)
 - [Development Setup](#development-setup)
 - [Contributing](#contributing)
-- [Why are we building this?](#why-are-we-building-this)
-- [Our Mission](#our-mission)
 - [License](#license)
-- [Contributors](#contributors)
 
 # Features
 
@@ -236,24 +173,8 @@ Please refer to [Development Setup](https://docs.nocodb.com/engineering/developm
 
 Please refer to [Contribution Guide](https://github.com/nocodb/nocodb/blob/master/.github/CONTRIBUTING.md).
 
-# Why are we building this?
-
-Most internet businesses equip themselves with either spreadsheet or a database to solve their business needs. Spreadsheets are used by Billion+ humans collaboratively every single day. However, we are way off working at similar speeds on databases which are way more powerful tools when it comes to computing. Attempts to solve this with SaaS offerings have meant horrible access controls, vendor lock-in, data lock-in, abrupt price changes & most importantly a glass ceiling on what's possible in the future.
-
-# Our Mission
-
-Our mission is to provide the most powerful no-code interface for databases, accessible to every internet business across the world. By making this capability broadly available under a fair and sustainable model, we aim to democratise access to powerful computing tools and enable a billion-plus people to develop radical tinkering and building abilities on the internet.
-
 # License
 
 <p>
 This project is licensed under <a href="./LICENSE">Sustainable Use License</a>.
 </p>
-
-# Contributors
-
-Thank you for your contributions! We appreciate all the contributions from the community.
-
-<a href="https://github.com/nocodb/nocodb/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=nocodb/nocodb" />
-</a>

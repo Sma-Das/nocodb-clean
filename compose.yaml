@@ -1,0 +1,15 @@
+services:
+  nocodb:
+    image: nocodb-clean:local
+    build:
+      context: .
+      target: runtime
+    ports:
+      - "8080:8080"
+    volumes:
+      - nocodb-data:/usr/app/data
+    restart: unless-stopped
+    init: true
+
+volumes:
+  nocodb-data:

@@ -1,4 +1,26 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": ["node_modules", "test", "tests", "dist", "**/*spec.ts"]
+  "compilerOptions": {
+    "lib": ["es2022", "dom"],
+    "paths": {
+      "src/*": ["./src/*"],
+      "~/*": ["./src/*"],
+      "@/*": ["./src/*"],
+      "@noco-local-integrations/*": ["../noco-integrations/packages/*"],
+      "@noco-local-integrations/core": [
+        "../noco-integrations/core/src/index.ts"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "test",
+    "tests",
+    "dist",
+    "**/*spec.ts",
+    "src/ee",
+    "src/ee-on-prem",
+    "src/ee-cloud",
+    "src/run/cloud.ts"
+  ]
 }

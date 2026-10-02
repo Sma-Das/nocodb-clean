@@ -74,7 +74,6 @@ export function useGlobalState(storageKey = 'nocodb-gui-v2'): State {
     },
     isAddNewRecordGridMode: true,
     syncDataUpvotes: [],
-    giftBannerDismissedCount: 0,
     isLeftSidebarOpen: !isViewPortMobile(),
     lastUsedAuthMethod: null,
   }

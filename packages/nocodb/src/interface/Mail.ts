@@ -8,9 +8,9 @@ import type {
   TableType,
   UITypes,
   UserType,
-  WorkspaceType,
 } from 'nocodb-sdk';
 import type { XcEmailAttachment } from '~/types/nc-plugin';
+import type { Workspace } from '~/models';
 
 enum MailEvent {
   COMMENT_CREATE = 'COMMENT_CREATE',
@@ -122,7 +122,7 @@ interface OrganizationInvitePayload {
 }
 
 interface WorkspaceInvitePayload {
-  workspace: WorkspaceType;
+  workspace: Workspace;
   user: UserType;
   req: NcRequest;
   token?: string;

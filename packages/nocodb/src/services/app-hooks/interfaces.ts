@@ -80,11 +80,15 @@ export interface RowMentionEvent extends NcBaseEvent {
   mentions: string[];
 }
 
+type ProjectUserEventData = Partial<Omit<ProjectUserReqType, 'roles'>> & {
+  roles?: ProjectUserReqType['roles'] | ProjectRoles;
+};
+
 export interface ProjectUserUpdateEvent extends NcBaseEvent {
   base: BaseType;
   user: UserType;
-  baseUser: Partial<ProjectUserReqType>;
-  oldBaseUser: Partial<ProjectUserReqType>;
+  baseUser: ProjectUserEventData;
+  oldBaseUser: ProjectUserEventData;
   /** Set when the role change came from redeeming an invite link. */
   via?: 'invite_link';
 }

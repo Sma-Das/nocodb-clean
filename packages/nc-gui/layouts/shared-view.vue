@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import { PlanTitles } from 'nocodb-sdk'
-
-const { isLoading, appInfo } = useGlobal()
+const { isLoading } = useGlobal()
 
 const { isDark } = useTheme()
 
@@ -13,8 +11,6 @@ const { productName, logoUrl, logoDarkUrl, isWhiteLabelled, config } = useBrandi
 
 const { isFullScreen } = storeToRefs(useSidebarStore())
 
-const { activePlanTitle } = useEeConfig()
-
 const router = useRouter()
 
 const route = router.currentRoute
@@ -22,12 +18,6 @@ const route = router.currentRoute
 const disableTopbar = computed(() => route.value.query?.disableTopbar === 'true' || isFullScreen.value)
 
 const ncNotFound = computed(() => route.value.query?.ncNotFound === 'true')
-
-const showSignUpButton = computed(() => {
-  if (appInfo.value.ee) return false
-
-  return !activePlanTitle.value || activePlanTitle.value === PlanTitles.FREE
-})
 
 onMounted(() => {
   // check if we are inside an iframe
@@ -76,8 +66,8 @@ export default {
           <div class="flex items-center gap-6 h-7 flex-1 min-w-0">
             <a
               class="transition-all duration-200 cursor-pointer transform hover:scale-105"
-              :href="isWhiteLabelled ? config?.email?.footerUrl || undefined : 'https://github.com/nocodb/nocodb'"
-              :target="isWhiteLabelled && !config?.email?.footerUrl ? undefined : '_blank'"
+              :href="isWhiteLabelled ? config?.email?.footerUrl || undefined : undefined"
+              :target="isWhiteLabelled && config?.email?.footerUrl ? '_blank' : undefined"
               rel="noopener noreferrer"
             >
               <template v-if="isWhiteLabelled && (isDark ? logoDarkUrl : logoUrl)">
@@ -146,16 +136,6 @@ export default {
             <DashboardMiniSidebarTheme placement="bottom" render-as-btn />
 
             <LazySmartsheetToolbarExportWithProvider v-if="allowCSVDownload" />
-
-            <a
-              v-if="showSignUpButton"
-              href="https://app.nocodb.com/signin"
-              target="_blank"
-              class="!no-underline xs:hidden"
-              rel="noopener"
-            >
-              <NcButton size="xs"> {{ $t('labels.signUpForFree') }} </NcButton>
-            </a>
           </div>
         </a-layout-header>
         <NcFullScreen v-model="isFullScreen" class="h-full" :page-only="true">

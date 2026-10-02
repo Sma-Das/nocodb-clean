@@ -66,6 +66,7 @@ import { validateUniqueConstraint } from '~/helpers/uniqueConstraintHelpers';
 import { OperationName } from '~/command-registry/op-names';
 import { TraceCommand } from '~/decorators/trace-command.decorator';
 import { isReplay } from '~/helpers/replayScope';
+import { NcConcurrent } from '~/utils/NcConcurrent';
 
 @Injectable()
 export class TablesService {
@@ -716,15 +717,21 @@ export class TablesService {
 
     models = includeM2M ? models : (models.filter((t) => !t.mm) as Model[]);
 
-    const result = await models.reduce(async (_obj, model) => {
-      const obj = await _obj;
+    const [modelViews, disabledList] = await Promise.all([
+      NcConcurrent(
+        models.map((model) => () => model.getViews()),
+        { concurrency: 3 },
+      ),
+      ModelRoleVisibility.list(context, baseId),
+    ]);
 
-      const views = await model.getViews();
-      for (const view of views) {
+    const result: Record<string, any> = {};
+    for (const [index, model] of models.entries()) {
+      for (const view of modelViews[index]) {
         // Mask the bcrypt password hash — the owner UI never needs the
         // stored value; it sees a sentinel and renders a masked state.
         const safeView = View.maskPasswordForResponse(view);
-        obj[view.id] = {
+        result[view.id] = {
           ptn: model.table_name,
           _ptn: model.title,
           ptype: model.type,
@@ -735,11 +742,7 @@ export class TablesService {
           disabled: { ...defaultDisabled },
         };
       }
-
-      return obj;
-    }, Promise.resolve({}));
-
-    const disabledList = await ModelRoleVisibility.list(context, baseId);
+    }
 
     for (const d of disabledList) {
       if (result[d.fk_view_id])
@@ -764,7 +767,16 @@ export class TablesService {
       isPublicBase?: boolean;
     },
   ) {
-    const viewList = await this.xcVisibilityMetaGet(context, param.baseId);
+    const models = await Model.list(context, {
+      base_id: param.baseId,
+      source_id: param.allSources ? undefined : param.sourceId,
+    });
+    const viewList = await this.xcVisibilityMetaGet(
+      context,
+      param.baseId,
+      models,
+      param.includeM2M ?? false,
+    );
 
     // todo: optimise
     const tableViewMapping = viewList.reduce((o, view: any) => {
@@ -779,12 +791,7 @@ export class TablesService {
       return o;
     }, {});
 
-    let tableList = (
-      await Model.list(context, {
-        base_id: param.baseId,
-        source_id: param.allSources ? undefined : param.sourceId,
-      })
-    ).filter((t) => tableViewMapping[t.id]);
+    let tableList = models.filter((t) => tableViewMapping[t.id]);
 
     // Filter tables based on TABLE_VISIBILITY permission
     // Base owners always see all tables, so skip filtering for them

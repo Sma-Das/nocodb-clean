@@ -35,8 +35,6 @@ const { isUIAllowed } = useRoles()
 
 const { setActiveCmdView } = useCommand()
 
-const { isChatWootEnabled } = useProvideChatwoot()
-
 const {
   isPanelExpanded: isChatPanelExpanded,
   hasWorkspaceContext: hasChatWorkspaceContext,
@@ -317,25 +315,8 @@ useEventListener(document, 'keydown', (e: KeyboardEvent) => {
           <DashboardMiniSidebarHelp />
         </NcTooltip>
       </DashboardMiniSidebarItemWrapper>
+
       <template v-if="!isMobileMode">
-        <!--   Disabled for now since feed is not actively maintained -->
-        <!--
-        <DashboardMiniSidebarItemWrapper>
-          <NcTooltip
-            v-if="appInfo.feedEnabled"
-            :title="`${$t('title.whatsNew')}!`"
-            placement="right"
-            hide-on-click
-            :arrow="false"
-          >
-            <DashboardSidebarFeed />
-          </NcTooltip>
-        </DashboardMiniSidebarItemWrapper> -->
-        <DashboardMiniSidebarItemWrapper v-if="isChatWootEnabled">
-          <NcTooltip :title="`${$t('labels.chatWithNocoDBSupport')}!`" placement="right" hide-on-click :arrow="false">
-            <DashboardSidebarChatSupport />
-          </NcTooltip>
-        </DashboardMiniSidebarItemWrapper>
         <div class="px-2 w-full">
           <NcDivider class="!my-2 !border-nc-border-gray-dark" />
         </div>

@@ -1,3 +1,7 @@
+<script setup lang="ts">
+await navigateTo('/')
+</script>
+
 <template>
-  <FeedView />
+  <span />
 </template>

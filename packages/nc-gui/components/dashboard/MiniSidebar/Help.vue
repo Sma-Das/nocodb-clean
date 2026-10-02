@@ -23,27 +23,11 @@ const { t } = useI18n()
 
 const { appInfo, isMobileMode } = useGlobal()
 
-const { isChatWootEnabled } = useProvideChatwoot()
-
-const { isModalVisible: isChatVisible } = useChatWoot()
-
-// White-label may override the help-menu support email (falls back to NocoDB
-// support when unset); the rest of the help menu is unchanged — enterprise
-// support/docs continue to route through NocoDB.
 const { isWhiteLabelled, config } = useBranding()
 
 const visible = ref(false)
 
 const copyBtnRef = ref()
-
-const toggleChatSupport = () => {
-  if (!isChatVisible.value && !ncIsFunction(window.$chatwoot?.toggle)) {
-    return
-  }
-  const toggleText = (isChatVisible.value ? 'hide' : 'show') as any
-  window.$chatwoot.toggle(toggleText)
-  visible.value = false
-}
 
 const helpItems = computed<CategoryItemType[]>(() => {
   const isWl = isWhiteLabelled.value
@@ -90,40 +74,8 @@ const helpItems = computed<CategoryItemType[]>(() => {
       ],
     },
     {
-      category: t('general.community'),
-      items: [
-        {
-          title: t('title.forum'),
-          icon: 'ncDiscordForum',
-          e: 'c:nocodb:forum-open',
-          link: 'https://community.nocodb.com/',
-        },
-        {
-          title: t('general.youtube'),
-          icon: 'ncYoutube',
-          e: 'c:nocodb:youtube-open',
-          link: 'https://www.youtube.com/@nocodb',
-        },
-        {
-          title: 'X',
-          icon: 'ncLogoTwitter',
-          link: 'https://twitter.com/nocodb',
-          e: 'c:nocodb:twitter',
-        },
-      ],
-    },
-    {
       category: t('general.contactSupport'),
       items: [
-        {
-          title: t('labels.chatWithNocoDBSupport'),
-          icon: 'ncSupportAgent',
-          e: 'c:nocodb:chat-support',
-          link: '',
-          onClick: toggleChatSupport,
-          // isChatWootEnabled is already false when white-labelled.
-          hidden: !isChatWootEnabled.value,
-        },
         {
           // White-label may override the support contact; otherwise fall back to
           // NocoDB support — enterprise support routes through NocoDB regardless.
@@ -136,18 +88,6 @@ const helpItems = computed<CategoryItemType[]>(() => {
         },
       ],
       hidden: !appInfo.value.ee,
-    },
-    {
-      category: t('title.whatsNew'),
-      items: [
-        {
-          title: t('general.changelog'),
-          icon: 'ncList',
-          e: 'c:nocodb:changelog-open',
-          link: 'https://nocodb.com/changelog',
-        },
-      ],
-      hidden: !!isMobileMode.value,
     },
   ]
 })
