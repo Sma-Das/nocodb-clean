@@ -10,6 +10,9 @@ Thumbs.db
 .nodemonignore
 .sass-cache/
 node_modules/
+.env
+.env.*
+!.env.example
 help/
 a
 public/lib/
@@ -145,3 +148,4 @@ GUIDE.md
 /script.sh
 # One-off screenshot harness, machine-specific paths
 /.nc-shot.cjs
+.neon
