@@ -410,7 +410,7 @@ reach the open-source bundle**. Don't move the glob back into `tours/index.ts`.
 const {
   activeTour, isActive, availableTours, activeBeacons,  // state
   start, stop, refresh, init,                           // control
-  isSeen, reset, markOnboardingHandoff,                 // persistence
+  isSeen, reset,                                       // persistence
   explain,                                              // why isn't my tour showing?
 } = useTours()
 ```
@@ -425,16 +425,14 @@ const {
 |---|---|---|
 | seen / dismissed | `user.meta.tours` | follows the user across devices |
 | auto-fired | `localStorage`, keyed by user id | shared across tabs |
-| onboarding handoff | `localStorage`, keyed by user id | survives the navigation |
 
 Seen-state writes go through `updateUserMeta()` — the backend replaces `meta`
 wholesale, so a partial write would drop other keys. Writes are optimistic and
 fire-and-forget; a lost write just re-shows a tour.
 
-Both localStorage entries are **maps keyed by user id**, not bare values:
+The auto-fired localStorage entry is a **map keyed by user id**, not a bare value:
 localStorage is per-browser while what they record is per-person, so on a shared
-machine a bare value would let the first user to finish onboarding suppress the
-tour for everyone signing in after them.
+machine a bare value would let the first user suppress a tour for everyone signing in after them.
 
 "Auto-fired" is recorded **only after a tour actually opens**. Marking on attempt
 would permanently suppress a tour whose start failed, now that the record
@@ -456,13 +454,6 @@ With it off nothing is eligible, so the recipes below list and fire nothing —
 `__ncStartTour(id)` is the one thing that still works.
 
 ```js
-// Both keys are { [userId]: value }. The signed-in id isn't in localStorage —
-// read it off the JWT the app already stores:
-const uid = JSON.parse(atob(JSON.parse(localStorage.getItem('nocodb-gui-v2')).token.split('.')[1])).id
-
-// force the onboarding trigger without a fresh signup
-localStorage.setItem('nc-tours-onboarding-handoff', JSON.stringify({ [uid]: true }))
-
 // let everything trigger again (clears every user on this browser)
 localStorage.removeItem('nc-tours-auto-fired')
 ```
@@ -496,7 +487,7 @@ localStorage.removeItem('nc-tours-auto-fired')
   [When predicates are evaluated](#when-predicates-are-evaluated).
 - **Tour copy is inline English**, not i18n.
 - **Runtime coverage is thin.** `click`, `event`, `goto` and `advanceOnClick` are typechecked but
-  not yet exercised in a browser. Two tours exist: `onboarding-workspace-basics` (`auto`) and
+  not yet exercised in a browser. Two tours exist: `onboarding-workspace-basics` (`manual`) and
   `ee/tours/defs/feature-workflows` (`route` + `trigger.when`).
 - **Nothing exercises `trigger: 'beacon'`.** `Beacon.vue` renders and is wired up, but no tour
   currently uses it.

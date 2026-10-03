@@ -31,34 +31,8 @@ export default defineTour({
   // No `audience` route gate on purpose: it also drives Help-menu listing, so it
   // would hide "Product Tours" everywhere else. The route check is on the trigger.
 
-  // Fires on its own for new signups only, subject to the engine's interruption
-  // budget (once per session, never within 7 days of another tour). Feature
-  // announcements should almost always use `beacon` instead.
-  //
-  // `is_new_user` belongs here rather than in `audience` because `audience` also
-  // controls Help-menu listing — gating there would stop existing users from
-  // ever replaying this. `is_new_user` is cleared once the onboarding
-  // questionnaire completes (see useOnboardingFlow).
-  trigger: {
-    type: 'auto',
-    delay: 1200,
-    when: ({ route }) => {
-      // Re-checked when the delay expires, not only when scheduled, so a user who
-      // clicks into a base during those 1200ms doesn't get the tour on a page with
-      // nothing to point at. Reuses the app's own route predicate rather than
-      // restating a path shape that would drift.
-      if (!isWsHomeRoute(route)) return false
-
-      // Two paths to "this is a new user":
-      //  - the questionnaire just finished and handed off (normal production flow)
-      //  - `is_new_user` is still set, i.e. the questionnaire is disabled or the
-      //    user reached a dashboard without going through it
-      // Checking only `is_new_user` would break the first path, because
-      // completing the questionnaire clears that flag before the tour host ever
-      // mounts — it would fire in dev and silently never fire in production.
-      return useTours().hasOnboardingHandoff() || !!useGlobal().user.value?.is_new_user
-    },
-  },
+  // Available from Help when requested; signup goes straight to the workspace.
+  trigger: { type: 'manual' },
 
   // Anchors are `data-tour` values (see tours/anchors.catalog.md) — the `selector:`
   // prefix takes a raw CSS selector when no attribute exists. Steps that need a

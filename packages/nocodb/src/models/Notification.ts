@@ -1,3 +1,4 @@
+import { AppEvents } from 'nocodb-sdk';
 import type { NotificationKind } from 'nocodb-sdk';
 import { extractProps } from '~/helpers/extractProps';
 import Noco from '~/Noco';
@@ -79,6 +80,13 @@ export default class Notification {
       MetaTable.NOTIFICATION,
       {
         condition,
+        // Hide welcome messages already stored by earlier versions before paging.
+        xcCondition: {
+          _or: [
+            { type: { neq: AppEvents.WELCOME } },
+            { type: { eq: null } },
+          ],
+        },
         limit,
         offset,
         orderBy: {
@@ -112,6 +120,12 @@ export default class Notification {
       MetaTable.NOTIFICATION,
       {
         condition,
+        xcCondition: {
+          _or: [
+            { type: { neq: AppEvents.WELCOME } },
+            { type: { eq: null } },
+          ],
+        },
       },
     );
 

@@ -1,5 +1,11 @@
-import type { ErrorEvent } from '@sentry/node';
 import { LRUMap } from '~/utils/LRUMap';
+
+interface ErrorEvent {
+  message?: string;
+  exception?: { values?: { type?: string; value?: string }[] };
+  breadcrumbs?: { message?: string; data?: Record<string, unknown> }[];
+  extra?: Record<string, unknown>;
+}
 
 /**
  * knex builds `err.message = formatQuery(sql, bindings) + ' - ' + err.message`,

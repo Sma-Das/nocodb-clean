@@ -420,7 +420,7 @@ test("legacy promotional API endpoints return empty responses", async () => {
   assert.deepEqual(await s.cloudFeatures({ query: {} }), []);
 });
 
-test("app info disables promotional services without scanning instance usage", async () => {
+test("app info disables onboarding and reporting despite production environment settings", async () => {
   let firstUserChecks = 0;
   const Utils = methods(
     "packages/nocodb/src/services/utils.service.ts",
@@ -438,7 +438,15 @@ test("app info disables promotional services without scanning instance usage", a
         getAppSettings: async () => ({}),
         getConfig: () => ({ meta: { db: { client: "pg" } } }),
       },
-      process,
+      process: {
+        env: {
+          NODE_ENV: "production",
+          NC_DISABLE_TELE: "false",
+          NC_DISABLE_ERR_REPORTS: "false",
+          NC_DISABLE_ONBOARDING_FLOW: "false",
+          NC_SENTRY_DSN: "https://example.test/ignored",
+        },
+      },
       isCloud: false,
       isEE: false,
       isOnPrem: true,
@@ -463,6 +471,9 @@ test("app info disables promotional services without scanning instance usage", a
   assert.equal(info.feedEnabled, false);
   assert.equal(info.disableSupportChat, true);
   assert.equal(info.giftUrl, null);
+  assert.equal(info.disableOnboardingFlow, true);
+  assert.equal(info.errorReportingEnabled, false);
+  assert.equal(info.sentryDSN, null);
   assert.equal(firstUserChecks, 1);
   assert.equal(info.defaultLimit, 25);
 });
@@ -488,4 +499,154 @@ test("frontend instrumentation stays callable without listeners or a socket", ()
   });
   provided.e("event", { data: "example" });
   provided.tele.emit("event", {});
+});
+
+test("browser error reporting neither inspects errors nor initializes collectors", () => {
+  const plugin = compile(
+    readFileSync(resolve(root, "packages/nc-gui/plugins/error-reporting.ts"), "utf8"),
+    { defineNuxtPlugin: (fn) => fn }
+  ).default;
+  let report;
+  plugin({
+    provide: (name, fn) => {
+      assert.equal(name, "report");
+      report = fn;
+    },
+  });
+  report(new Proxy({}, { get: () => { throw new Error("error inspected"); } }));
+});
+
+test("legacy error reports are acknowledged without reading or forwarding their contents", async () => {
+  const Utils = methods(
+    "packages/nocodb/src/services/utils.service.ts",
+    "UtilsService",
+    ["reportErrors"],
+    {}
+  );
+  assert.deepEqual(await new Utils().reportErrors(
+    new Proxy({}, { get: () => { throw new Error("report inspected"); } })
+  ), {});
+});
+
+test("signup opens the workspace without collecting onboarding answers or changing new-user flags", async () => {
+  const source = readFileSync(resolve(root, "packages/nc-gui/pages/signup/[[token]].vue"), "utf8");
+  const script = source.match(/<script setup lang="ts">([\s\S]*?)<\/script>/)[1];
+  const navigations = [];
+  let signupData;
+  let token;
+  const { signUp } = compile(script + "\nmodule.exports = { signUp };", {
+    require: (name) => {
+      assert.equal(name, "nocodb-sdk");
+      return { validatePassword: () => ({ valid: true }) };
+    },
+    definePageMeta: () => {},
+    useNuxtApp: () => ({ $e: () => {} }),
+    useRoute: () => ({ params: { token: "invite" }, query: { continueAfterOnboardingFlow: "/nc" } }),
+    useGlobal: () => ({ appInfo: {}, signIn: (value) => { token = value; } }),
+    useApi: () => ({
+      api: { auth: { signup: async (data) => { signupData = data; return { token: "session" }; } } },
+      isLoading: false,
+      error: { value: null },
+    }),
+    useI18n: () => ({ t: (key) => key }),
+    useWorkspace: () => ({ clearWorkspaces: () => {} }),
+    ref: () => ({ value: { validate: () => true } }),
+    reactive: (value) => value,
+    onMounted: () => {},
+    navigateTo: async (target) => { navigations.push(target); },
+  });
+  await signUp();
+  assert.equal(token, "session");
+  assert.equal(signupData.token, "invite");
+  assert.equal(signupData.ignore_subscribe, true);
+  assert.deepEqual(navigations, ["/"]);
+});
+
+test("server telemetry services don't read event payloads or register listeners", async () => {
+  const payload = new Proxy({}, { get: () => { throw new Error("event inspected"); } });
+  const { TelemetryService } = compile(
+    readFileSync(resolve(root, "packages/nocodb/src/services/telemetry.service.ts"), "utf8"),
+    { require: () => ({ Injectable: () => (cls) => cls }) }
+  );
+  const service = new TelemetryService();
+  service.sendEvent(payload);
+  await service.sendSystemEvent(payload);
+  const { TelemetryHandlerService } = compile(
+    readFileSync(resolve(root, "packages/nocodb/src/services/telemetry-handler.service.ts"), "utf8"),
+    {}
+  );
+  TelemetryHandlerService.sendPriorityError(payload, payload);
+});
+
+test("stored welcome notifications are excluded before SQLite pagination and unread counts", async () => {
+  const knex = backendRequire("knex")({ client: "sqlite3", connection: { filename: ":memory:" }, useNullAsDefault: true });
+  try {
+    await knex.schema.createTable("notifications", (table) => {
+      table.string("id");
+      table.string("type");
+      table.string("fk_user_id");
+      table.boolean("is_read");
+      table.boolean("is_deleted");
+      table.integer("created_at");
+    });
+    const rows = [
+      { id: "welcome", type: "app.welcome", created_at: 9 },
+      { id: "comment", type: "comment", created_at: 8 },
+      { id: "invite", type: "app.project.invite", created_at: 7 },
+      { id: "legacy", type: null, created_at: 6 },
+      { id: "read-welcome", type: "app.welcome", is_read: true, created_at: 5 },
+      { id: "deleted", type: "comment", is_deleted: true, created_at: 4 },
+      { id: "other-user", type: "comment", fk_user_id: "other", created_at: 3 },
+    ].map((row) => ({ fk_user_id: "user", is_read: false, is_deleted: false, ...row }));
+    await knex("notifications").insert(rows);
+
+    // Use the actual application's condition parser against a real SQLite query.
+    const file = "packages/nocodb/src/db/CustomKnex.ts";
+    const source = ts.createSourceFile(file, readFileSync(resolve(root, file), "utf8"), ts.ScriptTarget.Latest, true);
+    const declaration = source.statements.find((node) => ts.isVariableStatement(node) && node.declarationList.declarations.some((d) => d.name.getText(source) === "parseCondition"));
+    const { parseCondition } = compile(declaration.getText(source) + "\nmodule.exports = { parseCondition };", {});
+    const query = (args) => parseCondition(args.xcCondition, {}, knex("notifications").where(args.condition));
+    const meta = {
+      metaList2: async (_workspace, _base, _table, args) => query(args).orderBy("created_at", "desc").limit(args.limit).offset(args.offset),
+      metaCount: async (_workspace, _base, _table, args) => Number((await query(args).count({ count: "*" }).first()).count),
+    };
+    const Notification = methods("packages/nocodb/src/models/Notification.ts", "Notification", ["list", "count"], {
+      AppEvents: { WELCOME: "app.welcome" },
+      extractProps: (object, keys) => Object.fromEntries(keys.filter((key) => key in object).map((key) => [key, object[key]])),
+      RootScopes: { ROOT: "root" },
+      MetaTable: { NOTIFICATION: "notifications" },
+      prepareForResponse: () => {},
+    });
+    const params = { fk_user_id: "user", is_deleted: false, is_read: false, limit: 1 };
+    for (const [offset, id] of ["comment", "invite", "legacy"].entries()) {
+      assert.deepEqual((await Notification.list({ ...params, offset }, meta)).map((row) => row.id), [id]);
+    }
+    assert.equal(await Notification.count(params, meta), 3);
+    assert.equal(await Notification.count({ fk_user_id: "user", is_deleted: false }, meta), 3);
+    assert.equal(await Notification.count({ ...params, is_read: true }, meta), 0);
+    // Historical welcome rows are retained, while excluded from displayed counts.
+    assert.equal(Number((await knex("notifications").count({ count: "*" }).first()).count), rows.length);
+  } finally {
+    await knex.destroy();
+  }
+});
+
+test("notification hooks still deliver invitations and no longer register welcomes", async () => {
+  const AppEvents = { PROJECT_INVITE: "app.project.invite", WELCOME: "app.welcome" };
+  const Service = methods("packages/nocodb/src/services/notifications/notifications.service.ts", "NotificationsService", ["onModuleInit", "hookHandler"], { AppEvents });
+  const subscriptions = new Map();
+  const inserts = [];
+  const service = new Service();
+  service.listenerUnsubs = [];
+  service.appHooks = { on: (event, fn) => { subscriptions.set(event, fn); return () => {}; } };
+  service.insertNotification = async (data) => { inserts.push(data); };
+  service.onModuleInit();
+  assert.deepEqual([...subscriptions.keys()], [AppEvents.PROJECT_INVITE]);
+  const data = { base: { id: "base", title: "Base", type: "database" }, user: { id: "user" }, invitedBy: { id: "owner", email: "owner@example.test" }, req: {} };
+  await subscriptions.get(AppEvents.PROJECT_INVITE)(data);
+  assert.equal(inserts.length, 1);
+  assert.equal(inserts[0].type, AppEvents.PROJECT_INVITE);
+  assert.equal(inserts[0].fk_user_id, "user");
+  await service.hookHandler({ event: AppEvents.WELCOME, data });
+  assert.equal(inserts.length, 1);
 });

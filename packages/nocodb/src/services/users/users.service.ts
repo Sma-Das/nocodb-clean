@@ -677,11 +677,6 @@ export class UsersService {
       },
     });
 
-    this.appHooksService.emit(AppEvents.WELCOME, {
-      user,
-      req: param.req,
-    });
-
     return { ...(await this.login(user, param.req)), createdProject };
   }
 

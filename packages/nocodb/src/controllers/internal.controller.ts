@@ -11,7 +11,6 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import * as Sentry from '@sentry/nestjs';
 import {
   INTERNAL_BATCH_MAX_SIZE,
   NcContext,
@@ -382,8 +381,8 @@ export class InternalController {
       // Unhandled (default-500) sub-op errors must follow the same
       // observability path as the non-batched route — otherwise the
       // highest-frequency fan-out reads (filterList, viewColumnList,
-      // columnsHash, widgetDataGet, dataAggregate…) lose Sentry capture +
-      // structured logs the moment they start flowing through the batch
+      // columnsHash, widgetDataGet, dataAggregate…) lose structured logs
+      // the moment they start flowing through the batch
       // envelope. Mirror `GlobalExceptionFilter`'s side effects.
       if (mapped.unhandled) {
         this.reportSubOpException(err, req);
@@ -408,12 +407,9 @@ export class InternalController {
   /**
    * Side-effect hook for unhandled (default-500) sub-op rejections inside
    * the batch envelope. Mirrors `GlobalExceptionFilter`'s
-   * `captureException` + `logError` so monitoring stays at parity with
-   * the non-batched route. Override in EE to add workspace/user context
-   * and paid-workspace telemetry, matching the EE filter.
+   * local error logging so operators can diagnose batched failures.
    */
   protected reportSubOpException(exception: any, _req: NcRequest) {
-    Sentry.captureException(exception);
     this.logger.error(exception?.message, exception?.stack);
   }
 

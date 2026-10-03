@@ -65,7 +65,9 @@ ENV NODE_ENV=production \
     PORT=8080 \
     NC_TOOL_DIR=/usr/app/data \
     NC_GUI_DIST_PATH=/usr/app/nc-gui \
-    NC_DISABLE_TELE=true
+    NC_DISABLE_TELE=true \
+    NC_DISABLE_ERR_REPORTS=true \
+    NC_DISABLE_ONBOARDING_FLOW=true
 WORKDIR /usr/app
 COPY --from=backend /production/node_modules/ node_modules/
 COPY --from=backend /production/package.json ./

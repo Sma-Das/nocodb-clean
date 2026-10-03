@@ -3,7 +3,6 @@ import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 // @ts-ignore
 import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule as NestJsEventEmitter } from '@nestjs/event-emitter';
-import { SentryModule } from '@sentry/nestjs/setup';
 
 import type { MiddlewareConsumer } from '@nestjs/common';
 import { NocoModule } from '~/modules/noco.module';
@@ -37,7 +36,6 @@ export const ceModuleConfig = {
       load: [() => appConfig],
       isGlobal: true,
     }),
-    ...(process.env.NC_SENTRY_DSN ? [SentryModule.forRoot()] : []),
   ],
   providers: [
     {

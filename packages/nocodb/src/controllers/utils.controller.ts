@@ -35,12 +35,11 @@ import { UtilsService } from '~/services/utils.service';
 import { Acl } from '~/middlewares/extract-ids/extract-ids.middleware';
 import { MetaApiLimiterGuard } from '~/guards/meta-api-limiter.guard';
 import { PublicApiLimiterGuard } from '~/guards/public-api-limiter.guard';
-import { TelemetryService } from '~/services/telemetry.service';
 import { NcRequest } from '~/interface/config';
 import { Integration } from '~/models';
 import { MetaTable, RootScopes } from '~/utils/globals';
 import { NcError } from '~/helpers/catchError';
-import { deepMerge, isEE } from '~/utils';
+import { deepMerge } from '~/utils';
 import Noco from '~/Noco';
 import { DataApiLimiterGuard } from '~/guards/data-api-limiter.guard';
 
@@ -48,10 +47,7 @@ import { DataApiLimiterGuard } from '~/guards/data-api-limiter.guard';
 export class UtilsController {
   private version: string;
 
-  constructor(
-    protected readonly utilsService: UtilsService,
-    protected readonly telemetryService: TelemetryService,
-  ) {}
+  constructor(protected readonly utilsService: UtilsService) {}
 
   @UseGuards(PublicApiLimiterGuard)
   @Get('/api/v1/version')
@@ -250,14 +246,6 @@ export class UtilsController {
   @UseGuards(PublicApiLimiterGuard)
   @Post('/api/v1/error-reporting')
   async reportErrors(@Req() req: NcRequest, @Body() body: ErrorReportReqType) {
-    if (
-      `${process.env.NC_DISABLE_ERR_REPORTS}` === 'true' ||
-      isEE ||
-      process.env.NC_SENTRY_DSN
-    ) {
-      return {};
-    }
-
     return (await this.utilsService.reportErrors({
       req,
       body,

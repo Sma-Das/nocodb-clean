@@ -1,32 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { packageInfo, T } from '~/utils';
 
+// Preserve injected callers without collecting payloads or sending events.
 @Injectable()
 export class TelemetryService {
-  protected defaultPayload: any;
+  public sendEvent(_payload: { evt_type: string; [key: string]: any }) {}
 
-  constructor() {
-    this.defaultPayload = {
-      package_id: packageInfo.version,
-    };
-  }
-
-  public sendEvent({
-    evt_type: event,
-    ...payload
-  }: {
-    evt_type: string;
-    [key: string]: any;
-  }) {
-    if (event === '$pageview') T.page({ ...payload, event });
-    else T.event({ ...payload, event });
-  }
-
-  public async sendSystemEvent({
-    event_type,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    ...payload
-  }: {
+  public async sendSystemEvent(_payload: {
     event_type: string;
     [key: string]: any;
   }) {}
