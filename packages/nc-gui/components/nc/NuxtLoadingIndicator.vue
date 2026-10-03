@@ -5,8 +5,6 @@ const router = useRouter()
 
 const route = router.currentRoute
 
-const { showOnboardingFlow } = useOnboardingFlow()
-
 const { brandColor } = useBranding()
 
 // NuxtLoadingIndicator reads `color` as a JS prop (a canvas-like fill), so it
@@ -38,14 +36,8 @@ const stopLoadingIndicator = () => {
  * Reference path: packages/nc-gui/pages/index/[typeOrId]/[baseId]/index/index/[viewId]/[[viewTitle]]/[...slugs].vue
  */
 watch(
-  [() => route.value.params.viewTitle, () => route.value.params.slugs, () => route.value.query, () => showOnboardingFlow.value],
-  async ([viewTitle, slugs, _query, newShowOnboardingFlow]) => {
-    if (newShowOnboardingFlow) {
-      stopLoadingIndicator()
-
-      return
-    }
-
+  [() => route.value.params.viewTitle, () => route.value.params.slugs, () => route.value.query],
+  async ([viewTitle, slugs]) => {
     if (!viewTitle && ncIsUndefined(slugs) && route.value.name !== 'account-index-setup-nestedPage-app') return
 
     // VueUse 10's until() never stops its watcher when the condition is already true

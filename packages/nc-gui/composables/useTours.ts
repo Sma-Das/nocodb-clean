@@ -27,14 +27,6 @@ const USER_META_KEY = 'tours'
 /** localStorage, not sessionStorage — the latter is per-tab and re-fires in each new tab. */
 const AUTO_FIRED_KEY = 'nc-tours-auto-fired'
 
-/**
- * Set when the onboarding questionnaire finishes. Needed because completing it
- * clears `is_new_user` on `/`, before any page evaluates triggers — without this
- * the onboarding tour would fire only where the questionnaire is disabled (dev
- * and test) and never in production.
- */
-const ONBOARDING_HANDOFF_KEY = 'nc-tours-onboarding-handoff'
-
 const COOLDOWN_DAYS = 7
 
 /**
@@ -76,9 +68,8 @@ const PASSIVE_TRIGGERS = new Set(['auto', 'route', 'event'])
 /**
  * The tour system: eligibility, triggers, running, persistence. See tours/README.md.
  *
- * driver.js is imported lazily in `start` so it costs nothing until a tour runs,
- * and so `useOnboardingFlow` (which only needs `markOnboardingHandoff`) doesn't
- * pull it into its chunk. Its stylesheet stays eager in `components/tour/Host.vue`
+ * driver.js is imported lazily in `start` so it costs nothing until a tour runs.
+ * Its stylesheet stays eager in `components/tour/Host.vue`
  * — loading it dynamically would append it after that component's own style block
  * and override the design-system overrides there.
  */
@@ -112,8 +103,6 @@ export const useTours = createSharedComposable(() => {
    * after them. Seen-state proper lives in `user.meta` and is already per-user.
    */
   const autoFiredByUser = useStorage<Record<string, string[]>>(AUTO_FIRED_KEY, {})
-
-  const onboardingHandoffByUser = useStorage<Record<string, boolean>>(ONBOARDING_HANDOFF_KEY, {})
 
   /** Signed-out is its own bucket rather than a shared one. */
   const userKey = computed(() => user.value?.id ?? 'anonymous')
@@ -276,15 +265,6 @@ export const useTours = createSharedComposable(() => {
     } catch (e) {
       console.error('[tours] failed to reset tour state', e)
     }
-  }
-
-  /** Called by useOnboardingFlow once the questionnaire is done or skipped. */
-  function markOnboardingHandoff() {
-    onboardingHandoffByUser.value = { ...onboardingHandoffByUser.value, [userKey.value]: true }
-  }
-
-  function hasOnboardingHandoff(): boolean {
-    return !!onboardingHandoffByUser.value[userKey.value]
   }
 
   function emit(event: string, data: Record<string, unknown> = {}) {
@@ -890,8 +870,6 @@ export const useTours = createSharedComposable(() => {
     init,
     isSeen,
     reset,
-    markOnboardingHandoff,
-    hasOnboardingHandoff,
     explain,
   }
 })

@@ -1,5 +1,4 @@
 import { Catch, Logger, NotFoundException } from '@nestjs/common';
-import * as Sentry from '@sentry/nestjs';
 
 import { ThrottlerException } from '@nestjs/throttler';
 import {
@@ -31,7 +30,7 @@ import {
 
 // NcBaseErrorv2 types that stand for a server-side failure, not caller error.
 // The mapper marks them handled (they carry a safe user message), but there's a
-// real bug underneath — so they must both log AND reach Sentry.
+// real bug underneath, so they must still be logged locally.
 const SERVER_SIDE_NC_ERROR_TYPES = [
   NcErrorType.ERR_INTERNAL_SERVER,
   NcErrorType.ERR_DATABASE_OP_FAILED,
@@ -71,7 +70,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     // Only a user-caused db error is quiet. Infra errors (connection loss,
     // pool exhaustion) are logged so operators see an outage, and unknown
     // ones — any failure carrying a `code` that no dialect matched — are
-    // logged and reported.
+    // logged locally.
     const quietDbError =
       (dbError?.kind ?? DBErrorKind.EXPECTED) === DBErrorKind.EXPECTED
         ? dbError
@@ -135,17 +134,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     const mapped = mapExceptionToResponse(exception, apiVersion);
 
-    // A raw throw maps unhandled; a server-side NcBaseErrorv2 (e.g.
-    // internalServerError) maps handled but is still a real bug. Both must page
-    // Sentry — mirrors the log gate above so logging and capture never diverge.
-    if (
-      mapped.unhandled ||
-      (exception instanceof NcBaseErrorv2 &&
-        SERVER_SIDE_NC_ERROR_TYPES.includes(exception.error))
-    ) {
-      this.captureException(exception, request);
-    }
-
     // Include actual error message only in development
     if (mapped.unhandled && process.env.NODE_ENV !== 'production') {
       const msgProp = apiVersion === NcApiVersion.V3 ? 'message' : 'msg';
@@ -156,10 +144,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     }
 
     return response.status(mapped.status).json(mapped.body);
-  }
-
-  protected captureException(exception: any, _request: any) {
-    Sentry.captureException(exception);
   }
 
   protected logError(exception: any, _request: any) {

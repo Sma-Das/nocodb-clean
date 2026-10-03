@@ -16,8 +16,6 @@ const { api, isLoading, error } = useApi({ useGlobalInstance: true })
 
 const { t } = useI18n()
 
-const { isEnabledOnboardingFlow, showOnboardingFlowLocalState } = useOnboardingFlow()
-
 const { clearWorkspaces } = useWorkspace()
 
 const formValidator = ref()
@@ -68,53 +66,17 @@ async function signUp() {
 
   data.ignore_subscribe = true
 
-  api.auth.signup(data).then(async (user) => {
+  return api.auth.signup(data).then(async (user) => {
     signIn(user.token!)
 
     $e('a:auth:sign-up')
 
     try {
-      // TODO: Add to swagger
-      if (isEnabledOnboardingFlow.value) {
-        const continueAfterOnboardingFlow = 'nc'
-
-        /**
-         * Onboarding flow is shown only for new users
-         */
-        showOnboardingFlowLocalState.value = true
-
-        await navigateTo({
-          path: '/',
-          query: continueAfterOnboardingFlow ? { continueAfterOnboardingFlow } : {},
-        })
-
-        return
-      }
-
-      // if user signed up then redirect to ws bases list page
-      return await navigateTo({
-        name: 'index-typeOrId',
-        params: {
-          typeOrId: 'nc',
-        },
-      })
+      // The home route opens the user's workspace or last visited base.
+      return await navigateTo('/')
     } catch (e) {
       console.error(e)
     }
-
-    if (isEnabledOnboardingFlow.value) {
-      /**
-       * Onboarding flow is shown only for new users
-       */
-      showOnboardingFlowLocalState.value = true
-      await navigateTo('/')
-      return
-    }
-
-    await navigateTo({
-      path: '/',
-      query: route.query,
-    })
   })
 }
 
@@ -145,8 +107,6 @@ onMounted(async () => {
 
           <h1 class="prose-2xl font-bold self-center my-4">
             {{ $t('general.signUp') }}
-            {{ $route.query.redirect_to === '/referral' ? '& REFER' : '' }}
-            {{ $route.query.redirect_to === '/pricing' ? '& BUY' : '' }}
           </h1>
 
           <h2 v-if="appInfo.firstUser" class="prose dark:prose-invert !text-primary font-semibold self-center">
@@ -238,18 +198,6 @@ onMounted(async () => {
               </div>
             </div>
           </a-form>
-        </div>
-
-        <div class="prose-sm mt-4 text-nc-content-gray-muted">
-          {{ $t('msg.bySigningUp') }}
-          <a
-            class="prose-sm !text-nc-content-gray-muted underline"
-            target="_blank"
-            href="https://nocodb.com/policy-nocodb"
-            rel="noopener"
-          >
-            {{ $t('title.termsOfService') }}</a
-          >
         </div>
       </div>
     </NuxtLayout>

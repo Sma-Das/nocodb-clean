@@ -376,7 +376,6 @@ export default defineNuxtConfig({
         // reloads the page.
         '@ant-design/icons-vue',
         '@iconify/vue',
-        '@sentry/vue',
         '@tiptap/extension-paragraph',
         '@unocss/preset-mini/colors',
         '@vueuse/integrations/useJwt',

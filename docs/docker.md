@@ -89,5 +89,5 @@ and stalled responses:
 node --test scripts/tests/docker-healthcheck.test.cjs
 ```
 
-The existing 14 cleanup/performance regression checks also passed. Browser interaction,
+The 20 cleanup/performance regression checks also passed. Browser interaction,
 external PostgreSQL/MySQL, and AMD64 execution were not tested.

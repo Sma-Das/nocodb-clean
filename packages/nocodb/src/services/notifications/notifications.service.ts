@@ -1,9 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { AppEvents, getCircularReplacer } from 'nocodb-sdk';
-import type {
-  ProjectInviteEvent,
-  WelcomeEvent,
-} from '~/services/app-hooks/interfaces';
+import type { ProjectInviteEvent } from '~/services/app-hooks/interfaces';
 import type { OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import type { UserType } from 'nocodb-sdk';
 import type { NcRequest } from '~/interface/config';
@@ -193,7 +190,7 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
     data,
   }: {
     event: AppEvents;
-    data: ProjectInviteEvent | WelcomeEvent;
+    data: ProjectInviteEvent;
   }) {
     const { req } = data;
     switch (event) {
@@ -223,20 +220,6 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
           );
         }
         break;
-      case AppEvents.WELCOME:
-        {
-          const { user, req } = data as WelcomeEvent;
-
-          await this.insertNotification(
-            {
-              fk_user_id: user.id,
-              type: AppEvents.WELCOME,
-              body: {},
-            },
-            req,
-          );
-        }
-        break;
     }
   }
 
@@ -253,11 +236,6 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
     this.listenerUnsubs.push(
       this.appHooks.on(AppEvents.PROJECT_INVITE, (data) =>
         this.hookHandler({ event: AppEvents.PROJECT_INVITE, data }),
-      ),
-    );
-    this.listenerUnsubs.push(
-      this.appHooks.on(AppEvents.WELCOME, (data) =>
-        this.hookHandler({ event: AppEvents.WELCOME, data }),
       ),
     );
   }

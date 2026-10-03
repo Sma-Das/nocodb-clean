@@ -24,8 +24,7 @@ function onItemClick() {
 
 <template>
   <div class="select-none" @click="onItemClick">
-    <NotificationItemWelcome v-if="item.type === AppEvents.WELCOME" :item="item" />
-    <NotificationItemProjectInvite v-else-if="item.type === AppEvents.PROJECT_INVITE" :item="item" />
+    <NotificationItemProjectInvite v-if="item.type === AppEvents.PROJECT_INVITE" :item="item" />
     <NotificationItemWorkspaceInvite v-else-if="item.type === AppEvents.WORKSPACE_USER_INVITE" :item="item" />
     <NotificationItemMentionEvent v-else-if="['mention'].includes(item.type)" :item="item" />
     <NotificationItemCommentEvent v-else-if="item.type === 'comment'" :item="item" />

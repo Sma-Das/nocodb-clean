@@ -54,7 +54,7 @@ export interface AppInfo {
   samlProviderName: string | null
   giftUrl: string | null
   feedEnabled: boolean
-  sentryDSN: string
+  sentryDSN: string | null
   isOnPrem: boolean
   licenseServerUrl?: string
   isPostgres: boolean

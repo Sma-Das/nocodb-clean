@@ -14,12 +14,10 @@ watch(
   { immediate: true },
 )
 
-const { showOnboardingFlow } = useOnboardingFlow()
-
 const { hideSharedBaseBtn } = storeToRefs(useConfigStore())
 
 const disableBaseLayout = computed(
-  () => route.value.path.startsWith('/nc/view') || route.value.path.startsWith('/nc/form') || showOnboardingFlow.value,
+  () => route.value.path.startsWith('/nc/view') || route.value.path.startsWith('/nc/form'),
 )
 
 const { isExperimentalFeatureModalOpen, initializeFeatures } = useBetaFeatureToggle()

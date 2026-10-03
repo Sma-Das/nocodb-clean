@@ -18,7 +18,7 @@ import SqlMgrv2 from '~/db/sql-mgr/v2/SqlMgrv2';
 import { NcError } from '~/helpers/catchError';
 import { Base, User } from '~/models';
 import Noco from '~/Noco';
-import { isCloud, isEE, isOnPrem, T } from '~/utils';
+import { isCloud, isEE, isOnPrem } from '~/utils';
 import NcConnectionMgrv2 from '~/utils/common/NcConnectionMgrv2';
 import { MetaTable, RootScopes } from '~/utils/globals';
 import { jdbcToXcConfig } from '~/utils/nc-config/helpers';
@@ -456,11 +456,8 @@ export class UtilsService {
       timezone: defaultConnectionConfig.timezone,
       ncMin: !!process.env.NC_MIN,
       teleEnabled: false,
-      errorReportingEnabled: process.env.NC_DISABLE_ERR_REPORTS !== 'true',
-      sentryDSN:
-        process.env.NC_DISABLE_ERR_REPORTS !== 'true'
-          ? process.env.NC_SENTRY_DSN
-          : null,
+      errorReportingEnabled: false,
+      sentryDSN: null,
       auditEnabled: process.env.NC_DISABLE_AUDIT !== 'true',
       undoRedoEnabled: !NC_DISABLE_UNDO_REDO,
       ncSiteUrl: (param.req as any).ncSiteUrl,
@@ -492,22 +489,12 @@ export class UtilsService {
       isOnPrem,
       disableSupportChat: true,
       disableGroupByAggregation: NC_DISABLE_GROUP_BY_AGG,
-      /**
-       * Allow disabling onboarding flow based on env variable or development mode
-       *
-       * TODO: @rameshmane7218 remove test env once we enable onboarding flow in playwright
-       */
-      disableOnboardingFlow:
-        process.env.NC_DISABLE_ONBOARDING_FLOW === 'true' ||
-        process.env.NODE_ENV === 'development' ||
-        process.env.NODE_ENV === 'test',
+      disableOnboardingFlow: true,
       /**
        * Kill switch for in-app product tours.
        *
        * Hard-disabled under `test` so tour overlays can never intercept clicks
-       * in the Playwright suite. Unlike `disableOnboardingFlow` this stays
-       * ENABLED in `development` — engineers need to see tours while authoring
-       * them.
+       * in the Playwright suite.
        */
       disableTours:
         process.env.NC_DISABLE_TOURS === 'true' ||
@@ -522,17 +509,8 @@ export class UtilsService {
     return result;
   }
 
-  async reportErrors(param: { body: ErrorReportReqType; req: NcRequest }) {
-    for (const error of param.body?.errors ?? []) {
-      T.emit('evt', {
-        evt_type: 'gui:error',
-        properties: {
-          message: error.message,
-          stack: error.stack?.split('\n').slice(0, 2).join('\n'),
-          ...(param.body.extra || {}),
-        },
-      });
-    }
+  async reportErrors(_param: { body: ErrorReportReqType; req: NcRequest }) {
+    return {};
   }
 
   // Keep existing API routes compatible without fetching promotional content.
