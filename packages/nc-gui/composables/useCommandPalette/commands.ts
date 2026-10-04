@@ -25,36 +25,6 @@ export const getHomeCommands = () => [
     section: 'Account',
     handler: () => {},
   },
-  {
-    id: 'user_account-discord',
-    title: getI18n().global.t('general.discord'),
-    icon: 'discord',
-    parent: 'user',
-    section: 'Community',
-    handler: () => {
-      navigateTo('https://discord.gg/c7GEYrvFtT', { external: true })
-    },
-  },
-  {
-    id: 'user_account-twitter',
-    title: '(formerly Twitter)',
-    icon: 'twitter',
-    parent: 'user',
-    section: 'Community',
-    handler: () => {
-      navigateTo('https://twitter.com/NocoDB', { external: true })
-    },
-  },
-  {
-    id: 'user_account-reddit',
-    title: 'Reddit',
-    icon: 'reddit',
-    parent: 'user',
-    section: 'Community',
-    handler: () => {
-      navigateTo('https://www.reddit.com/r/NocoDB/', { external: true })
-    },
-  },
 ]
 
 /*

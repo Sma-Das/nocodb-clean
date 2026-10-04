@@ -8,8 +8,6 @@
   "iconUrl": "json-exporter/assets/icon.png",
   "publisher": {
     "name": "NocoDB",
-    "email": "contact@nocodb.com",
-    "url": "https://www.nocodb.com",
     "icon": {
       "src": "json-exporter/assets/publisher-icon.svg",
       "width": 24,

@@ -1,19 +1,19 @@
 {
   "name": "nc-gui",
   "private": true,
-  "description": "NocoDB Frontend",
+  "description": "SmaDB Frontend",
   "author": {
     "name": "NocoDB",
     "url": "https://nocodb.com/"
   },
   "license": "Sustainable Use License",
-  "homepage": "https://github.com/nocodb/nocodb",
+  "homepage": "https://github.com/Sma-Das/nocodb-clean",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nocodb/nocodb.git"
+    "url": "https://github.com/Sma-Das/nocodb-clean.git"
   },
   "bugs": {
-    "url": "https://github.com/nocodb/nocodb/issues"
+    "url": "https://github.com/Sma-Das/nocodb-clean/issues"
   },
   "engines": {
     "node": ">=18"

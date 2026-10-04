@@ -32,7 +32,7 @@ const antDirection = computed(() => (isRtl.value ? 'rtl' : 'ltr'))
 
 const { commandPalette, cmdData, cmdPlaceholder, activeScope, loadTemporaryScope } = useCommandPalette()
 
-const { cmdK, cmdL, cmdJ, setActiveCmdView } = useCommand()
+const { cmdK, cmdL, setActiveCmdView } = useCommand()
 
 useRealtime()
 
@@ -61,9 +61,6 @@ useEventListener(document, 'keydown', async (e: KeyboardEvent) => {
         commandPalette.value?.open?.()
         break
       case 'l':
-        e.preventDefault()
-        break
-      case 'j':
         e.preventDefault()
         break
     }
@@ -150,8 +147,6 @@ const _ = (window as any).ResizeObserver
       />
       <!-- Recent Views. Cycles through recently visited Views -->
       <CmdL v-model:open="cmdL" :set-active-cmd-view="setActiveCmdView" />
-      <!-- Documentation. Integrated NocoDB Docs directly inside the Product -->
-      <CmdJ v-model:open="cmdJ" :set-active-cmd-view="setActiveCmdView" />
       <DashboardFeatureExperimentation v-model:value="isExperimentalFeatureModalOpen" />
     </div>
   </ErrorBoundary>

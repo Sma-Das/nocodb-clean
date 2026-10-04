@@ -62,8 +62,6 @@ const openBaseRelations = () => {
   })
 }
 
-const WEBHOOK_DOCS_URL = 'https://nocodb.com/docs/product-docs/automation/webhook'
-
 const indicator = h(LoadingOutlined, {
   style: {
     fontSize: '2rem',
@@ -166,7 +164,7 @@ const toolHeader = computed(() => {
     case 'api':
       return { title: t('labels.apiSnippet'), description: t('labels.apiSnippetSubtext') }
     case 'webhook':
-      return { title: t('objects.webhooks'), description: t('labels.webhooksSubtext'), docsHref: WEBHOOK_DOCS_URL }
+      return { title: t('objects.webhooks'), description: t('labels.webhooksSubtext') }
     case 'field':
     default:
       return { title: t('general.manageFields'), description: t('labels.manageFieldsSubtext') }
@@ -271,7 +269,7 @@ watch(
       </ShellRail>
 
       <div class="flex-1 flex flex-col min-w-0 min-h-0">
-        <ShellHeader :title="toolHeader.title" :description="toolHeader.description" :docs-href="toolHeader.docsHref">
+        <ShellHeader :title="toolHeader.title" :description="toolHeader.description">
           <template v-if="!upgradeCard" #actions>
             <!-- Record Templates -->
             <NcButton

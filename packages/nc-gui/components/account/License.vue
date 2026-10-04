@@ -196,15 +196,7 @@ loadLicense()
             <template v-if="isLicenseKeySetByEnv">
               <NcAlert visible type="warning" background>
                 <template #description>
-                  {{ $t('labels.licenseKeySetByEnv') }}
-                  <a
-                    href="https://nocodb.com/docs/self-hosting/license-activation"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="!text-nc-content-brand !no-underline hover:underline"
-                    >{{ $t('msg.learnMore') }}</a
-                  >
-                </template>
+                  {{ $t('labels.licenseKeySetByEnv') }}                </template>
               </NcAlert>
             </template>
 

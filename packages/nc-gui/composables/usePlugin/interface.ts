@@ -8,8 +8,8 @@ export interface ExtensionManifest {
   iconUrl: string
   publisher: {
     name: string
-    email: string
-    url: string
+    email?: string
+    url?: string
     icon?: {
       src: string
       width?: number
@@ -54,8 +54,8 @@ export interface ScriptManifest {
   iconUrl: string
   publisher: {
     name: string
-    email: string
-    url: string
+    email?: string
+    url?: string
     icon?: {
       src: string
       width?: number

@@ -1301,13 +1301,8 @@ watch(
           </div>
         </general-overlay>
       </div>
-      <div class="nc-edit-or-add-integration-right-panel">
-        <template v-if="appInfo.isCloud && !appInfo.isOnPrem">
-          <DashboardSettingsDataSourcesInfo varient="new" />
-          <NcDivider />
-        </template>
-        <WorkspaceIntegrationsSupportedDocs />
-        <NcDivider />
+      <div v-if="appInfo.isCloud && !appInfo.isOnPrem" class="nc-edit-or-add-integration-right-panel">
+        <DashboardSettingsDataSourcesInfo varient="new" />
       </div>
     </div>
   </div>

@@ -331,7 +331,6 @@ useEventListener(document, 'keydown', async (e: KeyboardEvent) => {
     (!isBaseSearchInput &&
       (isActiveInputElementExist(e) ||
         cmdKActive() ||
-        isCmdJActive() ||
         isNcDropdownOpen() ||
         isActiveElementInsideExtension() ||
         isActiveElementInsideScriptPane() ||

@@ -1209,16 +1209,6 @@ const webhookV2AndV3Diff = computed(() => {
 
         <div class="flex justify-end items-center gap-3 flex-1">
           <template v-if="activeTab === HookTab.Configuration">
-            <a
-              href="https://nocodb.com/docs/product-docs/automation/webhook"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="inline-flex items-center gap-1.5 text-bodyDefaultSm font-medium text-nc-content-gray-subtle hover:text-nc-content-brand !no-underline"
-              data-testid="nc-webhook-docs-link"
-            >
-              {{ $t('title.docs') }}
-              <GeneralIcon icon="ncExternalLink" class="!h-3.5 !w-3.5" />
-            </a>
             <NcTooltip v-if="!showUpgradeModal" :disabled="!testConnectionError && hookRef.notification.type !== 'Script'">
               <template v-if="hookRef.notification.type === 'Script'" #title>
                 {{ $t('tooltip.testWebhookDisabledForScripts') }}
@@ -1273,16 +1263,6 @@ const webhookV2AndV3Diff = computed(() => {
         <div class="h-full w-full max-w-[1040] min-w-[640px] px-6 md:px-12 py-6 flex flex-col">
           <div class="flex flex-col gap-2 mb-8">
             <div class="text-base font-bold text-nc-content-gray-emphasis">{{ $t('labels.webhookResponseChange') }}</div>
-            <div class="text-sm font-normal text-nc-content-gray-subtle2">
-              For more information on webhooks v3 visit
-              <a
-                href="https://nocodb.com/docs/product-docs/automation/webhook/webhook-v2-vs-v3#upgrade-to-webhook-v3"
-                class="nc-link"
-                target="_blank"
-              >
-                NocoDB Docs.
-              </a>
-            </div>
           </div>
 
           <div class="nc-webhook-version-diff">

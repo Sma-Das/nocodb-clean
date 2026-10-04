@@ -1,5 +1,4 @@
 import type { McpTokenPermissionsJson } from 'nocodb-sdk'
-import type { SupportedDocsType } from '~/lib/types'
 
 /**
  * The scopes a connection grants, or null when it predates them.
@@ -21,11 +20,3 @@ export function parseMcpTokenPermissions(token: {
     return null
   }
 }
-
-/** Setup docs offered next to a connection's client config. */
-export const MCP_SUPPORT_DOCS: SupportedDocsType[] = [
-  { title: 'Getting Started with MCP Server', href: 'https://nocodb.com/docs/product-docs/mcp' },
-  { title: 'Claude Setup', href: 'https://nocodb.com/docs/product-docs/mcp#claude' },
-  { title: 'Cursor Setup', href: 'https://nocodb.com/docs/product-docs/mcp#cursor' },
-  { title: 'Windsurf Setup', href: 'https://nocodb.com/docs/product-docs/mcp#windsurf' },
-]

@@ -220,12 +220,7 @@ watch(
       </ShellRail>
 
       <div v-if="showPane" class="flex-1 flex flex-col min-w-0 min-h-0">
-        <ShellHeader
-          :title="meta?.title ?? ''"
-          :description="meta?.description"
-          :docs-href="meta?.docsHref"
-          :leading-inset="isMobileMode"
-        />
+        <ShellHeader :title="meta?.title ?? ''" :description="meta?.description" :leading-inset="isMobileMode" />
 
         <div v-if="!isPaneAllowed" class="flex-1 min-h-0 flex items-center justify-center">
           <GeneralLoader size="xlarge" />

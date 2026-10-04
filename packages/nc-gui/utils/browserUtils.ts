@@ -213,7 +213,6 @@ export function hasAncestorWithClass(element: HTMLElement, className: string | A
   return classNames.some((c) => !!element.closest(`.${c}`))
 }
 export const cmdKActive = () => document.querySelector('.cmdk-modal-active')
-export const isCmdJActive = () => document.querySelector('.DocSearch--active')
 export const isActiveInputElementExist = (e?: Event) => {
   const activeElement = document.activeElement
   const target = e?.target

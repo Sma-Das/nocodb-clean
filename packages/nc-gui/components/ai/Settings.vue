@@ -101,13 +101,6 @@ onMounted(async () => {
       <div class="flex flex-col w-[320px] overflow-hidden">
         <div class="flex items-center justify-between w-full p-3 bg-nc-bg-purple-light">
           <span class="text-sm font-bold text-nc-content-gray">{{ $t('labels.settings') }}</span>
-          <!-- Todo: add docs link  -->
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            class="!no-underline !hover:(underline text-nc-content-purple-dark) text-nc-content-purple-dark"
-            >{{ $t('title.docs') }}</a
-          >
         </div>
         <div class="flex flex-col p-3 text-sm gap-3">
           <!-- Integration Select -->

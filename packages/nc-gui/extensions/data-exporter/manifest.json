@@ -8,20 +8,13 @@
   "iconUrl": "data-exporter/assets/icon.svg",
   "publisher": {
     "name": "NocoDB",
-    "email": "contact@nocodb.com",
-    "url": "https://www.nocodb.com",
     "icon": {
       "src": "data-exporter/assets/publisher-icon.svg",
       "width": 24,
       "height": 24
     }
   },
-  "links": [
-    {
-      "title": "Documentation",
-      "href": "https://nocodb.com/docs/product-docs/extensions/data-exporter"
-    }
-  ],
+  "links": [],
   "config": {
     "contentMinHeight": "110px"
   },

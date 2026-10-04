@@ -264,7 +264,6 @@ provide(MetaInj, lookupTableMeta)
 // attachment via its own (model, row). Expose the parent table's modelId, the
 // parent row's pk and the lookup columnId so the attachment cell downloads via
 // the parent row's lookup column (which the user is authorised to read).
-// See https://github.com/nocodb/nocodb/issues — lookup attachment download.
 const lookupAttachmentDownloadCtx = computed(() => {
   const modelId = parentMeta.value?.id
   const columnId = column.value?.id

@@ -606,10 +606,6 @@ function handleAutoScroll(scroll: boolean, className: string) {
           </div>
         </general-overlay>
       </div>
-      <div class="nc-edit-source-right-panel">
-        <DashboardSettingsDataSourcesSupportedDocs />
-        <NcDivider />
-      </div>
     </div>
     <div class="p-4 w-full flex items-center justify-between gap-3 border-t-1 border-nc-border-gray-medium">
       <div class="flex-1 flex items-center gap-3">
@@ -664,9 +660,6 @@ function handleAutoScroll(scroll: boolean, className: string) {
 <style lang="scss" scoped>
 .nc-edit-source-left-panel {
   @apply p-6 flex-1 flex justify-center;
-}
-.nc-edit-source-right-panel {
-  @apply p-4 w-[320px] border-l-1 border-nc-border-gray-medium flex flex-col gap-4 bg-nc-bg-gray-extralight rounded-br-2xl;
 }
 :deep(.ant-collapse-header) {
   @apply !-mt-4 !p-0 flex items-center !cursor-default children:first:flex;

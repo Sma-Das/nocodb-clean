@@ -93,7 +93,6 @@ useEventListener(document, 'keydown', async (e: KeyboardEvent) => {
     (!isBaseSearchInput &&
       (isActiveInputElementExist(e) ||
         cmdKActive() ||
-        isCmdJActive() ||
         isNcDropdownOpen() ||
         isActiveElementInsideExtension() ||
         isActiveElementInsideScriptPane() ||
@@ -180,23 +179,6 @@ useEventListener(document, 'keydown', (e: KeyboardEvent) => {
           >
             <div class="nc-mini-sidebar-btn">
               <MdiClockOutline class="h-4 w-4" />
-            </div>
-          </div>
-        </NcTooltip>
-      </DashboardMiniSidebarItemWrapper>
-      <DashboardMiniSidebarItemWrapper>
-        <NcTooltip placement="right" hide-on-click :arrow="false">
-          <template #title>
-            <div class="flex items-center gap-1">{{ $t('labels.searchDocumentation') }} {{ renderCmdOrCtrlKey(true) }} J</div>
-          </template>
-          <div
-            v-e="['c:quick-actions']"
-            class="nc-mini-sidebar-btn-full-width"
-            data-testid="nc-sidebar-cmd-j-btn"
-            @click="setActiveCmdView('cmd-j')"
-          >
-            <div class="nc-mini-sidebar-btn">
-              <GeneralIcon icon="ncFile" class="h-4 w-4" />
             </div>
           </div>
         </NcTooltip>

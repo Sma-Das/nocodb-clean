@@ -385,7 +385,6 @@ export function useCopyPaste({
       isActiveElementInsideSmartTextPanel() ||
       isActiveElementInsideInterfacePanel() ||
       isInterfaceRecordSheetOpen(hostEl?.value) ||
-      isCmdJActive() ||
       cmdKActive()
     ) {
       return

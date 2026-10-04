@@ -35,45 +35,6 @@ const helpItems = computed<CategoryItemType[]>(() => {
 
   return [
     {
-      category: t('general.resources'),
-      items: [
-        {
-          title: t('labels.documentation'),
-          icon: 'file',
-          e: 'e:nocodb:docs-open',
-          link: 'https://nocodb.com/docs/product-docs',
-        },
-        {
-          title: t('labels.apis'),
-          icon: 'ncCode',
-          e: '',
-          link: '',
-          subItems: [
-            {
-              title: t('labels.dataApiV3'),
-              e: 'c:nocodb:data-api-v3-open',
-              link: 'https://nocodb.com/apis/v3/data',
-            },
-            {
-              title: t('labels.metaApiV3'),
-              e: 'c:nocodb:meta-api-v3-open',
-              link: 'https://nocodb.com/apis/v3/meta',
-            },
-            {
-              title: t('labels.dataApiV2'),
-              e: 'c:nocodb:data-api-open',
-              link: 'https://nocodb.com/apis/v2/data',
-            },
-            {
-              title: t('labels.metaApiV2'),
-              e: 'c:nocodb:meta-api-open',
-              link: 'https://nocodb.com/apis/v2/meta',
-            },
-          ],
-        },
-      ],
-    },
-    {
       category: t('general.contactSupport'),
       items: [
         {

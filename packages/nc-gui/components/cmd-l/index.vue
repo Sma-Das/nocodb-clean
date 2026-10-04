@@ -157,8 +157,6 @@ useEventListener('keydown', (e: KeyboardEvent) => {
     } else moveDown()
   } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
     hide()
-  } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'j') {
-    hide()
   } else if (vOpen.value) {
     cmdInputEl.value?.focus()
   }

@@ -681,13 +681,6 @@ const handleScrollIntoView = () => {
         <GeneralIcon icon="alertTriangle" class="flex-none h-4 w-4 text-orange-500" />
         <span class="text-sm text-nc-content-gray">
           {{ $t('msg.info.upgradeLinkFieldAvailable') }}
-          <a
-            href="https://nocodb.com/docs/product-docs/fields/field-types/links-based/link-to-another-record#upgrade-from-links-v1"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-nc-content-brand underline ml-1"
-            >{{ $t('msg.learnMore') }}</a
-          >
         </span>
       </div>
       <GeneralSourceRestrictionTooltip :message="$t('tooltip.fieldCannotBeUpgraded')" :enabled="!!isMetaReadOnly">
@@ -862,15 +855,7 @@ const handleScrollIntoView = () => {
             @click="onViewLabelClick"
           >
             {{ $t('labels.limitRecordSelectionToView') }}
-
-            <a
-              href="https://nocodb.com/docs/product-docs/fields/field-types/links-based/links#limit-by-view"
-              target="_blank"
-              class="flex text-nc-content-gray-disabled hover:text-nc-content-gray-subtle"
-              @click.stop
-            >
-              <GeneralIcon icon="ncInfo" class="flex-none w-3.5 h-3.5" /> </a
-          ></span>
+          </span>
         </div>
         <template #title>
           {{
@@ -958,15 +943,6 @@ const handleScrollIntoView = () => {
                   @click="click(PlanFeatureTypes.FEATURE_LTAR_LIMIT_SELECTION_BY_FILTER, () => onFilterLabelClick())"
                 >
                   {{ $t('labels.limitRecordSelectionToFilters') }}
-
-                  <a
-                    href="https://nocodb.com/docs/product-docs/fields/field-types/links-based/links#limit-by-filter-"
-                    target="_blank"
-                    class="flex text-nc-content-gray-disabled hover:text-nc-content-gray-subtle"
-                    @click.stop
-                  >
-                    <GeneralIcon icon="ncInfo" class="flex-none w-3.5 h-3.5" />
-                  </a>
                 </span>
                 <LazyPaymentUpgradeBadge
                   v-if="!limitRecToCond"
