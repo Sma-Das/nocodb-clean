@@ -74,30 +74,30 @@ export function migratePresetId(presetId: string, version?: number): string {
 export const DARK_PALETTE_PRESETS: DarkPalettePreset[] = [
   {
     /**
-     * flat surfaces + tinted-overlay inputs (mined reference system). The
-     * applied default — its values still live here rather than in
+     * neutral graphite: flat zinc surfaces, hairline borders, violet-tinted
+     * selection. The applied default — its values live here rather than in
      * variables.css, so selecting it injects a block.
      */
     id: 'default',
     label: 'Default',
     values: {
-      minisidebar: '#1d1f25',
-      sidebar: '#1d1f25',
-      content: '#1d1f25',
-      canvas: '#000000',
-      elevated: '#1d1f25',
-      input: 'rgba(195, 212, 249, 0.18)',
-      inputBorder: 'rgba(255, 255, 255, 0.1)',
-      tooltip: '#31353e',
-      hover: '#282a30',
+      minisidebar: '#0f0f10',
+      sidebar: '#0f0f10',
+      content: '#131315',
+      canvas: '#0a0a0b',
+      elevated: '#19191c',
+      input: '#0f0f10',
+      inputBorder: '#2e2e33',
+      tooltip: '#26262a',
+      hover: '#1b1b1e',
       /* must differ from `hover`: cards rest on gray-50 and hover to gray-100 */
-      borderLight: '#2d2f35',
-      gridLine: '#3d3e44',
-      border: '#34363b',
-      selection: '#243043',
-      text: '#ffffff',
-      cellText: '#ffffff',
-      textMuted: '#979aa0',
+      borderLight: '#202023',
+      gridLine: '#252528',
+      border: '#2a2a2e',
+      selection: '#221e34',
+      text: '#ededee',
+      cellText: '#dcdce0',
+      textMuted: '#98989f',
     },
   },
   {

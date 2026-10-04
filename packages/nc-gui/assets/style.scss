@@ -54,10 +54,10 @@ body {
   --navbar-bg: #fafafa;
   --navbar-border: #e0e0e0;
 
-  --ant-primary-color: #3366ff !important;
-  --ant-primary-color-hover: #5c85ff !important;
-  --ant-primary-color-active: #3366ff !important;
-  --ant-primary-color-outline: rgba(51, 102, 255, 0.24) !important;
+  --ant-primary-color: #6e56cf !important;
+  --ant-primary-color-hover: #8b78d9 !important;
+  --ant-primary-color-active: #6e56cf !important;
+  --ant-primary-color-outline: rgba(110, 86, 207, 0.24) !important;
 }
 
 ::-moz-selection {
@@ -735,16 +735,21 @@ a {
 }
 
 .scaling-btn {
-  @apply z-1 relative color-transition rounded-md px-4 py-2 text-white;
+  @apply z-1 relative color-transition rounded-lg px-4 py-2 font-medium;
+  background: var(--nc-fill-ink);
+  color: var(--nc-content-on-ink);
 
-  &::after {
-    @apply rounded absolute top-0 left-0 right-0 bottom-0 transition-all duration-150 ease-in-out bg-primary bg-opacity-100;
-    content: '';
-    z-index: -1;
+  &:hover {
+    background: var(--nc-fill-ink-hover);
   }
 
-  &:hover::after {
-    @apply transform scale-110;
+  &.secondary {
+    @apply border-1 border-nc-border-gray-medium text-nc-content-gray;
+    background: var(--nc-bg-default);
+
+    &:hover {
+      @apply bg-nc-bg-gray-extralight;
+    }
   }
 }
 

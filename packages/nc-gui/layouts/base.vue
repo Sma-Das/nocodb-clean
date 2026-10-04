@@ -153,7 +153,7 @@ hooks.hook('page:finish', () => {
       >
         <template #title>{{ $t('labels.community.communityTranslated') }}</template>
 
-        <GeneralLanguage class="nc-lang-btn text-white" />
+        <GeneralLanguage class="nc-lang-btn" />
       </NcTooltip>
 
       <div class="w-full h-full overflow-hidden nc-layout-base-inner">
@@ -165,25 +165,11 @@ hooks.hook('page:finish', () => {
 
 <style lang="scss">
 .nc-lang-btn-wrapper {
-  @apply fixed bottom-10 right-10 z-99 w-12 h-12;
+  @apply fixed bottom-6 right-6 z-99 w-9 h-9;
 }
 
 .nc-lang-btn {
-  @apply color-transition flex items-center justify-center w-full h-full rounded-full shadow-md shadow-nc-content-gray-muted p-2 !bg-primary text-white ring-opacity-100 active:(ring ring-accent) hover:(ring ring-accent);
-
-  &::after {
-    @apply rounded-full absolute top-0 left-0 right-0 bottom-0 transition-all duration-150 ease-in-out bg-primary;
-    content: '';
-    z-index: -1;
-  }
-
-  &:hover::after {
-    @apply transform scale-110 ring ring-accent ring-opacity-100;
-  }
-
-  &:active::after {
-    @apply ring ring-accent ring-opacity-100;
-  }
+  @apply color-transition flex items-center justify-center w-full h-full rounded-lg p-2 text-lg border-1 border-nc-border-gray-medium bg-nc-bg-default !text-nc-content-gray-muted hover:(!text-nc-content-gray bg-nc-bg-gray-extralight);
 }
 
 .nc-navbar {

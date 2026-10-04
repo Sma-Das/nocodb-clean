@@ -29,7 +29,7 @@ export const useBrandingApply = createSharedComposable(() => {
   const STYLE_ID = 'nc-brand-color-override'
 
   const DEFAULT_FAVICON = '/favicon.ico'
-  const DEFAULT_THEME_COLOR = '#3366FF'
+  const DEFAULT_THEME_COLOR = '#6E56CF'
   const DEFAULT_APPLE_TOUCH_ICON = '/apple-touch-icon-180x180.png'
 
   function ensureFaviconLink(): HTMLLinkElement {

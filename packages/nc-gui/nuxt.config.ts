@@ -80,7 +80,7 @@ export default defineNuxtConfig({
         },
         {
           name: 'theme-color',
-          content: '#3366FF',
+          content: '#6E56CF',
         },
         {
           hid: 'description',

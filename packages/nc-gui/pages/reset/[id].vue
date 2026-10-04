@@ -50,14 +50,16 @@ function resetError() {
 <template>
   <div>
     <NuxtLayout>
-      <div class="md:bg-primary/5 signin forgot-password h-full min-h-[600px] flex flex-col justify-center items-center">
+      <div
+        class="md:bg-nc-bg-gray-extralight signin forgot-password h-full min-h-[600px] flex flex-col justify-center items-center"
+      >
         <div
-          class="bg-nc-bg-default md:mt-[60px] relative flex flex-col justify-center gap-2 w-full max-w-[500px] mx-auto p-8 md:(rounded-lg border-1 border-nc-border-gray-medium shadow-xl)"
+          class="bg-nc-bg-default md:mt-[60px] relative flex flex-col justify-center gap-2 w-full max-w-[440px] mx-auto p-8 md:(rounded-xl border-1 border-nc-border-gray-medium)"
         >
           <LazyGeneralNocoIcon class="color-transition hover:(ring ring-accent ring-opacity-100)" :animate="isLoading" />
 
           <div class="self-center flex flex-col justify-center items-center text-center gap-2">
-            <h1 class="prose-2xl font-bold my-4 w-full">{{ $t('title.resetPassword') }}</h1>
+            <h1 class="text-2xl font-semibold tracking-tight my-4 w-full">{{ $t('title.resetPassword') }}</h1>
 
             <div class="prose-sm text-success flex items-center leading-8 gap-2">
               {{ $t('msg.info.passwordRecovery.success') }} <ClaritySuccessLine />
@@ -122,7 +124,7 @@ function resetError() {
 .signin {
   .ant-input-affix-wrapper,
   .ant-input {
-    @apply !appearance-none my-1 border-1 border-solid border-primary border-opacity-50 rounded;
+    @apply !appearance-none my-1 border-1 border-solid border-nc-border-gray-medium rounded-lg;
   }
 
   .password {
