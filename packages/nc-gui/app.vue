@@ -16,9 +16,7 @@ watch(
 
 const { hideSharedBaseBtn } = storeToRefs(useConfigStore())
 
-const disableBaseLayout = computed(
-  () => route.value.path.startsWith('/nc/view') || route.value.path.startsWith('/nc/form'),
-)
+const disableBaseLayout = computed(() => route.value.path.startsWith('/nc/view') || route.value.path.startsWith('/nc/form'))
 
 const { isExperimentalFeatureModalOpen, initializeFeatures } = useBetaFeatureToggle()
 
@@ -35,8 +33,6 @@ const antDirection = computed(() => (isRtl.value ? 'rtl' : 'ltr'))
 const { commandPalette, cmdData, cmdPlaceholder, activeScope, loadTemporaryScope } = useCommandPalette()
 
 const { cmdK, cmdL, cmdJ, setActiveCmdView } = useCommand()
-
-useUserSync()
 
 useRealtime()
 

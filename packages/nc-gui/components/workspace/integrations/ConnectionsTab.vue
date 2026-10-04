@@ -20,6 +20,8 @@ type SortFields = 'title' | 'sub_type' | 'created_at' | 'created_by' | 'source_c
 
 const { t } = useI18n()
 
+const { productName } = useBranding()
+
 const {
   integrations,
   isLoadingIntegrations,
@@ -581,7 +583,7 @@ const customRow = (record: Record<string, any>) => ({
             <div class="h-8 w-8 grid place-items-center">
               <GeneralIcon icon="nocodb1" />
             </div>
-            <div class="text-sm !leading-5 capitalize font-semibold truncate">NocoDB Cloud</div>
+            <div class="text-sm !leading-5 capitalize font-semibold truncate">{{ productName }}</div>
           </div>
           <NcTooltip v-else :disabled="!isUserDeleted(integration.created_by)" class="w-full">
             <template #title>

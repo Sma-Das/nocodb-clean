@@ -376,8 +376,8 @@ export function useBaseSettingsNav() {
             ev: 'migrate',
             icon: 'ncUpload',
             testId: 'migrate-tab',
-            title: t('labels.baseNav.migrateToCloud'),
-            keywords: 'general migrate move export cloud',
+            title: t('labels.baseNav.migrateBase'),
+            keywords: 'general migrate move export',
           },
         ].filter(Boolean) as ShellRailGroup['items'],
       },
@@ -504,9 +504,8 @@ export function useBaseSettingsNav() {
         description: t('labels.baseNav.desc.migrateToV3'),
       },
       'migrate': {
-        title: t('labels.baseNav.migrateToCloud'),
-        description: t('labels.baseNav.desc.migrateToCloud'),
-        docsHref: 'https://nocodb.com/docs/product/account-settings/cloud-enterprise-edition/oss-to-enterprise-migration',
+        title: t('labels.baseNav.migrateBase'),
+        description: t('labels.baseNav.desc.migrateBase'),
       },
     }
 

@@ -236,7 +236,6 @@ export function useCanvasTable({
   const { appInfo, isMobileMode } = useGlobal()
   const { $api } = useNuxtApp()
   const { t } = useI18n()
-  const { currentUser } = useUserSync()
   const { gridViewCols, metaColumnById, updateGridViewColumn } = useViewColumnsOrThrow()
   const {
     eventBus,
@@ -368,7 +367,6 @@ export function useCanvasTable({
     triggerRefreshCanvas,
     getDataCache,
     scriptEventBus,
-    currentUser,
   )
 
   watch(
