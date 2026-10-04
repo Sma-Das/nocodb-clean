@@ -50,9 +50,6 @@ const itemStyle = computed(() => ({
     :data-label="label || undefined"
     @click="!disabled && emits('click')"
   >
-    <!-- Active indicator bar -->
-    <span class="nc-dock-item-indicator" />
-
     <slot>
       <GeneralIcon v-if="currentIcon" :icon="(currentIcon as any)" class="nc-dock-item-icon" />
     </slot>
@@ -91,20 +88,6 @@ const itemStyle = computed(() => ({
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   }
 
-  .nc-dock-item-indicator {
-    @apply bg-nc-content-brand;
-    position: absolute;
-    left: -12px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 3px;
-    height: 20px;
-    border-radius: 0 3px 3px 0;
-    opacity: 0;
-    transition: opacity 0.2s;
-    pointer-events: none;
-  }
-
   .nc-dock-item-icon {
     @apply h-5 w-5 flex items-center justify-center;
     color: inherit;
@@ -120,15 +103,11 @@ const itemStyle = computed(() => ({
   }
 
   &.active {
-    @apply text-nc-content-brand;
+    @apply text-nc-content-gray-emphasis;
     background: rgba(0, 0, 0, 0.08);
 
     :root[theme='dark'] & {
       background: rgba(255, 255, 255, 0.08);
-    }
-
-    .nc-dock-item-indicator {
-      opacity: 1;
     }
   }
 
@@ -145,12 +124,6 @@ const itemStyle = computed(() => ({
   &[data-label]:hover::before {
     left: auto;
     right: calc(100% + 10px);
-  }
-
-  .nc-dock-item-indicator {
-    left: auto;
-    right: -12px;
-    border-radius: 3px 0 0 3px;
   }
 }
 </style>

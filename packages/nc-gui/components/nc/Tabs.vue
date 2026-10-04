@@ -44,10 +44,7 @@ const props = defineProps<{
     @apply px-2 text-nc-content-gray-subtle2 !hover:text-nc-content-gray;
   }
   .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-    @apply text-nc-content-brand;
-  }
-  .ant-tabs-tab.ant-tabs-tab-active:hover .ant-tabs-tab-btn {
-    @apply text-nc-content-brand-disabled;
+    @apply text-nc-content-gray-emphasis;
   }
 
   .ant-tabs-nav {
@@ -55,7 +52,7 @@ const props = defineProps<{
   }
 
   .ant-tabs-ink-bar {
-    @apply bg-nc-content-brand !rounded-t-xl;
+    @apply bg-nc-content-gray-emphasis;
   }
 
   &.theme-ai {
