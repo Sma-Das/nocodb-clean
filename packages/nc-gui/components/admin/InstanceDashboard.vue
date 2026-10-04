@@ -7,9 +7,9 @@ const { isWhiteLabelled, productName, faviconUrl } = useBranding()
 
 const instanceName = computed(() => {
   try {
-    return appInfo.value.ncSiteUrl ? new URL(appInfo.value.ncSiteUrl).hostname : 'NocoDB'
+    return appInfo.value.ncSiteUrl ? new URL(appInfo.value.ncSiteUrl).hostname : 'SmaDB'
   } catch {
-    return 'NocoDB'
+    return 'SmaDB'
   }
 })
 
@@ -46,7 +46,7 @@ onMounted(async () => {
               :alt="productName"
               class="h-12 w-12 rounded-lg object-contain"
             />
-            <img v-else src="~/assets/img/brand/nocodb-logo.svg" alt="NocoDB" class="h-12 w-12 rounded-lg" />
+            <img v-else src="~/assets/img/brand/smadb.svg" :alt="productName" class="h-12 w-12 rounded-lg" />
             <span class="text-nc-content-gray-emphasis text-2xl font-semibold">
               {{ instanceName }}
             </span>

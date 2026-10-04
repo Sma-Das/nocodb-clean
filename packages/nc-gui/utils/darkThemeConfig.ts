@@ -103,7 +103,7 @@ export const DARK_PALETTE_PRESETS: DarkPalettePreset[] = [
   {
     /** classic (pre-refactor) production dark palette — this one IS variables.css */
     id: 'classic',
-    label: 'NocoDB classic',
+    label: 'Classic',
     values: {
       minisidebar: '#2a2c2e',
       sidebar: '#1d1d1f',

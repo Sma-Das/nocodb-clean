@@ -13,8 +13,6 @@ const baseRole = inject(ProjectRoleInj)!
 
 const { isUIAllowed } = useRoles()
 
-const { isDark } = useTheme()
-
 const projectNodeRef = ref()
 
 async function addNewProjectChildEntity(showSourceSelector = true) {
@@ -40,8 +38,7 @@ const hasTableCreatePermission = computed(() => {
             class="flex items-center nc-workspace-menu overflow-hidden py-1.25 pr-0.25 justify-center w-full"
           >
             <div class="w-24 min-w-10 p-1">
-              <img v-if="isDark" width="96" alt="NocoDB" src="~/assets/img/brand/text.png" />
-              <img v-else width="96" alt="NocoDB" src="~/assets/img/brand/nocodb.png" />
+              <GeneralBrandWordmark />
             </div>
 
             <div class="flex flex-grow"></div>

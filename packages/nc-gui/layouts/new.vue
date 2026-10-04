@@ -53,7 +53,7 @@ export default {
         <div class="flex-1 min-w-0 w-50">
           <nuxt-link :to="isPublic ? '' : '/'">
             <img v-if="isWhiteLabelled && logoUrl" :src="logoUrl" :alt="productName" class="h-11 max-w-[180px] object-contain" />
-            <img v-else src="~/assets/img/brand/nocodb-full.png" class="h-11" />
+            <GeneralBrandWordmark v-else />
           </nuxt-link>
         </div>
 

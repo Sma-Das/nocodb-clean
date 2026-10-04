@@ -63,8 +63,8 @@ hooks.hook('page:finish', () => {
                 <img width="25" :alt="productName" :src="faviconUrl" class="object-contain" />
               </template>
               <template v-else>
-                <img v-if="!isDashboard" width="120" alt="NocoDB" src="~/assets/img/brand/nocodb-full.png" />
-                <img v-else width="25" alt="NocoDB" src="~/assets/img/icons/256x256.png" />
+                <GeneralBrandWordmark v-if="!isDashboard" />
+                <img v-else width="25" :alt="productName" src="~/assets/img/icons/256x256.png" />
               </template>
             </div>
           </a-tooltip>

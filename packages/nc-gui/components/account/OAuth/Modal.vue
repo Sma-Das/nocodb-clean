@@ -19,11 +19,11 @@ const { getPossibleAttachmentSrc } = useAttachment()
 
 const supportedDocs: SupportedDocsType[] = [
   {
-    title: 'NocoDB OAuth Client Setup',
+    title: 'SmaDB OAuth Client Setup',
     href: 'https://docs.nocodb.com/nc-gui/oauth-client-setup',
   },
   {
-    title: 'NocoDB OAuth Client Setup',
+    title: 'SmaDB OAuth Client Setup',
     href: 'https://docs.nocodb.com/nc-gui/oauth-client-setup',
   },
 ]

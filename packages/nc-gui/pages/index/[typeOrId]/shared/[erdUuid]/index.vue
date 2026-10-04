@@ -50,7 +50,7 @@ onMounted(async () => {
         {{ appInfo.version }}
       </template>
       <img v-if="brandIcon" width="50" :alt="productName" :src="brandIcon" class="object-contain" />
-      <img v-else width="50" alt="NocoDB" src="~/assets/img/icons/256x256.png" />
+      <img v-else width="50" alt="SmaDB" src="~/assets/img/icons/256x256.png" />
     </a-tooltip>
     <div class="ml-2 font-bold text-nc-content-gray-muted uppercase">{{ base.title }}</div>
   </div>

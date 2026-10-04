@@ -50,7 +50,7 @@ watch(
   () => {
     if (activeTable.value?.title) return
 
-    useTitle(`${currentBase.value?.title ?? activeWorkspace.value?.title ?? productName.value ?? 'NocoDB'}`)
+    useTitle(`${currentBase.value?.title ?? activeWorkspace.value?.title ?? productName.value ?? 'SmaDB'}`)
   },
   {
     immediate: true,

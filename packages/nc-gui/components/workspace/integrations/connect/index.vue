@@ -86,7 +86,7 @@ onMounted(async () => {
                       <a-row :gutter="24">
                         <a-col :span="12">
                           <a-form-item :label="$t('labels.connectionName')">
-                            <a-input value="NocoDB" disabled />
+                            <a-input value="SmaDB" disabled />
                           </a-form-item>
                         </a-col>
                       </a-row>
