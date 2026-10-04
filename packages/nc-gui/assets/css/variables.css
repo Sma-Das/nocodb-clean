@@ -45,85 +45,85 @@
 
   /* Surface tokens (dark-mode refactor) — dedicated backgrounds for chrome,
      overlays and inputs. Light values match the pre-refactor look exactly. */
-  --color-sidebar-bg: #ffffff;
-  --rgb-color-sidebar-bg: 255, 255, 255;
-  --color-minisidebar-bg: #ffffff;
-  --rgb-color-minisidebar-bg: 255, 255, 255;
+  --color-sidebar-bg: #fafafa;
+  --rgb-color-sidebar-bg: 250, 250, 250;
+  --color-minisidebar-bg: #fafafa;
+  --rgb-color-minisidebar-bg: 250, 250, 250;
   --nc-bg-elevated: #ffffff;
   --rgb-nc-bg-elevated: 255, 255, 255;
-  --nc-bg-canvas: #f9f9fa;
-  --rgb-nc-bg-canvas: 249, 249, 250;
+  --nc-bg-canvas: #fafafa;
+  --rgb-nc-bg-canvas: 250, 250, 250;
   --nc-bg-input: #ffffff;
 
   --color-base-none: #ffffff00;
 
   /* 🎨 Brand */
-  --color-brand-20: #f5f6ff;
-  --rgb-color-brand-20: 245, 246, 255;
+  --color-brand-20: #f8f7fd;
+  --rgb-color-brand-20: 248, 247, 253;
 
-  --color-brand-50: #f0f3ff;
-  --rgb-color-brand-50: 240, 243, 255;
+  --color-brand-50: #f4f2fb;
+  --rgb-color-brand-50: 244, 242, 251;
 
-  --color-brand-100: #d6e0ff;
-  --rgb-color-brand-100: 214, 224, 255;
+  --color-brand-100: #e2ddf5;
+  --rgb-color-brand-100: 226, 221, 245;
 
-  --color-brand-200: #adc2ff;
-  --rgb-color-brand-200: 173, 194, 255;
+  --color-brand-200: #c5bbec;
+  --rgb-color-brand-200: 197, 187, 236;
 
-  --color-brand-300: #85a3ff;
-  --rgb-color-brand-300: 133, 163, 255;
+  --color-brand-300: #a89ae2;
+  --rgb-color-brand-300: 168, 154, 226;
 
-  --color-brand-400: #5c85ff;
-  --rgb-color-brand-400: 92, 133, 255;
+  --color-brand-400: #8b78d9;
+  --rgb-color-brand-400: 139, 120, 217;
 
-  --color-brand-500: #3366ff;
-  --rgb-color-brand-500: 51, 102, 255;
+  --color-brand-500: #6e56cf;
+  --rgb-color-brand-500: 110, 86, 207;
 
-  --color-brand-600: #2952cc;
-  --rgb-color-brand-600: 41, 82, 204;
+  --color-brand-600: #5846a3;
+  --rgb-color-brand-600: 88, 70, 163;
 
-  --color-brand-700: #1f3d99;
-  --rgb-color-brand-700: 31, 61, 153;
+  --color-brand-700: #423478;
+  --rgb-color-brand-700: 66, 52, 120;
 
-  --color-brand-800: #142966;
-  --rgb-color-brand-800: 20, 41, 102;
+  --color-brand-800: #2b234d;
+  --rgb-color-brand-800: 43, 35, 77;
 
-  --color-brand-900: #0a1433;
-  --rgb-color-brand-900: 10, 20, 51;
+  --color-brand-900: #141023;
+  --rgb-color-brand-900: 20, 16, 35;
 
   /* 🎨 Gray */
   --color-gray-20: #fdfdfd;
   --rgb-color-gray-20: 253, 253, 253;
 
-  --color-gray-50: #f9f9fa;
-  --rgb-color-gray-50: 249, 249, 250;
+  --color-gray-50: #fafafa;
+  --rgb-color-gray-50: 250, 250, 250;
 
   --color-gray-100: #f4f4f5;
   --rgb-color-gray-100: 244, 244, 245;
 
-  --color-gray-200: #e7e7e9;
-  --rgb-color-gray-200: 231, 231, 233;
+  --color-gray-200: #e4e4e7;
+  --rgb-color-gray-200: 228, 228, 231;
 
-  --color-gray-300: #d5d5d9;
-  --rgb-color-gray-300: 213, 213, 217;
+  --color-gray-300: #d4d4d8;
+  --rgb-color-gray-300: 212, 212, 216;
 
-  --color-gray-400: #9aa2af;
-  --rgb-color-gray-400: 154, 162, 175;
+  --color-gray-400: #a1a1aa;
+  --rgb-color-gray-400: 161, 161, 170;
 
-  --color-gray-500: #6a7184;
-  --rgb-color-gray-500: 106, 113, 132;
+  --color-gray-500: #71717a;
+  --rgb-color-gray-500: 113, 113, 122;
 
-  --color-gray-600: #4a5268;
-  --rgb-color-gray-600: 74, 82, 104;
+  --color-gray-600: #52525b;
+  --rgb-color-gray-600: 82, 82, 91;
 
-  --color-gray-700: #374151;
-  --rgb-color-gray-700: 55, 65, 81;
+  --color-gray-700: #3f3f46;
+  --rgb-color-gray-700: 63, 63, 70;
 
-  --color-gray-800: #1f293a;
-  --rgb-color-gray-800: 31, 41, 58;
+  --color-gray-800: #27272a;
+  --rgb-color-gray-800: 39, 39, 42;
 
-  --color-gray-900: #101015;
-  --rgb-color-gray-900: 16, 16, 21;
+  --color-gray-900: #18181b;
+  --rgb-color-gray-900: 24, 24, 27;
 
   /* 🎨 Green */
   --color-green-20: #f4fff8;
@@ -488,45 +488,45 @@
   --color-base-none: #ffffff00;
 
   /* 🎨 Brand */
-  --color-brand-20: #161d38;
-  --rgb-color-brand-20: 22, 29, 56;
+  --color-brand-20: #191627;
+  --rgb-color-brand-20: 25, 22, 39;
 
-  --color-brand-50: #141a3a;
-  --rgb-color-brand-50: 20, 26, 58;
+  --color-brand-50: #221e34;
+  --rgb-color-brand-50: 34, 30, 52;
 
   /* --color-brand-50: #141a57;
   --rgb-color-brand-50: 20, 26, 87; */
 
-  --color-brand-100: #19288f;
-  --rgb-color-brand-100: 25, 40, 143;
+  --color-brand-100: #403375;
+  --rgb-color-brand-100: 64, 51, 117;
 
-  --color-brand-200: #1727b6;
-  --rgb-color-brand-200: 23, 39, 182;
+  --color-brand-200: #4b3a92;
+  --rgb-color-brand-200: 75, 58, 146;
 
-  --color-brand-300: #1b43f5;
-  --rgb-color-brand-300: 27, 67, 245;
+  --color-brand-300: #624ac5;
+  --rgb-color-brand-300: 98, 74, 197;
 
-  --color-brand-400: #3366ff;
-  --rgb-color-brand-400: 51, 102, 255;
+  --color-brand-400: #7760d2;
+  --rgb-color-brand-400: 119, 96, 210;
 
-  --color-brand-500: #598eff;
-  --rgb-color-brand-500: 89, 142, 255;
+  --color-brand-500: #8f7cda;
+  --rgb-color-brand-500: 143, 124, 218;
 
-  --color-brand-600: #8eb6ff;
-  --rgb-color-brand-600: 142, 182, 255;
+  --color-brand-600: #b4a8e6;
+  --rgb-color-brand-600: 180, 168, 230;
 
-  --color-brand-700: #bcd2ff;
-  --rgb-color-brand-700: 188, 210, 255;
+  --color-brand-700: #ccc3ee;
+  --rgb-color-brand-700: 204, 195, 238;
 
-  --color-brand-800: #d9e5ff;
-  --rgb-color-brand-800: 217, 229, 255;
+  --color-brand-800: #e4dff6;
+  --rgb-color-brand-800: 228, 223, 246;
 
-  --color-brand-900: #eef4ff;
-  --rgb-color-brand-900: 238, 244, 255;
+  --color-brand-900: #f5f3fc;
+  --rgb-color-brand-900: 245, 243, 252;
 
   /* 🎨 Gray */
-  --color-gray-20: #14161a;
-  --rgb-color-gray-20: 20, 22, 26;
+  --color-gray-20: #111113;
+  --rgb-color-gray-20: 17, 17, 19;
 
   --color-gray-50: #1d1d1f;
   --rgb-color-gray-50: 29, 29, 31;
@@ -537,11 +537,11 @@
   --color-gray-200: #3b3d40;
   --rgb-color-gray-200: 59, 61, 64;
 
-  --color-gray-300: #4d515c;
-  --rgb-color-gray-300: 77, 81, 92;
+  --color-gray-300: #3f3f46;
+  --rgb-color-gray-300: 63, 63, 70;
 
-  --color-gray-400: #6d727d;
-  --rgb-color-gray-400: 109, 114, 125;
+  --color-gray-400: #6b6b74;
+  --rgb-color-gray-400: 107, 107, 116;
 
   --color-gray-500: #989ca5;
   --rgb-color-gray-500: 152, 156, 165;
@@ -549,14 +549,14 @@
   --color-gray-600: #c5cbd6;
   --rgb-color-gray-600: 197, 203, 214;
 
-  --color-gray-700: #d5dce8;
-  --rgb-color-gray-700: 213, 220, 232;
+  --color-gray-700: #dcdce0;
+  --rgb-color-gray-700: 220, 220, 224;
 
   --color-gray-800: #e2e9f6;
   --rgb-color-gray-800: 226, 233, 246;
 
-  --color-gray-900: #e9f0fd;
-  --rgb-color-gray-900: 233, 240, 253;
+  --color-gray-900: #f7f7f8;
+  --rgb-color-gray-900: 247, 247, 248;
 
   /* 🎨 Green */
   --color-green-20: #162312;
@@ -895,10 +895,20 @@
 :root {
   --nc-bg-brand-inverted: var(--color-brand-50);
   --rgb-nc-bg-brand-inverted: var(--rgb-color-brand-50);
+
+  /* Ink: monochrome primary-action fill. Brand colour stays for accents (focus,
+     selection, links); primary buttons read as neutral ink in both modes. */
+  --nc-fill-ink: #18181b;
+  --nc-fill-ink-hover: #3f3f46;
+  --nc-content-on-ink: #ffffff;
 }
 [theme='dark'] {
   --nc-bg-brand-inverted: var(--color-gray-200);
   --rgb-nc-bg-brand-inverted: var(--rgb-color-gray-200);
+
+  --nc-fill-ink: #ededee;
+  --nc-fill-ink-hover: #d4d4d8;
+  --nc-content-on-ink: #18181b;
 }
 
 :root,
@@ -907,19 +917,19 @@
      fill, focus rings, box-shadows, text selection) that aren't part of the
      --color-brand-* ramp. Same value in light & dark, mirroring those literals.
      White-labelling overrides this one var to recolour them all. */
-  --nc-brand-accent: #3366ff;
-  --nc-brand-accent-rgb: 51, 102, 255;
+  --nc-brand-accent: #6e56cf;
+  --nc-brand-accent-rgb: 110, 86, 207;
   /* Darker hover shade of the accent — also mode-independent (constant in light
      & dark), mirroring the hand-written #2952cc hover literals. Do NOT use
      --color-brand-600 for these: that ramp stop inverts in dark mode. */
-  --nc-brand-accent-hover: #2952cc;
+  --nc-brand-accent-hover: #5846a3;
 
   /* NocoAI accent — the agents CTA pink-red. Mode-independent for the same
      reason as the brand accent above: it backs solid surfaces carrying white
      text, so a ramp stop that inverts in dark mode would wreck the contrast. */
-  --nc-ai-accent: #e7345e;
-  --nc-ai-accent-rgb: 231, 52, 94;
-  --nc-ai-accent-hover: #c11e4b;
+  --nc-ai-accent: var(--nc-brand-accent);
+  --nc-ai-accent-rgb: var(--nc-brand-accent-rgb);
+  --nc-ai-accent-hover: var(--nc-brand-accent-hover);
 
   --nc-content-gray-extreme: var(--color-base-black);
   --nc-content-gray-emphasis: var(--color-gray-900);

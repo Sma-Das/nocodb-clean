@@ -74,8 +74,7 @@ export default {
                 <img :src="(isDark ? logoDarkUrl : logoUrl) ?? ''" :alt="productName" class="h-7 max-w-[120px] object-contain" />
               </template>
               <template v-else-if="!isWhiteLabelled">
-                <img v-if="isDark" width="96" alt="NocoDB" src="~/assets/img/brand/text.png" class="flex-none min-w-[96px]" />
-                <img v-else width="96" alt="NocoDB" src="~/assets/img/brand/nocodb.png" class="flex-none min-w-[96px]" />
+                <GeneralBrandWordmark class="flex-none" />
               </template>
             </a>
 

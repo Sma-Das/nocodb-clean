@@ -80,7 +80,7 @@ export default defineNuxtConfig({
         },
         {
           name: 'theme-color',
-          content: '#3366FF',
+          content: '#6E56CF',
         },
         {
           hid: 'description',
@@ -88,9 +88,9 @@ export default defineNuxtConfig({
           content: process.env.npm_package_description || '',
         },
         // Open Graph
-        { hid: 'og:site_name', property: 'og:site_name', content: 'NocoDB' },
+        { hid: 'og:site_name', property: 'og:site_name', content: 'SmaDB' },
         { hid: 'og:type', property: 'og:type', content: 'website' },
-        { hid: 'og:title', property: 'og:title', content: 'NocoDB' },
+        { hid: 'og:title', property: 'og:title', content: 'SmaDB' },
         {
           hid: 'og:description',
           property: 'og:description',
@@ -98,7 +98,7 @@ export default defineNuxtConfig({
         },
         // Twitter
         { hid: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
-        { hid: 'twitter:title', name: 'twitter:title', content: 'NocoDB' },
+        { hid: 'twitter:title', name: 'twitter:title', content: 'SmaDB' },
         {
           hid: 'twitter:description',
           name: 'twitter:description',

@@ -1,5 +1,4 @@
 import type { Api, ButtonType, TableType } from 'nocodb-sdk'
-import type { UserObject } from 'packages/nc-gui/composables/useUserSync'
 import type { InterfacePageDataApi } from '~/lib/interfaceData'
 
 interface ActionState {
@@ -35,8 +34,6 @@ export class ActionManager {
     isRowSortRequiredRows: ComputedRef<Array<Row>>
   }
 
-  private readonly userSync: Ref<UserObject>
-
   private eventBus?: any
 
   // Consolidated state maps
@@ -62,7 +59,6 @@ export class ActionManager {
       isRowSortRequiredRows: ComputedRef<Array<Row>>
     },
     eventBus?: any,
-    userSync?: any,
   ) {
     this.api = api
     this.loadScript = loadScript
@@ -71,7 +67,6 @@ export class ActionManager {
     this.triggerRefreshCanvas = triggerRefreshCanvas
     this.getDataCache = getDataCache
     this.eventBus = eventBus
-    this.userSync = userSync
 
     this.setupEventListeners()
   }
@@ -263,9 +258,9 @@ export class ActionManager {
     try {
       url = addMissingUrlSchma(url)
       url = decodeURI(url) === url ? encodeURI(url) : url
-      confirmPageLeavingRedirect(url, '_blank', allowLocalUrl, this.userSync?.value)
+      confirmPageLeavingRedirect(url, '_blank', allowLocalUrl)
     } catch {
-      confirmPageLeavingRedirect(encodeURI(url), '_blank', allowLocalUrl, this.userSync?.value)
+      confirmPageLeavingRedirect(encodeURI(url), '_blank', allowLocalUrl)
     }
   }
 

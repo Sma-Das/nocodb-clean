@@ -7,9 +7,9 @@ interface Props {
   activeIcon?: string
   active?: boolean
   disabled?: boolean
-  /** Dropdown trigger — active state shows hover bg only, no indicator or text color */
+  /** Dropdown trigger — active state shows hover bg only, no text color */
   isDropdown?: boolean
-  /** Hide the left-side active indicator bar and active background */
+  /** Hide the active background */
   plainActive?: boolean
   panelKey?: string
 }
@@ -63,9 +63,6 @@ const isTooltipDisabled = computed(() => {
       :data-panel="panelKey"
       @click="!disabled && emits('click')"
     >
-      <!-- Active indicator bar -->
-      <span v-if="!plainActive" class="nc-rail-item-indicator" />
-
       <span class="nc-rail-item-chip">
         <slot v-if="$slots.default" />
 
@@ -103,12 +100,6 @@ const isTooltipDisabled = computed(() => {
     @apply text-nc-content-gray-muted;
   }
 
-  .nc-rail-item-indicator {
-    @apply absolute left-0 top-1/2 transform -translate-y-1/2 w-[4px] h-[22px] opacity-0 pointer-events-none rounded-r-[3px];
-    @apply bg-nc-content-brand;
-    transition: opacity 0.2s;
-  }
-
   .nc-rail-item-icon {
     @apply h-4 w-4 flex items-center justify-center;
   }
@@ -139,34 +130,25 @@ const isTooltipDisabled = computed(() => {
     }
   }
 
-  // Normal active state: brand color text + indicator
+  // Normal active state: neutral chip + emphasis text, no accent colour
   &.active:not(.is-dropdown) {
-    @apply text-nc-content-brand;
+    @apply text-nc-content-gray-emphasis;
 
     .nc-rail-item-chip {
-      // The palette's selection token, so the tint tracks whichever dark preset
-      // is applied rather than sitting as a fixed blue on an arbitrary ground.
-      // Pushed toward the brand accent because the raw token is nearly white in
-      // light mode; mixing rather than hardcoding keeps all 12 palettes in step.
-      background: color-mix(in srgb, var(--nc-content-brand) 15%, var(--color-brand-50));
-    }
+      background: rgba(0, 0, 0, 0.07);
 
-    // brand-500 on the dark pill is only ~3.5:1 — lift to brand-600 for AA
-    :root[theme='dark'] & {
-      @apply text-nc-brand-600;
-    }
-
-    .nc-rail-item-indicator {
-      opacity: 1;
+      :root[theme='dark'] & {
+        background: rgba(255, 255, 255, 0.09);
+      }
     }
   }
 
-  // Plain active: no background, no indicator — text color preserved from slot content
+  // Plain active: no background — text color preserved from slot content
   &.plain-active.active .nc-rail-item-chip {
     background: transparent;
   }
 
-  // Dropdown active state: hover bg only, no indicator or text color change
+  // Dropdown active state: hover bg only, no text color change
   &.is-dropdown.active {
     @apply text-nc-content-gray-muted;
 
@@ -195,18 +177,6 @@ const isTooltipDisabled = computed(() => {
       width: 40px;
       height: 40px;
     }
-
-    .nc-rail-item-indicator {
-      @apply h-[24px];
-    }
   }
-}
-</style>
-
-<style lang="scss">
-.rtl .nc-rail-item .nc-rail-item-indicator {
-  left: auto;
-  right: 0;
-  border-radius: 2px 0 0 2px;
 }
 </style>

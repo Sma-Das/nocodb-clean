@@ -1194,7 +1194,7 @@ function getErrorByTableName(tableName: string) {
                 <div v-if="column.key === 'source_column'" class="w-full">
                   <label class="w-full flex items-center gap-3 h-full">
                     <NcTooltip :disabled="record.enabled || !!record.destCn">
-                      <template #title>Select NocoDB field to map</template>
+                      <template #title>Select SmaDB field to map</template>
                       <NcCheckbox v-model:checked="record.enabled" :disabled="!record.destCn" />
                     </NcTooltip>
 

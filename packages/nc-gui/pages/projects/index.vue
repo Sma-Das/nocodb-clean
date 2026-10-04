@@ -10,7 +10,7 @@ const { t } = useI18n()
 
 const navDrawerOptions = [
   {
-    title: 'My NocoDB',
+    title: 'My SmaDB',
     icon: MdiFolderOutline,
   },
   /* todo: implement the api and bring back the options below

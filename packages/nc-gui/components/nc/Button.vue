@@ -316,8 +316,17 @@ useEventListener(NcButton, 'mousedown', () => {
 .nc-button.ant-btn-primary {
   @apply border-0 xs:(hover:border-0) text-white !text-shadow-none;
 
-  &.theme-default {
-    @apply bg-brand-500 md:(hover:bg-brand-600);
+  // Monochrome ink fill; inverts in dark mode, so text follows --nc-content-on-ink.
+  &.theme-default:not(:disabled):not(.nc-show-as-disabled) {
+    background: var(--nc-fill-ink);
+    color: var(--nc-content-on-ink);
+
+    @media (min-width: 820px) {
+      &:hover {
+        background: var(--nc-fill-ink-hover);
+        color: var(--nc-content-on-ink);
+      }
+    }
   }
 
   &.theme-ai {

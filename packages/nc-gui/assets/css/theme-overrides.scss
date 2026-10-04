@@ -143,12 +143,12 @@ body {
 .ant-tabs-tab-remove:active,
 .ant-tabs-tab-remove:focus,
 .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-  --un-bg-opacity: 1;
-  color: rgba(var(--rgb-color-brand-500), var(--un-bg-opacity));
+  color: var(--nc-content-gray-emphasis);
 }
 
+// Neutral ink underline rather than an accent-coloured bar
 .ant-tabs-ink-bar {
-  background: rgb(var(--rgb-color-brand-500));
+  background: var(--nc-content-gray-emphasis);
 }
 
 .ant-progress-text {

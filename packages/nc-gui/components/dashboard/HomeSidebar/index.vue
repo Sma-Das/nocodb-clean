@@ -25,8 +25,6 @@ const notificationStore = useNotification()
 
 const { unreadCount } = toRefs(notificationStore)
 
-const { isDark } = useTheme()
-
 const isUserMenuOpen = ref(false)
 
 const isNotificationOpen = ref(false)
@@ -95,8 +93,7 @@ function onNavClick(item: NavItem) {
       class="w-full px-2 py-1.5 flex items-center justify-between gap-2 h-[var(--topbar-height)] flex-none border-b-1 border-nc-border-gray-light"
     >
       <div class="pl-1">
-        <img v-if="isDark" alt="NocoDB" src="~/assets/img/brand/full-logo.png" class="h-9" />
-        <img v-else alt="NocoDB" src="~/assets/img/brand/nocodb-full-color.png" class="h-9" />
+        <GeneralBrandWordmark />
       </div>
 
       <!-- Only in the collapsed (peek) state, where it re-docks the sidebar. -->

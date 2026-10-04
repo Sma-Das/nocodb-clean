@@ -15,7 +15,7 @@ const FEATURES = [
   {
     id: 'bases_v3',
     title: 'Bases V3',
-    description: 'Experience the next generation of NocoDB with Bases V3 with and enhanced performance and optimizations.',
+    description: 'Experience the next generation of SmaDB with Bases V3 with and enhanced performance and optimizations.',
     enabled: false,
     version: 1,
   },
@@ -37,7 +37,7 @@ const FEATURES = [
   {
     id: 'ai_beta_features',
     title: 'AI beta features',
-    description: 'Unlock AI beta features to enhance your NocoDB experience.',
+    description: 'Unlock AI beta features to enhance your SmaDB experience.',
     enabled: false,
     version: 2,
     isEngineering: true,

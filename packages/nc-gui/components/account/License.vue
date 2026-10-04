@@ -118,28 +118,6 @@ const copyLicenseKey = async () => {
   }
 }
 
-const onManageLicense = async () => {
-  if (licenseStatus.value === 'none') return
-
-  let instanceId: string | undefined
-  try {
-    const status = await $fetch<{ instanceId?: string }>('/api/v1/license/status', {
-      baseURL: $api.instance.defaults.baseURL,
-      headers: { 'xc-auth': token.value as string },
-    })
-    instanceId = status.instanceId
-  } catch {
-    // The account page remains available without an instance hint.
-  }
-
-  const licenseServerUrl = appInfo.value.licenseServerUrl || NC_CLOUD_URL
-  window.open(
-    `${licenseServerUrl}/account/self-hosted${instanceId ? `?instance_id=${encodeURIComponent(instanceId)}` : ''}`,
-    '_blank',
-    'noopener,noreferrer',
-  )
-}
-
 loadLicense()
 </script>
 
@@ -283,31 +261,6 @@ loadLicense()
 
           <AccountLicenseCredits v-if="isEeUI" />
 
-          <div v-if="licenseStatus !== 'none'" class="flex flex-col border-1 rounded-2xl border-nc-border-gray-medium p-6 gap-4">
-            <div class="flex flex-col gap-1">
-              <span class="font-bold text-base text-nc-content-gray">
-                {{ $t('labels.manageLicense') }}
-              </span>
-              <span class="text-sm text-nc-content-gray-subtle2">
-                {{ $t('labels.manageLicenseOnCloud') }}
-              </span>
-            </div>
-
-            <div>
-              <NcButton
-                v-e="['c:account:license:manage']"
-                type="secondary"
-                size="small"
-                data-testid="nc-license-manage-btn"
-                @click="onManageLicense"
-              >
-                <div class="flex gap-2 items-center">
-                  {{ $t('labels.manageLicense') }}
-                  <GeneralIcon icon="ncExternalLink" />
-                </div>
-              </NcButton>
-            </div>
-          </div>
         </template>
       </div>
     </div>

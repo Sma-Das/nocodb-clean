@@ -75,8 +75,6 @@ export const MINI_SIDEBAR_WIDTH = 48
 
 export const NEW_MINI_SIDEBAR_WIDTH = 64
 
-export const NC_CLOUD_URL = 'https://app.nocodb.com'
-
 export const clientMousePositionDefaultValue = { clientX: 0, clientY: 0 }
 
 // Curated palettes keyed by the chart appearance.colorSchema enum value.

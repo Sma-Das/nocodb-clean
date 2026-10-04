@@ -21,7 +21,7 @@ const { $e } = useNuxtApp()
 
 const { t } = useI18n()
 
-const { appInfo, isMobileMode } = useGlobal()
+const { isMobileMode } = useGlobal()
 
 const { isWhiteLabelled, config } = useBranding()
 
@@ -77,9 +77,7 @@ const helpItems = computed<CategoryItemType[]>(() => {
       category: t('general.contactSupport'),
       items: [
         {
-          // White-label may override the support contact; otherwise fall back to
-          // NocoDB support — enterprise support routes through NocoDB regardless.
-          title: isWl && supportEmail ? supportEmail : 'support@nocodb.com',
+          title: supportEmail,
           icon: 'ncMail',
           e: 'c:nocodb:contact-us-mail-copy',
           link: '',
@@ -87,7 +85,8 @@ const helpItems = computed<CategoryItemType[]>(() => {
           tooltip: t('labels.clickToCopy'),
         },
       ],
-      hidden: !appInfo.value.ee,
+      // Only a configured white-label contact; there is no default support address.
+      hidden: !(isWl && supportEmail),
     },
   ]
 })

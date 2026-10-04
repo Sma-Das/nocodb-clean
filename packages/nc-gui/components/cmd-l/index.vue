@@ -309,7 +309,7 @@ onMounted(() => {
     &.selected {
       cursor: pointer;
       background-color: var(--color-gray-100);
-      border-left: 4px solid var(--color-brand-400);
+      border-left: 4px solid transparent;
       outline: none;
     }
 

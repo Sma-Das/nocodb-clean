@@ -9,6 +9,8 @@ const { orgRoles, isUIAllowed } = useRoles()
 
 const { isEEFeatureBlocked } = useEeConfig()
 
+const { productName } = useBranding()
+
 const showLicenseTab = computed(() => isEeUI)
 
 const isSuperAdmin = computed(() => !!orgRoles.value?.[OrgUserRoles.SUPER_ADMIN])
@@ -108,7 +110,7 @@ watch(
             <NcDivider class="!mt-0" />
 
             <div class="text-sm ml-2 p-2 mt-2 flex items-center justify-between gap-2">
-              <div class="text-base font-bold text-nc-content-gray-emphasis">NocoDB</div>
+              <div class="text-base font-bold text-nc-content-gray-emphasis">{{ productName }}</div>
               <span class="text-nc-content-gray-muted">{{ $t('labels.adminPanel') }}</span>
             </div>
 

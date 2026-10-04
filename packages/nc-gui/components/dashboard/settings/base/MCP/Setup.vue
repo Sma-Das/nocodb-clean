@@ -29,12 +29,12 @@ const serverName = computed(() => {
 
   if (props.showWorkspaceBaseInfo) {
     title = isScopedConnection.value
-      ? `NocoDB - ${props.token.title}`
+      ? `SmaDB - ${props.token.title}`
       : isEeUI
-      ? `NocoDB ${props.token.workspace?.title || 'Workspace'} - ${props.token.base?.title || 'Base'}`
-      : `NocoDB - ${props.token.base?.title || 'Base'}`
+      ? `SmaDB ${props.token.workspace?.title || 'Workspace'} - ${props.token.base?.title || 'Base'}`
+      : `SmaDB - ${props.token.base?.title || 'Base'}`
   } else {
-    title = `NocoDB Base - ${openedProject.value?.title}`
+    title = `SmaDB Base - ${openedProject.value?.title}`
   }
 
   if (activeTab.value === 'antigravity') {
