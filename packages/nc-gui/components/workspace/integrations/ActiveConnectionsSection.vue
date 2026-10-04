@@ -308,13 +308,6 @@ const handleEdit = (integration: IntegrationType) => {
             </NcButton>
           </div>
           <div class="text-sm text-nc-content-inverted-secondary">{{ successConfirmModal.description }}</div>
-          <a
-            target="_blank"
-            href="https://nocodb.com/docs/product-docs/data-sources/connect-to-data-source"
-            rel="noopener noreferrer"
-          >
-            {{ $t('msg.learnMore') }}
-          </a>
         </div>
       </div>
     </NcModal>

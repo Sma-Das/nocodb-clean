@@ -111,7 +111,7 @@ export function useKeyboardNavigation({
 
     if (isExpandedCellInputExist() || isNcListSearchInputActive()) return
     if (isNcDropdownOpen()) return
-    if (isCmdJActive() || cmdKActive()) return
+    if (cmdKActive()) return
 
     if (isDrawerOrModalExist() || isLinkDropdownExist() || isGeneralOverlayActive()) {
       // If Extension Pane is Active, ignore

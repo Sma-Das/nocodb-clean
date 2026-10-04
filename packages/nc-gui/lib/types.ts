@@ -365,7 +365,7 @@ interface UsersSortType {
   direction?: 'asc' | 'desc'
 }
 
-type CommandPaletteType = 'cmd-k' | 'cmd-j' | 'cmd-l'
+type CommandPaletteType = 'cmd-k' | 'cmd-l'
 
 interface FormFieldsLimitOptionsType {
   id: string
@@ -1187,11 +1187,6 @@ interface OAuthAuthorization {
   last_used_at?: string
 }
 
-interface SupportedDocsType {
-  title: string
-  href: string
-}
-
 interface TeamType {
   id: string
   title: string
@@ -1276,7 +1271,6 @@ export type {
   GroupKeysStorage,
   ViewScrollPositionStorage,
   OAuthAuthorization,
-  SupportedDocsType,
   TeamType,
 }
 

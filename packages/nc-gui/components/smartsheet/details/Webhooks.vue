@@ -338,17 +338,6 @@ const getHookTypeText = (hook: HookType) => {
           :description="$t('msg.webhookV2DeprecationAlertDesc')"
           background
         >
-          <template #action>
-            <NcButton
-              type="link"
-              size="xsmall"
-              class="!hover:underline !font-bold"
-              target="_blank"
-              href="https://nocodb.com/docs/product-docs/automation/webhook/webhook-v2-vs-v3#upgrade-to-webhook-v3"
-            >
-              {{ $t('activity.goToDocs') }}
-            </NcButton>
-          </template>
         </NcAlert>
 
         <div class="w-full mb-4 flex justify-between gap-3" :class="{ 'mt-6': !inShell || hasV2Webhooks }">
@@ -364,21 +353,6 @@ const getHookTypeText = (hook: HookType) => {
                 <GeneralIcon icon="search" class="mr-2 h-4 w-4 text-nc-content-inverted-secondary-disabled" />
               </template>
             </a-input>
-            <NcButton
-              v-if="!inShell"
-              class="px-2"
-              type="text"
-              size="small"
-              @click="
-                navigateTo('https://nocodb.com/docs/product-docs/automation/webhook', { open: navigateToBlankTargetOpenOption })
-              "
-            >
-              <div class="flex items-center gap-2">
-                {{ $t('title.docs') }}
-
-                <GeneralIcon icon="externalLink" />
-              </div>
-            </NcButton>
           </div>
 
           <NcButton

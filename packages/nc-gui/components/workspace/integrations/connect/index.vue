@@ -162,7 +162,6 @@ onMounted(async () => {
         </div>
       </div>
     </template>
-    <template v-if="!dataReflectionEnabled" #rightPanel> </template>
   </WorkspaceIntegrationsFormsEditOrAddCommonWrapper>
 </template>
 

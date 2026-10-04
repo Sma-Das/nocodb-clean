@@ -25,17 +25,11 @@ defineProps<{
   >
     <template #title>
       <slot name="title">
-        {{ isSqlView ? $t('tooltip.schemaChangeDisabledFormSqlView') : $t('tooltip.schemaChangeDisabled') }} <br />
-        {{ message }}
-        <br v-if="message" />
-        <a
-          v-if="!isSqlView"
-          class="!text-current"
-          href="https://nocodb.com/docs/product-docs/data-sources/connect-to-data-source#configuring-permissions"
-          target="_blank"
-        >
-          {{ $t('msg.learnMore') }}
-        </a>
+        {{ isSqlView ? $t('tooltip.schemaChangeDisabledFormSqlView') : $t('tooltip.schemaChangeDisabled') }}
+        <template v-if="message">
+          <br />
+          {{ message }}
+        </template>
       </slot>
     </template>
     <slot />

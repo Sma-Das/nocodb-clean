@@ -1,12 +1,11 @@
 <script lang="ts" setup>
 // Title block — identical on every pane of every shell (the shell contract):
 //   Title                                    [secondary] [primary]
-//   Description · Docs ↗
+//   Description
 // The pane title appears here exactly once; panes must not echo it in the body.
 interface Props {
   title: string
   description?: string
-  docsHref?: string
   /** Clears the corner back button (`ShellBack`), the way `pr-14` clears the close one. */
   leadingInset?: boolean
 }
@@ -54,19 +53,7 @@ const crumb = computed(() => {
         </template>
         <span v-else class="text-nc-content-gray-extreme truncate">{{ title }}</span>
       </div>
-      <div v-if="!crumb && (description || docsHref)" class="mt-0.5 text-sm leading-5 text-nc-content-gray-muted">
-        <span v-if="description">{{ description }}</span>
-        <a
-          v-if="docsHref"
-          :href="docsHref"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="nc-shell-docs inline-flex items-center gap-1 ml-1.5 !no-underline hover:underline"
-        >
-          {{ $t('title.docs') }}
-          <GeneralIcon icon="ncExternalLink" class="!h-3.5 !w-3.5" />
-        </a>
-      </div>
+      <div v-if="!crumb && description" class="mt-0.5 text-sm leading-5 text-nc-content-gray-muted">{{ description }}</div>
     </div>
 
     <!-- One zone for both the host's own actions and whatever a pane teleports in
@@ -81,12 +68,3 @@ const crumb = computed(() => {
     </div>
   </div>
 </template>
-
-<style lang="scss" scoped>
-// Inherits the description colour: a footnote, not a call to action.
-.nc-shell-docs,
-.nc-shell-docs:hover,
-.nc-shell-docs:focus {
-  color: inherit;
-}
-</style>

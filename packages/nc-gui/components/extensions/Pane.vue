@@ -241,13 +241,6 @@ onMounted(() => {
                 {{ $t('general.add') }} {{ $t('general.extension') }}
               </div>
             </NcButton>
-            <!-- Todo: add docs link  -->
-            <NcButton size="small" type="secondary">
-              <div class="flex items-center gap-1.5">
-                <GeneralIcon icon="externalLink" />
-                {{ $t('activity.goToDocs') }}
-              </div>
-            </NcButton>
 
             <img src="~assets/img/placeholder/extension.png" class="!w-full min-w-[250px] max-w-[432px] flex-none" />
           </div>

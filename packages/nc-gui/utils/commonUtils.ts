@@ -241,7 +241,7 @@ export const extractNameFromEmail = (email?: string) => {
  * fallback when a user has no `display_name` set.
  *
  * Takes the local part (before `@`), splits on common separators (`.`, `_`,
- * `-`, `+`), and capitalises each word — so `kalp.soni@nocodb.com` becomes
+ * `-`, `+`), and capitalises each word — so `kalp.soni@example.com` becomes
  * `Kalp Soni`. This keeps user names consistent across the app instead of
  * showing raw `firstname.lastname` or full email addresses.
  *
@@ -250,7 +250,7 @@ export const extractNameFromEmail = (email?: string) => {
  *
  * @example
  * ```typescript
- * formatUserNameFromEmail('kalp.soni@nocodb.com'); // => 'Kalp Soni'
+ * formatUserNameFromEmail('kalp.soni@example.com'); // => 'Kalp Soni'
  * ```
  */
 export const formatUserNameFromEmail = (email?: string) => {
@@ -308,7 +308,7 @@ export type ResolvedUserLike = Pick<UserType, 'id' | 'email' | 'display_name' | 
  *
  * Service users do not appear in `baseUsers`/collaborator lists, so audit and comment
  * feeds need this fallback to render `display_name` (e.g. "NocoDB Sync") instead of
- * the raw service email (e.g. "sync-service@nocodb.com").
+ * the raw service email (e.g. "sync-service@example.com").
  */
 export const findServiceUser = (idOrEmail?: string | null): ResolvedUserLike | undefined => {
   if (!idOrEmail) return undefined

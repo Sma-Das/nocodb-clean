@@ -17,17 +17,6 @@ const { createOAuthClient } = oauthStore
 
 const { getPossibleAttachmentSrc } = useAttachment()
 
-const supportedDocs: SupportedDocsType[] = [
-  {
-    title: 'SmaDB OAuth Client Setup',
-    href: 'https://docs.nocodb.com/nc-gui/oauth-client-setup',
-  },
-  {
-    title: 'SmaDB OAuth Client Setup',
-    href: 'https://docs.nocodb.com/nc-gui/oauth-client-setup',
-  },
-]
-
 const useForm = Form.useForm
 
 // Form data
@@ -332,10 +321,6 @@ function copyToClipboard(text: string, label: string) {
           </a-form>
         </div>
       </div>
-
-      <NcModalSupportedDocsSidebar>
-        <NcModalSupportedDocs :docs="supportedDocs"> </NcModalSupportedDocs>
-      </NcModalSupportedDocsSidebar>
     </div>
   </NcModal>
 </template>

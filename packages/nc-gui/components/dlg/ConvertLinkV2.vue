@@ -124,21 +124,9 @@ async function handleConvert() {
           class="flex-none h-5 w-5"
           :class="willAlterExternalSchema ? 'text-red-500' : 'text-orange-500'"
         />
-        <i18n-t
-          :keypath="willAlterExternalSchema ? 'msg.info.convertLinkExternalSchemaWarning' : 'msg.info.convertLinkV2Warning'"
-          tag="span"
-          class="text-sm text-nc-content-gray"
-        >
-          <template #learnMore>
-            <a
-              href="https://nocodb.com/docs/product-docs/fields/field-types/links-based/link-to-another-record#upgrade-from-links-v1"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-nc-content-brand underline"
-              >{{ $t('msg.learnMore') }}</a
-            >
-          </template>
-        </i18n-t>
+        <span class="text-sm text-nc-content-gray">
+          {{ $t(willAlterExternalSchema ? 'msg.info.convertLinkExternalSchemaWarning' : 'msg.info.convertLinkV2Warning') }}
+        </span>
       </div>
 
       <div class="flex flex-row gap-x-2 pt-2.5 justify-end border-t-1 border-nc-border-gray-medium">

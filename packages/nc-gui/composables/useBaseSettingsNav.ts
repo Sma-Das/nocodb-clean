@@ -19,7 +19,6 @@ export interface BaseSettingsPaneMeta {
   /** The header band's title. Often longer than the rail label ("Members" → "Base Members"). */
   title: string
   description?: string
-  docsHref?: string
 }
 
 /**
@@ -429,27 +428,22 @@ export function useBaseSettingsNav() {
       'collaborator': {
         title: t('labels.baseNav.membersPage'),
         description: t('labels.baseNav.desc.members'),
-        docsHref: 'https://nocodb.com/docs/product-docs/roles-and-permissions',
       },
       'permissions': {
         title: t('labels.baseNav.dataPermissionsNav'),
         description: t('labels.baseNav.desc.permissions'),
-        docsHref: 'https://nocodb.com/docs/product-docs/roles-and-permissions/table-permissions',
       },
       'data-source': {
         title: t('labels.baseNav.databases'),
         description: t('labels.baseNav.databasesInfo'),
-        docsHref: 'https://nocodb.com/docs/product-docs/data-sources/connect-to-data-source',
       },
       'syncs': {
         title: t('labels.baseNav.sync'),
         description: t('labels.baseNav.syncInfo'),
-        docsHref: 'https://nocodb.com/docs/product-docs/noco-sync',
       },
       'api-tokens': {
         title: t('labels.baseNav.apiTokens'),
         description: t('labels.baseNav.desc.apiTokens'),
-        docsHref: 'https://nocodb.com/docs/product-docs/account-settings/api-tokens#create-api-token',
       },
       'mcp': {
         title: t('labels.baseNav.mcpServer'),
@@ -459,7 +453,6 @@ export function useBaseSettingsNav() {
         // The pane is the gallery; the rail row stays plain "Integrations".
         title: t('labels.browseIntegrations'),
         description: t('labels.baseNav.desc.integrations'),
-        docsHref: 'https://nocodb.com/docs/product-docs/integrations',
       },
       'interface-members': {
         title: t('labels.baseNav.interfaceMembersPage'),
@@ -476,7 +469,6 @@ export function useBaseSettingsNav() {
       'record-trash': {
         title: t('labels.baseNav.trashRetention'),
         description: t('labels.baseNav.desc.trashRetention'),
-        docsHref: 'https://nocodb.com/docs/product-docs/bases/trash-settings',
       },
       'snapshots': {
         title: t('labels.baseNav.snapshots'),
@@ -493,7 +485,6 @@ export function useBaseSettingsNav() {
       'base-type': {
         title: t('general.baseType'),
         description: t('title.baseTypeTabSubtext'),
-        docsHref: 'https://nocodb.com/docs/product-docs/bases/private-base',
       },
       'data-display': {
         title: t('labels.dataDisplay'),

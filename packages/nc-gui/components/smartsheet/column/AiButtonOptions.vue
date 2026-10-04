@@ -336,15 +336,6 @@ onBeforeUnmount(() => {
             {{ fieldTitle }}
           </div>
 
-          <!-- Todo: add docs link -->
-          <NcButton size="small" type="secondary" @click.stop="navigateTo('/', { open: navigateToBlankTargetOpenOption })">
-            <template #icon>
-              <GeneralIcon icon="externalLink" class="text-nc-content-gray-subtle2" />
-            </template>
-
-            {{ $t('activity.goToDocs') }}
-          </NcButton>
-
           <NcButton
             v-if="!fromTableExplorer"
             size="small"

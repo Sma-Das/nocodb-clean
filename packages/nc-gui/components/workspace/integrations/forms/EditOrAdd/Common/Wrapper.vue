@@ -55,13 +55,6 @@ const isEditMode = computed(() => pageMode.value === IntegrationsPageMode.EDIT)
           <slot name="leftPanel" class="nc-edit-or-add-integration relative flex flex-col justify-center gap-2 w-full"> </slot>
         </div>
       </div>
-
-      <slot name="rightPanel" class="nc-edit-or-add-integration-right-panel">
-        <div v-if="!$slots.rightPanel" class="nc-edit-or-add-integration-right-panel">
-          <WorkspaceIntegrationsSupportedDocs />
-          <NcDivider />
-        </div>
-      </slot>
     </div>
   </div>
 </template>

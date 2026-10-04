@@ -371,13 +371,6 @@ watch(activeViewTab, (value) => {
 
                 <div class="text-sm font-normal text-nc-content-gray-subtle2">
                   {{ showActiveConnections ? $t('msg.manageConnectionsAndIntegrations') : $t('msg.connectIntegrations') }}
-                  <a
-                    class="nc-inline-doc-link"
-                    href="https://nocodb.com/docs/product-docs/integrations"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >{{ $t('msg.learnMore') }}</a
-                  >
                 </div>
               </div>
 
@@ -793,19 +786,5 @@ watch(activeViewTab, (value) => {
 .nc-browse-logo-request {
   @apply bg-transparent text-nc-content-gray-muted;
   border: 1px dashed var(--nc-border-gray-medium);
-}
-
-/* Reads as part of the sentence; shows as a link only on hover. */
-.nc-inline-doc-link {
-  color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  text-decoration-color: var(--nc-border-gray-dark);
-
-  &:hover,
-  &:focus-visible {
-    color: var(--nc-content-brand);
-    text-decoration-color: currentColor;
-  }
 }
 </style>

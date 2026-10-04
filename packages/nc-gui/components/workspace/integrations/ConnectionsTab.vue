@@ -429,14 +429,6 @@ const customRow = (record: Record<string, any>) => ({
 
       <div class="text-sm font-normal text-nc-content-gray-subtle2">
         {{ $t('msg.manageConnections') }}
-        <a
-          class="nc-inline-doc-link"
-          target="_blank"
-          href="https://nocodb.com/docs/product-docs/integrations/actions-on-connection"
-          rel="noopener noreferrer"
-        >
-          {{ $t('msg.learnMore') }}
-        </a>
       </div>
     </div>
 
@@ -812,14 +804,6 @@ const customRow = (record: Record<string, any>) => ({
           <div class="text-sm text-nc-content-inverted-secondary">
             {{ successConfirmModal.description }}
           </div>
-
-          <a
-            target="_blank"
-            href="https://nocodb.com/docs/product-docs/data-sources/connect-to-data-source"
-            rel="noopener noreferrer"
-          >
-            {{ $t('msg.learnMore') }}
-          </a>
         </div>
       </div>
     </NcModal>
@@ -860,19 +844,5 @@ const customRow = (record: Record<string, any>) => ({
 
 .nc-new-integration-type-wrapper {
   @apply flex flex-col gap-3;
-}
-
-/* Reads as part of the sentence; shows as a link only on hover. */
-.nc-inline-doc-link {
-  color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  text-decoration-color: var(--nc-border-gray-dark);
-
-  &:hover,
-  &:focus-visible {
-    color: var(--nc-content-brand);
-    text-decoration-color: currentColor;
-  }
 }
 </style>

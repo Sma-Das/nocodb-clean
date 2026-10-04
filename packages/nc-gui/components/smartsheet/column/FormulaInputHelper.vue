@@ -111,7 +111,6 @@ const suggestionsList = computed(() => {
         description: formulas[fn].description,
         syntax: formulas[fn].syntax,
         examples: formulas[fn].examples,
-        docsUrl: formulas[fn].docsUrl,
         unsupported: unsupportedFnList.includes(fn),
       })),
       ...supportedColumns.value
@@ -752,7 +751,7 @@ const validationErrorDisplay = computed(() => {
         </NcButton>
       </div>
     </div>
-    <div class="flex flex-col max-h-120 nc-scrollbar-thin pr-2">
+    <div class="flex flex-col max-h-120 nc-scrollbar-thin pr-2 mb-3">
       <div class="flex mt-3 text-[13px] text-nc-content-gray-subtle2 leading-6">{{ suggestionPreviewed.description }}</div>
 
       <div class="text-nc-content-gray-muted uppercase text-[11px] mt-3 mb-2">{{ $t('labels.syntax') }}</div>
@@ -773,14 +772,6 @@ const validationErrorDisplay = computed(() => {
       >
         {{ example }}
       </div>
-    </div>
-    <div class="flex flex-row mt-3 mb-3 justify-end pr-3">
-      <a v-if="suggestionPreviewed.docsUrl" target="_blank" rel="noopener noreferrer" :href="suggestionPreviewed.docsUrl">
-        <NcButton type="text" size="small" class="!text-nc-content-gray-disabled !hover:text-nc-content-gray-subtle !text-xs"
-          >{{ $t('labels.viewInDocs') }}
-          <GeneralIcon icon="openInNew" class="ml-1" />
-        </NcButton>
-      </a>
     </div>
   </div>
   <a-form-item :label="label" required v-bind="validationErrorDisplay">

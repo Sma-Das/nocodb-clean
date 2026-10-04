@@ -2617,14 +2617,6 @@ const { message: templatedMessage } = useTemplatedMessage(
                               </a-form-item>
                               <div class="text-small leading-[18px] text-nc-content-gray-disabled pl-3">
                                 {{ $t('msg.info.useRecordIdInRedirectUrl') }}
-                                <a
-                                  href="https://nocodb.com/docs/product-docs/views/view-types/form#redirect-url"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  class="!no-underline !hover:underline"
-                                >
-                                  {{ $t('msg.learnMore') }}
-                                </a>
                               </div>
                             </div>
                           </div>

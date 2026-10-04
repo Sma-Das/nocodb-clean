@@ -783,10 +783,6 @@ const isIntgrationDisabled = (integration: IntegrationType = {}) => {
             </div>
           </general-overlay>
         </div>
-        <div class="nc-add-source-right-panel">
-          <DashboardSettingsDataSourcesSupportedDocs />
-          <NcDivider />
-        </div>
       </div>
     </div>
   </NcModal>
@@ -795,9 +791,6 @@ const isIntgrationDisabled = (integration: IntegrationType = {}) => {
 <style lang="scss" scoped>
 .nc-add-source-left-panel {
   @apply p-6 flex-1 flex justify-center;
-}
-.nc-add-source-right-panel {
-  @apply p-4 w-[320px] border-l-1 border-nc-border-gray-medium flex flex-col gap-4 bg-nc-bg-gray-extralight rounded-br-2xl;
 }
 :deep(.ant-collapse-header) {
   @apply !-mt-4 !p-0 flex items-center !cursor-default children:first:flex;

@@ -21,7 +21,6 @@ const configs = computed(() => [
     key: 'email',
     description:
       'Configure your preferred email service to manage how your application sends alerts, notifications and other essential emails.',
-    docsLink: 'https://nocodb.com/docs/product-docs/account-settings/oss-specific-details#configure-email',
     buttonClick: () => {
       navigateToSetup('email', emailConfigured.value?.title)
     },
@@ -34,7 +33,6 @@ const configs = computed(() => [
     title: t('labels.configLabel', { label: t('labels.storage') }),
     key: 'storage',
     description: "Set up and manage your preferred storage solution for securely handling and storing your application's data.",
-    docsLink: 'https://nocodb.com/docs/product-docs/account-settings/oss-specific-details#configure-storage',
     buttonClick: () => {
       navigateToSetup('storage', storageConfigured.value?.title)
     },
@@ -94,21 +92,7 @@ onMounted(async () => {
           </div>
           <div class="text-nc-content-gray-subtle2 text-sm">{{ config.description }}</div>
 
-          <div class="flex justify-between mt-4">
-            <NcButton
-              size="small"
-              type="text"
-              :href="config.docsLink"
-              target="_blank"
-              class="!flex items-center !no-underline"
-              rel="noopener noreferer"
-              @click.stop
-            >
-              <div class="flex gap-2 items-center">
-                {{ $t('activity.goToDocs') }}
-                <GeneralIcon icon="ncExternalLink" />
-              </div>
-            </NcButton>
+          <div class="flex justify-end mt-4">
             <NcButton v-if="config.configured" size="small" type="text" @click.stop="config.buttonClick">
               <div class="flex gap-2 items-center">
                 <GeneralIcon icon="ncEdit3" />

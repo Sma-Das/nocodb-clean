@@ -351,16 +351,6 @@ watch(
                           <GeneralIcon icon="info" class="text-nc-content-gray-muted h-4" />
                         </NcTooltip>
                       </div>
-
-                      <a
-                        v-if="field.docsLink"
-                        :href="field.docsLink"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="text-xs justify-self-end no-underline hover:underline"
-                      >
-                        {{ $t('title.docs') }}
-                      </a>
                     </div>
                   </template>
                   <template v-if="field.type === FormBuilderInputType.Input">

@@ -28,16 +28,6 @@ export const getSourceTooltip = (source: SourceType) => {
         'Both data and schema editing are disabled.',
         h('br'),
         'This configuration is ideal for read-only use cases of the database.',
-        h('br'),
-        h(
-          'a',
-          {
-            className: '!text-current',
-            href: 'https://nocodb.com/docs/product-docs/data-sources/connect-to-data-source#configuring-permissions',
-            target: '_blank',
-          },
-          'Learn more',
-        ),
       ],
     )
   }
@@ -53,16 +43,6 @@ export const getSourceTooltip = (source: SourceType) => {
         'Data editing is allowed, while schema editing is forbidden.',
         h('br'),
         'This configuration is ideal to enable trusted users to directly change the database content.',
-        h('br'),
-        h(
-          'a',
-          {
-            className: '!text-current',
-            href: 'https://nocodb.com/docs/product-docs/data-sources/connect-to-data-source#configuring-permissions',
-            target: '_blank',
-          },
-          'Learn more',
-        ),
       ],
     )
   }
@@ -76,17 +56,7 @@ export const getSourceTooltip = (source: SourceType) => {
       h('br'),
       'Both data and schema editing are enabled.',
       h('br'),
-      'We highly recommend ',
-      h(
-        'a',
-        {
-          className: '!text-current',
-          href: 'https://nocodb.com/docs/product-docs/data-sources/connect-to-data-source#configuring-permissions',
-          target: '_blank',
-        },
-        'disabling schema editing',
-      ),
-      ' to maintain data integrity and avoid potential issues.',
+      'We highly recommend disabling schema editing to maintain data integrity and avoid potential issues.',
     ],
   )
 }

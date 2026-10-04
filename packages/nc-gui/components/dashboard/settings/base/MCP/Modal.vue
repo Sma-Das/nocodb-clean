@@ -99,10 +99,6 @@ const closeModal = () => {
           />
         </div>
       </div>
-
-      <NcModalSupportedDocsSidebar>
-        <NcModalSupportedDocs :docs="MCP_SUPPORT_DOCS" />
-      </NcModalSupportedDocsSidebar>
     </div>
   </NcModal>
 </template>
