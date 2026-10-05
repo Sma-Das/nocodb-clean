@@ -2934,7 +2934,7 @@
     "excel": "Excel",
     "icsCalendar": "iCalendar (.ics)",
     "microsoftExcel": "Microsoft Excel",
-    "email": "E-mail",
+    "email": "Email",
     "storage": "Storage",
     "models": "Models",
     "syncState": "Sync state",
@@ -5067,7 +5067,7 @@
     "settings": "Settings",
     "validations": "Validations",
     "editConnJson": "Edit connection JSON",
-    "sendEmail": "SEND EMAIL",
+    "sendEmail": "Send reset link",
     "addFilterGroup": "Add filter group",
     "linkRecord": "Link record",
     "newRecord": "New record",
@@ -6063,18 +6063,18 @@
       "addUser": "Add new user",
       "metaNoChange": "No change identified",
       "passwordRecovery": {
-        "message_1": "Please provide the email address you used when you signed up.",
-        "message_2": "We will send you an email with a link to reset your password.",
-        "success": "Please check your email to reset the password"
+        "message_1": "Enter the email you signed up with.",
+        "message_2": "We'll send you a link to reset your password.",
+        "success": "Check your inbox for a reset link."
       },
       "ssoManagedByOrg": "Sign-in is managed by your organization.",
       "signUp": {
-        "superAdmin": "You will be the 'Super Admin'",
-        "alreadyHaveAccount": "Already have an account ?",
+        "superAdmin": "This first account becomes the super admin.",
+        "alreadyHaveAccount": "Already have an account?",
         "workEmail": "Enter your work email",
         "enterPassword": "Enter your password",
-        "forgotPassword": "Forgot your password ?",
-        "dontHaveAccount": "Don't have an account ?"
+        "forgotPassword": "Forgot password?",
+        "dontHaveAccount": "Don't have an account?"
       },
       "tablesMetadataInSync": "Tables metadata is in Sync",
       "enterTableName": "Enter table name",

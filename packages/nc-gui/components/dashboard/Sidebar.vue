@@ -64,6 +64,11 @@ onUnmounted(() => {
 .nc-sidebar-bottom-section {
   @apply flex-none overflow-auto p-1 empty:hidden;
 
+  // Slots whose features are off render hidden stubs; don't draw an empty bordered strip.
+  &:not(:has(> :not(.hidden))) {
+    @apply hidden;
+  }
+
   &:not(:has(.nc-maintenance-sidebar-banner)) {
     @apply border-t-1;
   }

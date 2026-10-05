@@ -225,7 +225,7 @@ const logout = async () => {
 <style lang="scss">
 .nc-user-sidebar {
   .tabs-menu .active {
-    @apply !bg-nc-bg-brand !text-nc-content-brand-disabled !hover:(bg-nc-bg-brand text-nc-content-brand-disabled) dark:(!bg-nc-bg-gray-medium !hover:bg-nc-bg-gray-medium) font-semibold;
+    @apply !bg-nc-bg-gray-medium !text-nc-content-gray-emphasis !hover:(bg-nc-bg-gray-medium text-nc-content-gray-emphasis) font-semibold;
   }
 }
 </style>

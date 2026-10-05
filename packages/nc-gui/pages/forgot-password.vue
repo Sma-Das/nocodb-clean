@@ -68,20 +68,19 @@ function navigateSignIn() {
     <NuxtLayout>
       <div class="md:bg-nc-bg-gray-extralight forgot-password h-full min-h-[600px] flex flex-col justify-center items-center">
         <div
-          class="bg-nc-bg-default md:mt-[60px] relative flex flex-col justify-center gap-2 w-full max-w-[440px] mx-auto p-8 md:(rounded-xl border-1 border-nc-border-gray-medium)"
+          class="bg-nc-bg-default flex flex-col justify-center gap-2 w-full max-w-[440px] mx-auto p-8 md:(rounded-xl border-1 border-nc-border-gray-medium)"
         >
-          <GeneralNocoIcon />
+          <GeneralNocoIcon :size="40" />
 
           <div class="self-center flex flex-col justify-center items-center text-center gap-2">
-            <h1 class="text-2xl font-semibold tracking-tight my-4 w-full">{{ $t('title.resetPassword') }}</h1>
+            <h1 class="text-xl font-semibold tracking-tight mt-2 mb-2 w-full">{{ $t('title.resetPassword') }}</h1>
 
-            <template v-if="!success">
-              <div class="prose-sm">{{ $t('msg.info.passwordRecovery.message_1') }}</div>
-              <div class="prose-sm mb-4">{{ $t('msg.info.passwordRecovery.message_2') }}</div>
-            </template>
+            <p v-if="!success" class="mb-4 text-sm text-nc-content-gray-subtle">
+              {{ $t('msg.info.passwordRecovery.message_1') }} {{ $t('msg.info.passwordRecovery.message_2') }}
+            </p>
 
             <template v-else>
-              <div class="prose-sm text-success flex items-center leading-8 gap-2">
+              <div class="text-sm text-success flex items-center leading-8 gap-2">
                 {{ $t('msg.info.passwordRecovery.success') }} <ClaritySuccessLine />
               </div>
 
@@ -89,11 +88,14 @@ function navigateSignIn() {
             </template>
           </div>
 
-          <a-form ref="formValidator" layout="vertical" :model="form" no-style @finish="resetPassword">
+          <a-form v-if="!success" ref="formValidator" layout="vertical" :model="form" no-style @finish="resetPassword">
             <Transition name="layout">
-              <div v-if="error" class="self-center mb-4 bg-red-500 text-white rounded-lg w-3/4 mx-auto p-1">
-                <div class="flex items-center gap-2 justify-center">
-                  <MaterialSymbolsWarning />
+              <div
+                v-if="error"
+                class="mb-4 rounded-lg border-1 border-nc-border-red bg-nc-bg-red-light px-3 py-2 text-sm text-nc-content-red-dark"
+              >
+                <div class="flex items-start gap-2">
+                  <MaterialSymbolsWarning class="flex-none mt-0.5" />
                   <div class="break-words">{{ error }}</div>
                 </div>
               </div>
@@ -108,15 +110,12 @@ function navigateSignIn() {
               />
             </a-form-item>
 
-            <div class="self-center flex flex-col gap-4 items-center justify-center w-full">
-              <button class="scaling-btn bg-opacity-100" type="submit">
-                <span class="flex items-center gap-2">
-                  <component :is="iconMap.signin" />
-                  {{ $t('activity.sendEmail') }}
-                </span>
+            <div class="flex flex-col gap-3 items-stretch mt-2">
+              <button class="scaling-btn w-full" type="submit">
+                {{ $t('activity.sendEmail') }}
               </button>
 
-              <div class="text-end prose-sm">
+              <div class="text-center text-sm text-nc-content-gray-subtle">
                 {{ $t('msg.info.signUp.alreadyHaveAccount') }}
                 <nuxt-link @click="navigateSignIn">{{ $t('general.signIn') }}</nuxt-link>
               </div>

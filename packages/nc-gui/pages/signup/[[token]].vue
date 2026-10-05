@@ -101,28 +101,28 @@ onMounted(async () => {
     <NuxtLayout>
       <div class="md:bg-nc-bg-gray-extralight signup h-full min-h-[600px] flex flex-col justify-center items-center">
         <div
-          class="bg-nc-bg-default md:mt-[60px] relative flex flex-col justify-center gap-2 w-full max-w-[440px] mx-auto p-8 md:(rounded-xl border-1 border-nc-border-gray-medium)"
+          class="bg-nc-bg-default flex flex-col justify-center gap-2 w-full max-w-[440px] mx-auto p-8 md:(rounded-xl border-1 border-nc-border-gray-medium)"
         >
-          <GeneralNocoIcon />
+          <GeneralNocoIcon :size="40" />
 
-          <h1 class="text-2xl font-semibold tracking-tight self-center my-4">
+          <h1 class="text-xl font-semibold tracking-tight self-center mt-2 mb-4">
             {{ $t('general.signUp') }}
           </h1>
 
-          <h2 v-if="appInfo.firstUser" class="prose dark:prose-invert !text-primary font-semibold self-center">
+          <p v-if="appInfo.firstUser" class="-mt-3 mb-4 self-center text-center text-sm text-nc-content-gray-subtle">
             {{ $t('msg.info.signUp.superAdmin') }}
-          </h2>
+          </p>
 
           <a-form ref="formValidator" :model="form" layout="vertical" no-style @finish="signUp">
             <template v-if="!appInfo.disableEmailAuth">
               <Transition name="layout">
                 <div
                   v-if="error"
-                  class="self-center mb-4 bg-red-500 text-white rounded-lg w-3/4 mx-auto p-1"
+                  class="mb-4 rounded-lg border-1 border-nc-border-red bg-nc-bg-red-light px-3 py-2 text-sm text-nc-content-red-dark"
                   data-testid="nc-signup-error"
                 >
-                  <div class="flex items-center gap-2 justify-center">
-                    <MaterialSymbolsWarning />
+                  <div class="flex items-start gap-2">
+                    <MaterialSymbolsWarning class="flex-none mt-0.5" />
                     <div class="break-words">{{ error }}</div>
                   </div>
                 </div>
@@ -150,35 +150,28 @@ onMounted(async () => {
                 />
               </a-form-item>
             </template>
-            <div class="self-center flex flex-col flex-wrap gap-4 items-center mt-4">
+            <div class="flex flex-col gap-3 items-stretch mt-2">
               <template v-if="!appInfo.disableEmailAuth">
-                <button class="scaling-btn bg-opacity-100" type="submit">
-                  <span class="flex items-center gap-2">
-                    <MaterialSymbolsRocketLaunchOutline />
-
-                    {{ $t('general.signUp') }}
-                  </span>
+                <button class="scaling-btn w-full" type="submit">
+                  {{ $t('general.signUp') }}
                 </button>
               </template>
               <a
                 v-if="appInfo.googleAuthEnabled"
                 :href="`${appInfo.ncSiteUrl}/auth/google`"
-                class="scaling-btn secondary !no-underline"
+                class="scaling-btn secondary w-full !no-underline"
               >
-                <span class="flex items-center gap-2">
+                <span class="flex items-center justify-center gap-2">
                   <LogosGoogleGmail />
 
                   {{ $t('labels.signUpWithProvider', { provider: 'Google' }) }}
                 </span>
               </a>
 
-              <div
-                v-if="appInfo.oidcAuthEnabled"
-                class="self-center flex flex-col flex-wrap gap-4 items-center mt-4 justify-center"
-              >
-                <a :href="`${appInfo.ncSiteUrl}/auth/oidc`" class="!text-primary !no-underline">
-                  <button type="button" class="scaling-btn bg-opacity-100">
-                    <span class="flex items-center gap-2">
+              <div v-if="appInfo.oidcAuthEnabled" class="flex flex-col">
+                <a :href="`${appInfo.ncSiteUrl}/auth/oidc`" class="!no-underline">
+                  <button type="button" class="scaling-btn w-full">
+                    <span class="flex items-center justify-center gap-2">
                       <MdiLogin />
                       <template v-if="!appInfo.disableEmailAuth">
                         {{ $t('labels.signUpWithProvider', { provider: appInfo.oidcProviderName || 'OpenID Connect' }) }}
@@ -191,7 +184,7 @@ onMounted(async () => {
                 </a>
               </div>
 
-              <div class="text-end prose-sm">
+              <div class="text-center text-sm text-nc-content-gray-subtle">
                 {{ $t('msg.info.signUp.alreadyHaveAccount') }}
 
                 <nuxt-link @click="navigateSignIn">{{ $t('general.signIn') }}</nuxt-link>

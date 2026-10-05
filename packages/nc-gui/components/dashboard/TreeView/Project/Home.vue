@@ -63,7 +63,7 @@ const hasTableCreatePermission = computed(() => {
               data-testid="nc-home-create-new-btn"
             >
               <div class="flex items-center gap-2">
-                <GeneralIcon icon="ncPlusCircle" class="!text-nc-content-brand" />
+                <GeneralIcon icon="ncPlusCircle" />
 
                 <div>{{ $t('labels.createNew') }}</div>
               </div>
@@ -110,7 +110,7 @@ const hasTableCreatePermission = computed(() => {
 }
 
 :deep(.ant-collapse-header) {
-  @apply !mx-0 !pl-2 h-7 !xs:(pl-2 h-[3rem]) !pr-0.5 !py-0 hover:bg-nc-bg-gray-medium xs:(hover:bg-nc-bg-brand) !rounded-md;
+  @apply !mx-0 !pl-2 h-7 !xs:(pl-2 h-[3rem]) !pr-0.5 !py-0 hover:bg-nc-bg-gray-medium !rounded-md;
 
   .ant-collapse-arrow {
     @apply !right-1 !xs:(flex-none border-1 border-nc-border-gray-medium w-6.5 h-6.5 mr-1);
@@ -152,10 +152,10 @@ const hasTableCreatePermission = computed(() => {
 }
 
 :deep(.nc-home-create-new-btn.nc-button) {
-  @apply hover:bg-nc-bg-brand !pr-1.5;
+  @apply hover:bg-nc-bg-gray-medium !pr-1.5;
 
   &.active {
-    @apply !bg-nc-bg-brand;
+    @apply !bg-nc-bg-gray-medium;
   }
 }
 </style>

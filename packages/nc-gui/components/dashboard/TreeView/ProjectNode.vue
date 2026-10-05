@@ -487,8 +487,7 @@ defineExpose({
               'flex-grow w-full': isProjectHeader && editMode,
               'bg-nc-bg-gray-medium': isProjectHeader && isProjectNodeContextMenuOpen,
               'h-7 pr-1 pl-2.5 xs:(pl-0) rtl:(pr-2.5 pl-1) rtl:xs:(pr-0) flex-grow w-full': !isProjectHeader,
-              'bg-primary-selected dark:bg-nc-bg-gray-medium active':
-                activeProjectId === base.id && !isMobileMode && !isProjectHeader,
+              'bg-nc-bg-gray-medium active': activeProjectId === base.id && !isMobileMode && !isProjectHeader,
               'hover:bg-nc-bg-gray-medium': !(activeProjectId === base.id) && !isProjectHeader,
             }"
             :data-id="base.id"
@@ -569,7 +568,7 @@ defineExpose({
               class="capitalize !bg-transparent !flex-1 mr-4 !rounded-md !pr-1.5 !h-6 animate-sidebar-node-input-padding"
               :class="
                 activeProjectId === base.id && baseViewOpen && !isProjectHeader
-                  ? '!text-nc-content-brand-disabled !font-semibold'
+                  ? '!text-nc-content-gray-emphasis !font-semibold'
                   : '!text-nc-content-gray-subtle'
               "
               :style="{

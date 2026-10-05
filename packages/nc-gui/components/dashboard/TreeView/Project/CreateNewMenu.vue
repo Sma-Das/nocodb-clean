@@ -45,12 +45,14 @@ const showBaseOption = (source: SourceType) => {
             :source="source"
             variant="large"
             submenu-class="nc-sub-menu-item-icon-only"
-            title-class="!p-0 hover:bg-nc-bg-brand dark:hover:bg-nc-bg-gray-medium group"
+            title-class="!p-0 hover:bg-nc-bg-gray-medium group"
             show-noco-db-import
             :popup-offset="[8, -2]"
           >
             <template #title>
-              <div class="w-8 h-8 flex items-center justify-center rounded-lg cursor-pointer group-hover:text-nc-content-brand">
+              <div
+                class="w-8 h-8 flex items-center justify-center rounded-lg cursor-pointer group-hover:text-nc-content-gray-emphasis"
+              >
                 <GeneralIcon icon="ncChevronRight" />
               </div>
             </template>

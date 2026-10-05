@@ -22,7 +22,7 @@ const brandIcon = computed(() => {
 </script>
 
 <template>
-  <div :style="{ left: `calc(50% - ${size / 2}px)`, top: `-${size / 2}px` }" class="absolute">
+  <div :style="{ width: `${size}px`, height: `${size}px` }" class="flex-none self-center">
     <img v-if="brandIcon" :width="size" :height="size" :alt="productName" :src="brandIcon" class="object-contain" />
     <img v-else-if="isDark" :width="size" :height="size" :alt="productName" src="~/assets/img/icons/256x256-trans.png" />
     <img v-else :width="size" :height="size" :alt="productName" src="~/assets/img/icons/256x256.png" />
