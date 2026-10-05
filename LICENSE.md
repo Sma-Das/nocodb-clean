@@ -1,3 +1,42 @@
+# SmaDB licensing scope
+
+SmaDB is a modified distribution of NocoDB maintained by Sma-Das. Repository
+independence does not transfer copyright or grant permission to relicense
+inherited code.
+
+## Inherited software
+
+The NocoDB licensing notice and Sustainable Use License are reproduced unchanged
+below. They continue to govern inherited NocoDB code and its use in this modified
+distribution. Package-specific license files and third-party notices also remain
+applicable. The application as a whole is not licensed under Apache 2.0.
+
+## Original SmaDB work
+
+Only original SmaDB work explicitly marked
+`SPDX-License-Identifier: Apache-2.0` is offered under the unmodified Apache
+License, Version 2.0, reproduced in [LICENSE-APACHE-2.0.txt](LICENSE-APACHE-2.0.txt).
+At the time this notice was added, this applies to the original logo artwork in:
+
+- `packages/nc-gui/assets/img/brand/smadb.svg`
+- `packages/nc-gui/assets/img/brand/smadb-dark.svg`
+
+This grant covers only copyright held by the SmaDB work's licensor. It does not
+relicense NocoDB code, third-party components, or modifications to inherited files.
+Unmarked files do not acquire an Apache 2.0 license through this notice. A future
+file may be marked Apache-2.0 only when its copyright holder has authority to
+license all of that file's contents under those terms.
+
+Redistribution of Apache-licensed work must comply with Apache 2.0 Section 4,
+including retaining applicable attribution notices from [NOTICE](NOTICE). Apache
+2.0 does not require a visible "Powered by SmaDB" label and does not grant rights
+to use SmaDB names or logos as trademarks except as described in Section 6.
+
+The Apache 2.0 permissions for explicitly licensed work do not override the
+Sustainable Use License restrictions applicable to the combined application.
+
+---
+
 # License
 
 **Updated on: January 29, 2026**

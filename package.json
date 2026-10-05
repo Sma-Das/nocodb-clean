@@ -1,20 +1,20 @@
 {
-  "name": "nocodb-root",
-  "description": "NocoDB Root",
+  "name": "smadb-root",
+  "description": "SmaDB workspace",
   "private": true,
   "author": {
     "name": "NocoDB Inc",
     "url": "https://nocodb.com/"
   },
-  "homepage": "https://github.com/nocodb/nocodb",
+  "homepage": "https://github.com/Sma-Das/nocodb-clean",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nocodb/nocodb.git"
+    "url": "https://github.com/Sma-Das/nocodb-clean.git"
   },
   "bugs": {
-    "url": "https://github.com/nocodb/nocodb/issues"
+    "url": "https://github.com/Sma-Das/nocodb-clean/issues"
   },
-  "license": "Sustainable Use License",
+  "license": "SEE LICENSE IN LICENSE.md",
   "devDependencies": {
     "@neon/config": "^1.7.3",
     "@neon/env": "^1.4.4",

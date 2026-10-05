@@ -74,7 +74,7 @@ COPY --from=backend /production/package.json ./
 COPY --from=backend /build/packages/nocodb/dist/ ./
 COPY --from=frontend /build/packages/nc-gui/.output/public/ nc-gui/
 COPY packages/nocodb/docker/healthcheck.cjs ./
-COPY LICENSE.md ./
+COPY LICENSE.md LICENSE-APACHE-2.0.txt NOTICE ./
 RUN mkdir -p data && chown node:node data
 USER node
 EXPOSE 8080

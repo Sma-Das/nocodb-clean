@@ -1,0 +1,22 @@
+SmaDB
+https://github.com/Sma-Das/nocodb-clean
+
+SmaDB is maintained by Sma-Das and includes modifications to NocoDB.
+It is not an official NocoDB distribution.
+
+Upstream software: NocoDB
+https://github.com/nocodb/nocodb
+Original NocoDB code and contributions remain the work of their respective
+copyright holders and remain subject to their original licensing terms.
+See LICENSE.md and applicable package-specific license files.
+
+Original SmaDB logo artwork in packages/nc-gui/assets/img/brand/smadb.svg
+and packages/nc-gui/assets/img/brand/smadb-dark.svg:
+Copyright 2026 Sma Das
+Licensed under the Apache License, Version 2.0.
+See LICENSE-APACHE-2.0.txt.
+
+Third-party components retain their respective licenses and notices.
+
+This notice identifies provenance and modifications. It does not change any
+license, relicense inherited code, or imply endorsement by upstream authors.

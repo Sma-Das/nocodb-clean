@@ -9,7 +9,7 @@ export default ({
 <head>
     <title>NocoDB : API Docs</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
-    <link rel="shortcut icon" href="${ncSiteUrl}/favicon.ico" />
+    <link rel="shortcut icon" href="${ncSiteUrl}/favicon.ico?v=smadb" />
     <link rel="stylesheet" href="${ncSiteUrl}/css/swagger-ui.css"/>
     <script src="${ncSiteUrl}/js/swagger-ui-bundle.js"></script>
 </head>
