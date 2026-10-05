@@ -109,7 +109,7 @@ const onCreateBaseClick = () => {
               @click="tableCreateReason ? undefined : openTableCreateDialog()"
             >
               <template #icon>
-                <GeneralIcon icon="addOutlineBox" class="!h-8 !w-8 !text-nc-content-brand" />
+                <GeneralIcon icon="addOutlineBox" class="!h-6 !w-6" />
               </template>
             </ProjectActionItem>
           </NcTooltip>
@@ -123,7 +123,7 @@ const onCreateBaseClick = () => {
             @click="isImportModalOpen = true"
           >
             <template #icon>
-              <GeneralIcon icon="download" class="!h-7.5 !w-7.5 !text-nc-content-orange-dark" />
+              <GeneralIcon icon="download" class="!h-6 !w-6" />
             </template>
           </ProjectActionItem>
 
@@ -153,7 +153,7 @@ const onCreateBaseClick = () => {
               @click="onCreateBaseClick"
             >
               <template #icon>
-                <GeneralIcon icon="server1" class="!h-7 !w-7 !text-nc-content-green-dark" />
+                <GeneralIcon icon="server1" class="!h-6 !w-6" />
               </template>
               <template #label>
                 <NcTooltip

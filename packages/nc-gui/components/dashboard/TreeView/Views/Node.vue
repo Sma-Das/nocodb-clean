@@ -403,7 +403,7 @@ watch(isDropdownOpen, async () => {
           v-model:value="_title"
           class="!bg-transparent !pr-1.5 !flex-1 mr-4 !rounded-md !h-6 animate-sidebar-node-input-padding"
           :class="{
-            '!font-medium !text-nc-content-brand-disabled': activeView?.id === vModel.id,
+            '!font-medium !text-nc-content-gray-emphasis': activeView?.id === vModel.id,
           }"
           :style="{
             fontWeight: 'inherit',
@@ -424,7 +424,7 @@ watch(isDropdownOpen, async () => {
           <div
             data-testid="sidebar-view-title"
             :class="{
-              'font-medium text-nc-content-brand-disabled': activeView?.id === vModel.id,
+              'font-medium text-nc-content-gray-emphasis': activeView?.id === vModel.id,
             }"
             :style="{ wordBreak: 'keep-all', whiteSpace: 'nowrap', display: 'inline' }"
             @dblclick.stop="onDblClick"

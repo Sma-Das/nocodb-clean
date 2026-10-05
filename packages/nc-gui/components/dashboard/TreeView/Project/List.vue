@@ -355,6 +355,6 @@ watch(
 }
 
 :deep(.nc-sidebar-create-base-btn.nc-button.ant-btn-text.theme-default) {
-  @apply hover:bg-nc-bg-brand pl-[15px];
+  @apply hover:bg-nc-bg-gray-medium pl-[15px];
 }
 </style>

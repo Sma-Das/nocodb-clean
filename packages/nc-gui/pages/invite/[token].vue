@@ -197,9 +197,7 @@ onMounted(() => {
     <NuxtLayout>
       <div class="nc-invite-page flex items-center justify-center min-h-full py-16 bg-nc-bg-default px-6">
         <div class="w-full max-w-100 flex flex-col items-center gap-6">
-          <div class="relative h-12 w-12 flex-none">
-            <GeneralNocoIcon :size="40" />
-          </div>
+          <GeneralNocoIcon :size="40" />
 
           <div v-if="isLoading || isRedirecting" class="flex flex-col items-center gap-3 w-full">
             <span class="h-5 w-48 rounded bg-nc-bg-gray-light" />
