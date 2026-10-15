@@ -261,6 +261,7 @@ export const permissionScopes = {
     'nestedListCopyPasteOrDeleteAll',
     'baseUserList',
     'sourceCreate',
+    'sourceAnalytics',
     'columnAdd',
 
     // Invite links -- editor+, the same floor as inviting by email (product
@@ -1095,6 +1096,7 @@ const permissionDescriptions: Record<string, string> = {
   createBase: 'create a new base',
   baseDelete: 'delete a base',
   sourceCreate: 'create a new source',
+  sourceAnalytics: 'view database analytics',
 
   userInvite: 'invite a user',
 

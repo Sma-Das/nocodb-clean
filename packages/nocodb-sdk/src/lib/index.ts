@@ -148,3 +148,4 @@ export * from '~/lib/previewAs';
 export * from '~/lib/agent';
 export * from '~/lib/skill';
 export * from '~/lib/inviteLink';
+export * from '~/lib/sourceAnalytics';

@@ -241,6 +241,8 @@ watch(
 
           <DashboardSettingsDataSources v-else-if="tab === 'data-source' && baseId" :base-id="baseId" class="max-h-full" />
 
+          <LazyDashboardSettingsSourceAnalytics v-else-if="tab === 'source-analytics' && baseId" :key="baseId" :base-id="baseId" />
+
           <DashboardSettingsBaseIntegrations v-else-if="tab === 'integrations' && baseId" :base-id="baseId" />
 
           <template v-else-if="tab === 'syncs' && baseId">
