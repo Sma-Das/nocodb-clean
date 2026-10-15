@@ -10,6 +10,7 @@ export const baseSettingsTabToSlug: Record<string, string> = {
   'collaborator': 'members',
   'interface-members': 'interface-members',
   'data-source': 'data-sources',
+  'source-analytics': 'database-analytics',
   'permissions': 'permissions',
   'docs-permissions': 'docs-permissions',
   'syncs': 'syncs',

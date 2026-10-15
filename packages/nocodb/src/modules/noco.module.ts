@@ -65,6 +65,8 @@ import { PublicMetasController } from '~/controllers/public-metas.controller';
 import { SharedBasesController } from '~/controllers/shared-bases.controller';
 import { SortsController } from '~/controllers/sorts.controller';
 import { SourcesController } from '~/controllers/sources.controller';
+import { SourceAnalyticsController } from '~/controllers/source-analytics.controller';
+import { SourceAnalyticsService } from '~/services/source-analytics.service';
 import { SyncController } from '~/controllers/sync.controller';
 import { TablesController } from '~/controllers/tables.controller';
 import { UtilsController } from '~/controllers/utils.controller';
@@ -209,6 +211,7 @@ export const nocoModuleMetadata = {
             ? [AttachmentsSecureController]
             : [AttachmentsController]),
           SourcesController,
+          SourceAnalyticsController,
           CachesController,
           CalendarsController,
           ColumnsController,
@@ -291,6 +294,7 @@ export const nocoModuleMetadata = {
     AttachmentsService,
     AuditsService,
     SourcesService,
+    SourceAnalyticsService,
     CachesService,
     CalendarsService,
     DataImportService,

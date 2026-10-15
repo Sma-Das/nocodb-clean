@@ -340,6 +340,7 @@ type ProjectPageType =
   | 'collaborator'
   | 'interface-members'
   | 'data-source'
+  | 'source-analytics'
   | 'base-settings'
   | 'syncs'
   | 'integrations'

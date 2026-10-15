@@ -233,6 +233,14 @@ export function useBaseSettingsNav() {
             info: t('labels.baseNav.databasesInfo'),
             logos: ['postgreSql', 'mysql', 'mssqlServer'],
           },
+          canSeeDataSources.value && {
+            slug: 'source-analytics',
+            ev: 'source-analytics',
+            icon: 'ncDatabase',
+            testId: 'source-analytics',
+            title: t('sourceAnalytics.title'),
+            keywords: 'database analytics query performance latency errors health storage connections metrics',
+          },
           canSeeSyncs.value && {
             slug: 'syncs',
             ev: 'syncs',
@@ -436,6 +444,10 @@ export function useBaseSettingsNav() {
       'data-source': {
         title: t('labels.baseNav.databases'),
         description: t('labels.baseNav.databasesInfo'),
+      },
+      'source-analytics': {
+        title: t('sourceAnalytics.title'),
+        description: t('sourceAnalytics.description'),
       },
       'syncs': {
         title: t('labels.baseNav.sync'),

@@ -12,6 +12,7 @@ import { RedisVersionTracker } from '~/utils/RedisVersionTracker';
 import { LRUMap } from '~/utils/LRUMap';
 import { applyDbSsrfProtection } from '~/helpers/dbSsrfLookup';
 import { isSsrfProtectionEnabled } from '~/utils/ssrf';
+import { SourceQueryMetrics } from '~/utils/source-query-metrics';
 
 const CONNECTION_CACHE_MAX_SIZE = +(
   process.env.NC_CONNECTION_CACHE_MAX_SIZE || 500
@@ -29,6 +30,7 @@ export default class NcConnectionMgrv2 {
   protected static connectionRefs = new LRUMap<XKnex>(
     CONNECTION_CACHE_MAX_SIZE,
     (conn) => {
+      SourceQueryMetrics.detach(conn);
       return conn.destroy().catch((e) => {
         NcConnectionMgrv2.logger.error({
           error: e,
@@ -131,6 +133,7 @@ export default class NcConnectionMgrv2 {
 
     const cached = this.connectionRefs.get(this.connectionKey(source));
     if (cached) {
+      SourceQueryMetrics.attach(this.connectionKey(source), cached);
       return cached;
     }
 
@@ -177,6 +180,7 @@ export default class NcConnectionMgrv2 {
     const knex = XKnex(knexConfig);
 
     this.stashDbMajorVersion(knex, source);
+    SourceQueryMetrics.attach(this.connectionKey(source), knex);
     this.connectionRefs.set(this.connectionKey(source), knex);
     return knex;
   }

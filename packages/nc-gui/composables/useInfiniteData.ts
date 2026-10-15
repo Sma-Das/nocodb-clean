@@ -601,7 +601,6 @@ export function useInfiniteData(args: {
         : await fetchBulkListData({}, bulkRequests)
 
       const allFormattedRows: Array<{ rows: Array<Row>; path: Array<number> }> = []
-      const processedChunks: Array<{ request: any; rows: Array<Row>; dataCache: any }> = []
 
       for (const request of batch) {
         // A reload landed while the request was in flight — the rows belong to the old group layout.
@@ -631,7 +630,6 @@ export function useInfiniteData(args: {
             invalidateChunksAt(dataCache.chunkStates.value, removed, CHUNK_SIZE, [request.chunkId])
 
             allFormattedRows.push({ rows, path: request.path })
-            processedChunks.push({ request, rows, dataCache })
           } else {
             dataCache.chunkStates.value[request.chunkId] = undefined
           }
@@ -649,21 +647,6 @@ export function useInfiniteData(args: {
       // loadBulkAggCommentsCount mutates through the reactive cache and emits TRIGGER_RE_RENDER.
       loadBulkAggCommentsCount(allFormattedRows).catch(() => {})
 
-      for (const { request, rows, dataCache } of processedChunks) {
-        try {
-          const removed = upsertCachedRows(dataCache.cachedRows.value, rows, (row) =>
-            extractPkFromRow(row, meta.value?.columns as ColumnType[]),
-          )
-
-          dataCache.chunkStates.value[request.chunkId] = 'loaded'
-          invalidateChunksAt(dataCache.chunkStates.value, removed, CHUNK_SIZE, [request.chunkId])
-          request.resolve(undefined)
-        } catch (error) {
-          console.error(`Error caching chunk ${request.chunkId}:`, error)
-          dataCache.chunkStates.value[request.chunkId] = undefined
-          request.reject(error)
-        }
-      }
     } catch (error) {
       // Superseded by a newer search term. The individual fallback would only re-issue every chunk
       // against the same aborted signal, so reset them for the new term's fetch and stop here.
