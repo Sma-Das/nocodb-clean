@@ -113,6 +113,7 @@ useMenuCloseOnEsc(open)
         size="small"
         type="secondary"
         :show-as-disabled="isLocked"
+        :aria-label="$t('objects.rowHeight')"
       >
         <div class="flex items-center gap-0.5">
           <component :is="iconMap.rowHeight" class="!h-3.75 !w-3.75" />

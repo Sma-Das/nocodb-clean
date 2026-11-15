@@ -39,6 +39,7 @@ const openTools = () => {
       size="small"
       type="text"
       data-testid="nc-table-tools-btn"
+      :aria-label="$t('general.tools')"
       :class="{ '!bg-nc-bg-gray-medium': isShellOpen }"
       @click="openTools"
     >
