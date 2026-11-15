@@ -138,12 +138,8 @@ const { isSystem } = useColumnCreateStoreOrThrow()
     <div
       class="nc-column-list-wrapper flex-col w-full max-h-[290px] nc-scrollbar-thin !overflow-y-auto px-2 focus-visible:(shadow-none outline-none ring-0)"
     >
-      <div v-if="!filteredOptions.length" class="px-2 py-6 text-nc-content-gray-muted flex flex-col items-center gap-6">
-        <img
-          src="~assets/img/placeholder/no-search-result-found.png"
-          class="!w-[164px] flex-none"
-          :alt="$t('title.noSearchResultsFound')"
-        />
+      <div v-if="!filteredOptions.length" class="px-2 py-6 text-nc-content-gray-muted flex flex-col items-center gap-3">
+        <GeneralEmptyGlyph />
 
         {{ options?.length ? $t('title.noResultsMatchedYourSearch') : $t('title.theListIsEmpty') }}
       </div>

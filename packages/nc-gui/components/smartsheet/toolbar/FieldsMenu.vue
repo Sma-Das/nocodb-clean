@@ -810,13 +810,9 @@ const onAddColumnDropdownVisibilityChange = () => {
           <div class="nc-fields-list">
             <div
               v-if="!localFilteredFieldList.length"
-              class="px-2 py-6 text-nc-content-gray-muted flex flex-col items-center gap-6 text-center"
+              class="px-2 py-6 text-nc-content-gray-muted flex flex-col items-center gap-3 text-center"
             >
-              <img
-                src="~assets/img/placeholder/no-search-result-found.png"
-                class="!w-[164px] flex-none"
-                :alt="$t('title.noSearchResultsFound')"
-              />
+              <GeneralEmptyGlyph />
 
               {{ $t('title.noResultsMatchedYourSearch') }}
             </div>
@@ -1043,7 +1039,7 @@ const onAddColumnDropdownVisibilityChange = () => {
                 :disabled="!!addFieldReason"
               >
                 <GeneralIcon icon="ncPlus" class="!w-4 !h-4 mr-1" />
-                <span>{{ $t('general.new') }} {{ $t('objects.field') }}</span>
+                <span>{{ $t('labels.multiField.newField') }}</span>
               </NcButton>
             </NcTooltip>
             <template #overlay>

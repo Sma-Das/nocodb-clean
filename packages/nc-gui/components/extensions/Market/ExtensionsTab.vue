@@ -118,12 +118,8 @@ const onAddExtension = (ext: any) => {
           v-if="searchQuery && !filteredAvailableExtensions.length && availableExtensions.length"
           class="w-full h-full flex items-center justify-center"
         >
-          <div class="pb-6 text-nc-content-gray-muted flex flex-col items-center gap-6 text-center">
-            <img
-              src="~assets/img/placeholder/no-search-result-found.png"
-              class="!w-[164px] flex-none"
-              alt="No search results found"
-            />
+          <div class="pb-6 text-nc-content-gray-muted flex flex-col items-center gap-3 text-center">
+            <GeneralEmptyGlyph />
 
             {{ $t('title.noResultsMatchedYourSearch') }}
           </div>

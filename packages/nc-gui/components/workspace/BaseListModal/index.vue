@@ -226,13 +226,9 @@ const hasNoSearchResults = computed(() => {
             <!-- No Search Results -->
             <div
               v-else-if="hasNoSearchResults"
-              class="h-full px-2 py-6 text-nc-content-gray-muted flex flex-col items-center justify-center gap-6 text-center"
+              class="h-full px-2 py-6 text-nc-content-gray-muted flex flex-col items-center justify-center gap-3 text-center"
             >
-              <img
-                src="~assets/img/placeholder/no-search-result-found.png"
-                class="!w-[164px] flex-none"
-                alt="No search results found"
-              />
+              <GeneralEmptyGlyph />
 
               {{ $t('title.noResultsMatchedYourSearch') }}
             </div>
