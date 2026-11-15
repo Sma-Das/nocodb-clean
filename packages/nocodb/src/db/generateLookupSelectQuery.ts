@@ -215,12 +215,16 @@ export default async function generateLookupSelectQuery({
       }
 
       if (relationType === RelationTypes.BELONGS_TO && !isMMLike) {
-        const childColumn = await relation.getChildColumn();
-        const parentColumn = await relation.getParentColumn();
-        const childModel = await childColumn.getModel();
-        await childModel.getColumns();
-        const parentModel = await parentColumn.getModel();
-        await parentModel.getColumns();
+        // child/parent metadata are independent: resolve them concurrently
+        const [childColumn, parentColumn] = await Promise.all([
+          relation.getChildColumn(),
+          relation.getParentColumn(),
+        ]);
+        const [childModel, parentModel] = await Promise.all([
+          childColumn.getModel(),
+          parentColumn.getModel(),
+        ]);
+        await Promise.all([childModel.getColumns(), parentModel.getColumns()]);
 
         const childBaseModel = await Model.getBaseModelSQL(childContext, {
           model: childModel,
@@ -258,12 +262,16 @@ export default async function generateLookupSelectQuery({
         }
       } else if (relationType === RelationTypes.HAS_MANY && !isMMLike) {
         isBtLookup = false;
-        const childColumn = await relation.getChildColumn();
-        const parentColumn = await relation.getParentColumn();
-        const childModel = await childColumn.getModel();
-        await childModel.getColumns();
-        const parentModel = await parentColumn.getModel();
-        await parentModel.getColumns();
+        // child/parent metadata are independent: resolve them concurrently
+        const [childColumn, parentColumn] = await Promise.all([
+          relation.getChildColumn(),
+          relation.getParentColumn(),
+        ]);
+        const [childModel, parentModel] = await Promise.all([
+          childColumn.getModel(),
+          parentColumn.getModel(),
+        ]);
+        await Promise.all([childModel.getColumns(), parentModel.getColumns()]);
 
         const childBaseModel = await Model.getBaseModelSQL(childContext, {
           model: childModel,
@@ -304,12 +312,16 @@ export default async function generateLookupSelectQuery({
         if (!isSingleTargetV2) {
           isBtLookup = false;
         }
-        const childColumn = await relation.getChildColumn();
-        const parentColumn = await relation.getParentColumn();
-        const childModel = await childColumn.getModel();
-        await childModel.getColumns();
-        const parentModel = await parentColumn.getModel();
-        await parentModel.getColumns();
+        // child/parent metadata are independent: resolve them concurrently
+        const [childColumn, parentColumn] = await Promise.all([
+          relation.getChildColumn(),
+          relation.getParentColumn(),
+        ]);
+        const [childModel, parentModel] = await Promise.all([
+          childColumn.getModel(),
+          parentColumn.getModel(),
+        ]);
+        await Promise.all([childModel.getColumns(), parentModel.getColumns()]);
 
         const childBaseModel = await Model.getBaseModelSQL(childContext, {
           model: childModel,
@@ -507,12 +519,19 @@ export default async function generateLookupSelectQuery({
         // if any of the relation in nested lookupColOpt is
         // not belongs to then throw error as we don't support
         if (relationType === RelationTypes.BELONGS_TO) {
-          const childColumn = await relation.getChildColumn();
-          const parentColumn = await relation.getParentColumn();
-          const childModel = await childColumn.getModel();
-          await childModel.getColumns();
-          const parentModel = await parentColumn.getModel();
-          await parentModel.getColumns();
+          // child/parent metadata are independent: resolve them concurrently
+          const [childColumn, parentColumn] = await Promise.all([
+            relation.getChildColumn(),
+            relation.getParentColumn(),
+          ]);
+          const [childModel, parentModel] = await Promise.all([
+            childColumn.getModel(),
+            parentColumn.getModel(),
+          ]);
+          await Promise.all([
+            childModel.getColumns(),
+            parentModel.getColumns(),
+          ]);
           const parentBaseModel = await Model.getBaseModelSQL(parentContext, {
             model: parentModel,
             dbDriver: knex,
@@ -558,12 +577,19 @@ export default async function generateLookupSelectQuery({
           }
         } else if (relationType === RelationTypes.HAS_MANY) {
           isBtLookup = false;
-          const childColumn = await relation.getChildColumn();
-          const parentColumn = await relation.getParentColumn();
-          const childModel = await childColumn.getModel();
-          await childModel.getColumns();
-          const parentModel = await parentColumn.getModel();
-          await parentModel.getColumns();
+          // child/parent metadata are independent: resolve them concurrently
+          const [childColumn, parentColumn] = await Promise.all([
+            relation.getChildColumn(),
+            relation.getParentColumn(),
+          ]);
+          const [childModel, parentModel] = await Promise.all([
+            childColumn.getModel(),
+            parentColumn.getModel(),
+          ]);
+          await Promise.all([
+            childModel.getColumns(),
+            parentModel.getColumns(),
+          ]);
           const childBaseModel = await Model.getBaseModelSQL(childContext, {
             model: childModel,
             dbDriver: knex,
@@ -612,12 +638,19 @@ export default async function generateLookupSelectQuery({
           if (!nestedIsSingleTargetV2) {
             isBtLookup = false;
           }
-          const childColumn = await relation.getChildColumn();
-          const parentColumn = await relation.getParentColumn();
-          const childModel = await childColumn.getModel();
-          await childModel.getColumns();
-          const parentModel = await parentColumn.getModel();
-          await parentModel.getColumns();
+          // child/parent metadata are independent: resolve them concurrently
+          const [childColumn, parentColumn] = await Promise.all([
+            relation.getChildColumn(),
+            relation.getParentColumn(),
+          ]);
+          const [childModel, parentModel] = await Promise.all([
+            childColumn.getModel(),
+            parentColumn.getModel(),
+          ]);
+          await Promise.all([
+            childModel.getColumns(),
+            parentModel.getColumns(),
+          ]);
 
           const childBaseModel = await Model.getBaseModelSQL(childContext, {
             model: childModel,

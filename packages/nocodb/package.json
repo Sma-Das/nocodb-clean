@@ -28,6 +28,7 @@
     "lint": "eslint \"src/**/*.ts\" --fix",
     "test": "jest --runInBand --forceExit --passWithNoTests",
     "test:analytics": "jest --runInBand --testRegex '(source-query-metrics|source-health|source-analytics.service)\\.spec\\.ts$'",
+    "test:perf": "jest --runInBand --testRegex '(BaseModelSqlv2\\.readpath|metaReadScope|Column\\.list-scope)\\.spec\\.ts$'",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r @swc-node/register node_modules/.bin/jest --runInBand",
