@@ -142,29 +142,37 @@ const [useProvideViewColumns, useViewColumns] = useInjectionState(
               })
             ).list) as any[]) ?? []
 
+      // Mutating accumulator — spreading `acc` per column made this O(n²) on wide tables.
       const fieldById = data.reduce<Record<string, any>>((acc, curr) => {
         // If hide column api is in progress and we try to load columns before that then we need to assign local visibility state
         curr.show = hidingViewColumnsMap.value[curr.fk_column_id] && !!curr.show ? false : !!curr.show
 
-        return {
-          ...acc,
-          [curr.fk_column_id]: curr,
-        }
+        acc[curr.fk_column_id] = curr
+        return acc
       }, {})
 
-      // For list views with levels, ensure metas for non-root level tables are loaded
+      // For list views with levels, ensure metas for non-root level tables are loaded.
+      // Level tables are independent, so start their loads together (deduped) — serial
+      // awaits each waited a full batch window + round trip before queueing the next,
+      // so they could never share one `batch` envelope.
       if (view.value?.type === ViewTypes.LIST) {
         const levels = (view.value?.view as ListType)?.levels || []
+        // Snapshot before awaiting — meta/view may change while loads are in flight.
+        const baseId = meta.value!.base_id!
+        const rootTableId = meta.value?.id
 
+        const levelModelIds = new Set<string>()
         for (const level of levels) {
-          if (level.fk_model_id && level.fk_model_id !== meta.value?.id) {
-            try {
-              await _getMeta(meta.value!.base_id!, level.fk_model_id)
-            } catch (e) {
-              // silently ignore — level table meta may not be accessible
-            }
-          }
+          if (level.fk_model_id && level.fk_model_id !== rootTableId) levelModelIds.add(level.fk_model_id)
         }
+
+        await Promise.all(
+          Array.from(levelModelIds, (modelId) =>
+            _getMeta(baseId, modelId).catch(() => {
+              // silently ignore — level table meta may not be accessible
+            }),
+          ),
+        )
       }
 
       // Build combined columns: root table + level tables (for list views)
@@ -232,13 +240,10 @@ const [useProvideViewColumns, useViewColumns] = useInjectionState(
       }
 
       // Use fields columns to populate gridViewCols
-      gridViewCols.value = fields.value.reduce<Record<string, GridColumnType>>(
-        (o, col) => ({
-          ...o,
-          [col.fk_column_id as string]: col,
-        }),
-        {},
-      )
+      gridViewCols.value = fields.value.reduce<Record<string, GridColumnType>>((o, col) => {
+        o[col.fk_column_id as string] = col
+        return o
+      }, {})
     }
 
     const updateDefaultViewColumnMeta = async (
