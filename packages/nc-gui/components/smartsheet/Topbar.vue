@@ -114,7 +114,9 @@ const topbarBreadcrumbItemWidth = computed(() => {
             type="text"
             size="small"
             class="nc-topbar-extension-btn"
-            :class="{ '!bg-nc-bg-brand !text-nc-content-brand': isPanelExpanded }"
+            :class="{ '!bg-nc-bg-gray-medium !text-nc-content-gray-emphasis': isPanelExpanded }"
+            :aria-label="$t('general.extensions')"
+            :aria-pressed="isPanelExpanded"
             data-testid="nc-topbar-extension-btn"
             @click="
               blockExtensions && !isPanelExpanded
