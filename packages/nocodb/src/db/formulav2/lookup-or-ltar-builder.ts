@@ -84,12 +84,16 @@ export const lookupOrLtarBuilder =
       const { parentContext, childContext, mmContext, refContext } =
         await relation.getParentChildContext();
 
-      const childColumn = await relation.getChildColumn();
-      const parentColumn = await relation.getParentColumn();
-      const childModel = await childColumn.getModel();
-      await childModel.getColumns();
-      const parentModel = await parentColumn.getModel();
-      await parentModel.getColumns();
+      // child/parent metadata are independent: resolve them concurrently
+      const [childColumn, parentColumn] = await Promise.all([
+        relation.getChildColumn(),
+        relation.getParentColumn(),
+      ]);
+      const [childModel, parentModel] = await Promise.all([
+        childColumn.getModel(),
+        parentColumn.getModel(),
+      ]);
+      await Promise.all([childModel.getColumns(), parentModel.getColumns()]);
 
       let relationType = isMMOrMMLike(relationCol)
         ? RelationTypes.MANY_TO_MANY
@@ -329,12 +333,16 @@ export const lookupOrLtarBuilder =
         // reset for next iteration
         lookupContext = refContext;
 
-        const childColumn = await relation.getChildColumn();
-        const parentColumn = await relation.getParentColumn();
-        const childModel = await childColumn.getModel();
-        await childModel.getColumns();
-        const parentModel = await parentColumn.getModel();
-        await parentModel.getColumns();
+        // child/parent metadata are independent: resolve them concurrently
+        const [childColumn, parentColumn] = await Promise.all([
+          relation.getChildColumn(),
+          relation.getParentColumn(),
+        ]);
+        const [childModel, parentModel] = await Promise.all([
+          childColumn.getModel(),
+          parentColumn.getModel(),
+        ]);
+        await Promise.all([childModel.getColumns(), parentModel.getColumns()]);
 
         const parentBaseModel = await Model.getBaseModelSQL(parentContext, {
           model: parentModel,
@@ -569,12 +577,19 @@ export const lookupOrLtarBuilder =
 
             const colOptions =
               (await lookupColumn.getColOptions()) as LinkToAnotherRecordColumn;
-            const childColumn = await colOptions.getChildColumn();
-            const parentColumn = await colOptions.getParentColumn();
-            const childModel = await childColumn.getModel();
-            await childModel.getColumns();
-            const parentModel = await parentColumn.getModel();
-            await parentModel.getColumns();
+            // child/parent metadata are independent: resolve them concurrently
+            const [childColumn, parentColumn] = await Promise.all([
+              colOptions.getChildColumn(),
+              colOptions.getParentColumn(),
+            ]);
+            const [childModel, parentModel] = await Promise.all([
+              childColumn.getModel(),
+              parentColumn.getModel(),
+            ]);
+            await Promise.all([
+              childModel.getColumns(),
+              parentModel.getColumns(),
+            ]);
 
             const parentBaseModel = await Model.getBaseModelSQL(parentContext, {
               model: parentModel,

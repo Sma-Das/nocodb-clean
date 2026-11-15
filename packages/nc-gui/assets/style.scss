@@ -810,15 +810,21 @@ a {
 }
 
 .nc-toolbar-btn {
-  @apply !shadow-none rounded hover:(bg-nc-bg-gray-extralight !text-nc-content-gray) focus:(!text-nc-content-gray bg-nc-bg-gray-extralight) text-nc-content-gray-subtle2 text-xs font-medium px-2 border-0;
+  @apply !shadow-none rounded-md hover:(bg-nc-bg-gray-light !text-nc-content-gray) focus:(!text-nc-content-gray) text-nc-content-gray-subtle2 text-xs font-medium px-2 border-0 transition-colors duration-150;
+}
+
+// Open menu: the trigger stays lit for as long as its dropdown is showing.
+.nc-toolbar-btn.ant-dropdown-open,
+.ant-dropdown-open > .nc-toolbar-btn {
+  @apply bg-nc-bg-gray-light !text-nc-content-gray;
 }
 
 .nc-toolbar-btn[disabled] {
-  @apply !text-gray-400 !cursor-not-allowed !hover:ring-0;
+  @apply !text-nc-content-gray-disabled !bg-transparent !cursor-not-allowed !hover:ring-0;
 }
 
 .nc-toolbar-btn.nc-show-as-disabled {
-  @apply !text-gray-400 !hover:ring-0;
+  @apply !text-nc-content-gray-disabled !hover:ring-0;
 }
 
 .nc-warning-info {
@@ -940,17 +946,17 @@ a {
 
 // button
 .nc-btn {
-  @apply rounded py-2 px-4 border-gray-200 h-auto;
+  @apply rounded-lg py-2 px-4 border-nc-border-gray-medium h-auto;
 }
 
 .ant-popover-inner {
   padding: 0 !important;
 }
 .ant-popover-inner-content {
-  @apply !px-1.5 !py-1 text-xs text-white bg-black;
+  @apply !px-2 !py-1 text-xs text-white bg-black;
 }
 .ant-tooltip-inner {
-  @apply !px-1.5 !py-1 text-xs text-white bg-black;
+  @apply !px-2 !py-1 text-xs font-medium text-white bg-black !rounded-md;
   min-height: 0 !important;
 }
 
@@ -979,26 +985,26 @@ a {
 }
 
 .ant-pagination .ant-pagination-prev {
-  @apply !border-1 !rounded-md !border-gray-200 transform scale-95;
+  @apply !border-1 !rounded-md !border-nc-border-gray-medium transform scale-95;
 }
 
 .ant-pagination .ant-pagination-item {
-  @apply !bg-white !rounded-md !border-1 !scale-110 !border-gray-200 !flex !items-center !justify-center;
+  @apply !bg-nc-bg-default !rounded-md !border-1 !scale-110 !border-nc-border-gray-medium !flex !items-center !justify-center;
 }
 
 .ant-pagination .ant-pagination-item a {
-  @apply !no-underline !text-gray-700;
+  @apply !no-underline !text-nc-content-gray-subtle;
 }
 .ant-pagination .ant-pagination-item-active a {
-  @apply !text-brand-500;
+  @apply !text-nc-content-gray-emphasis !font-semibold;
 }
 
 .ant-pagination .ant-pagination-next {
-  @apply !border-1  !rounded-md !border-gray-200 scale-95;
+  @apply !border-1 !rounded-md !border-nc-border-gray-medium scale-95;
 }
 
 .ant-pagination .ant-pagination-item-active {
-  @apply !bg-brand-50 !text-brand-500 !border-0 !scale-110;
+  @apply !bg-nc-bg-gray-medium !text-nc-content-gray-emphasis !border-0 !scale-110;
 }
 .ant-pagination .ant-pagination-item-link {
   @apply !flex !items-center !justify-center;
@@ -1051,6 +1057,14 @@ a {
     .nc-sidebar-script-node-context-btn
   ):not(.nc-sidebar-section-node-context-btn) {
   @apply hidden group-hover:(inline-block);
+}
+
+// Row actions only appear on hover, which leaves the keyboard with nothing to
+// tab to. Once focus is anywhere in the row, show them as hover would.
+.group:focus-within > * .nc-button.ant-btn.nc-sidebar-node-btn,
+.group:focus-within > .nc-button.ant-btn.nc-sidebar-node-btn,
+.nc-button.ant-btn.nc-sidebar-node-btn:focus-visible {
+  @apply opacity-100 !inline-block;
 }
 
 .nc-button.ant-btn.nc-sidebar-node-btn.nc-sidebar-expand {
@@ -1169,6 +1183,70 @@ svg.nc-virtual-cell-icon {
   .ant-input-prefix > span {
     margin-right: 0 !important;
     margin-left: 4px;
+  }
+}
+
+// Keyboard focus ring
+//
+// One ring for everything a keyboard can land on that doesn't already draw its
+// own (inputs, selects and switches do). `:focus-visible` keeps it off
+// mouse clicks; `outline` keeps it out of the box-shadow those controls use for
+// elevation, and follows each element's own radius.
+a,
+button,
+summary,
+[role='button'],
+[role='tab'],
+[role='link'],
+[role='menuitem'],
+[role='option'],
+[role='switch'],
+[role='checkbox'],
+[role='radio'],
+.ant-tabs-tab-btn,
+.ant-collapse-header,
+.ant-checkbox-input,
+.ant-radio-input {
+  &:focus-visible {
+    outline: 2px solid var(--nc-brand-accent) !important;
+    outline-offset: 2px;
+  }
+}
+
+// The switch draws its own ring (box-shadow), so the outline would double it up.
+.ant-switch:focus-visible {
+  outline: none !important;
+}
+
+// The native input sits invisibly on top of the drawn box, so ring the box.
+.ant-checkbox-input:focus-visible,
+.ant-radio-input:focus-visible {
+  outline: none !important;
+
+  & + .ant-checkbox-inner,
+  & + .ant-radio-inner {
+    outline: 2px solid var(--nc-brand-accent) !important;
+    outline-offset: 2px;
+  }
+}
+
+// Rows inside a clipped list can't show an outset ring; draw it inside instead.
+.ant-dropdown-menu-item,
+.ant-select-item,
+.nc-sidebar-node,
+.nc-shell-rail-item {
+  &:focus-visible {
+    outline-offset: -2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    // Transitions only: spinners and skeletons are status, not decoration.
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

@@ -748,6 +748,12 @@ export const useInfiniteGroups = (
     for (let i = 0; i < groups.length; i += BATCH_SIZE) {
       const batchGroups = groups.slice(i, i + BATCH_SIZE)
 
+      const batchGroupById = new Map<string, CanvasGroup>()
+      for (const group of batchGroups) {
+        const id = createGroupUniqueIdentifier(group)
+        if (!batchGroupById.has(id)) batchGroupById.set(id, group)
+      }
+
       const aggregationParams = batchGroups.map((group) => ({
         where: where?.value,
         alias: aggregationAliasMapper.generateAlias(createGroupUniqueIdentifier(group)),
@@ -785,7 +791,7 @@ export const useInfiniteGroups = (
             )
 
         await aggregationAliasMapper.process(aggResponse, (originalKey, value) => {
-          const group = batchGroups.find((g) => createGroupUniqueIdentifier(g) === originalKey.toString())
+          const group = batchGroupById.get(originalKey.toString())
 
           if (!group) return
 

@@ -240,6 +240,21 @@ export interface ExecAndParseOptions {
   skipPublicRedaction?: boolean;
 }
 
+interface DateConversionState {
+  timeZone: string | null;
+  isoRegex: RegExp;
+  datetimeRegex: RegExp;
+  noTimezoneRegex: RegExp;
+}
+
+/** Resolves a (possibly lookup) column to the column it ultimately points at. */
+export type NestedColumnResolver = (column: Column) => Promise<any>;
+
+interface ConvertUserFormatOptions {
+  skipPublicRedaction?: boolean;
+  resolveNestedColumn?: NestedColumnResolver;
+}
+
 /** Args stashed on DataLoader instances for relation queries (hm/mm/bt/oo). */
 interface RelationLoaderArgs {
   limit?: number;
@@ -1065,7 +1080,7 @@ class BaseModelSqlv2 implements IBaseModelSqlV2 {
         applyPaginate(qb, { ...rest, limit: limitOverride });
       }
     }
-    const proto = await this.getProto({ linksAsLtar });
+    const proto = await this.getProto({ linksAsLtar, columns });
 
     let data;
     try {
@@ -1723,9 +1738,13 @@ class BaseModelSqlv2 implements IBaseModelSqlV2 {
   async getProto({
     apiVersion = NcApiVersion.V2,
     linksAsLtar = false,
+    columns: suppliedColumns,
   }: {
     apiVersion?: NcApiVersion;
     linksAsLtar?: boolean;
+    // Columns this request already hydrated via `this.model.getColumns()`;
+    // avoids a second hydration on the first getProto of the instance.
+    columns?: Column[];
   } = {}) {
     if (this._proto) {
       return this._proto as ResolverObj;
@@ -1734,7 +1753,9 @@ class BaseModelSqlv2 implements IBaseModelSqlV2 {
     const proto: ResolverObj = {
       __columnAliases: {},
     };
-    const columns = await this.model.getColumns();
+    const columns = suppliedColumns ?? (await this.model.getColumns());
+    // A lookup's relation column always belongs to this model.
+    const columnsById = new Map(columns.map((c) => [c.id, c]));
     await Promise.all(
       columns.map(async (column) => {
         switch (column.uidt) {
@@ -1745,9 +1766,11 @@ class BaseModelSqlv2 implements IBaseModelSqlV2 {
               // Skip registering lookup alias if column has an error — sentinel value
               // is already selected in selectObject
               if (colOptions?.error) break;
-              const relCol = await Column.get(this.context, {
-                colId: colOptions.fk_relation_column_id,
-              });
+              const relCol =
+                columnsById.get(colOptions.fk_relation_column_id) ??
+                (await Column.get(this.context, {
+                  colId: colOptions.fk_relation_column_id,
+                }));
               const relColOptions =
                 await relCol?.getColOptions<LinkToAnotherRecordColumn>();
               // A link can outlive its nc_col_relations row; skip it rather
@@ -7554,16 +7577,31 @@ class BaseModelSqlv2 implements IBaseModelSqlV2 {
       await this.model.getColumns();
     }
 
+    // Every conversion step below resolves the terminal column of each lookup.
+    // Share one memoized resolution per lookup column for this call so a
+    // lookup-heavy table pays for the recursive metadata walk once instead of
+    // once per conversion step.
+    const resolveNestedColumn = this.createNestedColumnResolver();
+
     // we need to post process lookup fields based on the looked up column instead of the lookup column
     const aliasColumns = {};
 
-    if (!dependencyColumns) {
+    // The alias map is only consumed by column id -> title substitution (the
+    // outer substitution, or the nested-object rewrite of bulk aggregates).
+    // Raw reads such as count skip substitution, so skip the lookup walk too.
+    if (
+      !dependencyColumns &&
+      (options.bulkAggregate || !options.skipSubstitutingColumnIds)
+    ) {
       const nestedColumns = this.model?.columns.filter(
         (col) => col.uidt === UITypes.Lookup,
       );
 
-      for (const col of nestedColumns) {
-        const nestedColumn = await this.getNestedColumn(col);
+      const resolved = await Promise.all(
+        nestedColumns.map((col) => resolveNestedColumn(col)),
+      );
+      nestedColumns.forEach((col, i) => {
+        const nestedColumn = resolved[i];
         if (
           nestedColumn &&
           [RelationTypes.BELONGS_TO, RelationTypes.ONE_TO_ONE].includes(
@@ -7572,14 +7610,18 @@ class BaseModelSqlv2 implements IBaseModelSqlV2 {
         ) {
           aliasColumns[col.id] = nestedColumn;
         }
-      }
+      });
     }
 
     _perf?.mark('lookupSetup');
 
     // update attachment fields
     if (!options.skipAttachmentConversion) {
-      data = await this.convertAttachmentType(data, dependencyColumns);
+      data = await this.convertAttachmentType(
+        data,
+        dependencyColumns,
+        resolveNestedColumn,
+      );
     }
     _perf?.mark('attachment');
 
@@ -7601,13 +7643,20 @@ class BaseModelSqlv2 implements IBaseModelSqlV2 {
         data,
         dependencyColumns,
         options?.apiVersion,
-        { skipPublicRedaction: options?.skipPublicRedaction },
+        {
+          skipPublicRedaction: options?.skipPublicRedaction,
+          resolveNestedColumn,
+        },
       );
     }
     _perf?.mark('user');
 
     if (!options.skipJsonConversion) {
-      data = await this.convertJsonTypes(data, dependencyColumns);
+      data = await this.convertJsonTypes(
+        data,
+        dependencyColumns,
+        resolveNestedColumn,
+      );
     }
     _perf?.mark('json');
 
@@ -7636,6 +7685,7 @@ class BaseModelSqlv2 implements IBaseModelSqlV2 {
                       [value],
                       dependencyColumns,
                       aliasColumns,
+                      resolveNestedColumn,
                     )
                   )[0] ?? value
                 : value;
@@ -7661,6 +7711,7 @@ class BaseModelSqlv2 implements IBaseModelSqlV2 {
         data,
         dependencyColumns,
         aliasColumns,
+        resolveNestedColumn,
       );
     }
     _perf?.mark('substituteIds');
@@ -7700,6 +7751,7 @@ class BaseModelSqlv2 implements IBaseModelSqlV2 {
     data: Record<string, any>[],
     dependencyColumns?: Column[],
     aliasColumns?: Record<string, Column>,
+    resolveNestedColumn: NestedColumnResolver = (c) => this.getNestedColumn(c),
   ) {
     const modelColumns = this.model?.columns.concat(dependencyColumns ?? []);
 
@@ -7735,7 +7787,7 @@ class BaseModelSqlv2 implements IBaseModelSqlV2 {
         isLinksAsLtar;
       if (isLtarColumn) {
         if (col.uidt === UITypes.Lookup) {
-          const nestedCol = await this.getNestedColumn(col);
+          const nestedCol = await resolveNestedColumn(col);
           if (nestedCol?.uidt !== UITypes.LinkToAnotherRecord) {
             ltarMap[col.id] = false;
             continue;
@@ -7865,25 +7917,48 @@ class BaseModelSqlv2 implements IBaseModelSqlV2 {
     data: Record<string, any>[],
     dependencyColumns?: Column[],
     apiVersion?: NcApiVersion,
-    options?: { skipPublicRedaction?: boolean },
+    options?: ConvertUserFormatOptions,
   ): Promise<Record<string, any>[]>;
   protected async convertUserFormat(
     data: Record<string, any>,
     dependencyColumns?: Column[],
     apiVersion?: NcApiVersion,
-    options?: { skipPublicRedaction?: boolean },
+    options?: ConvertUserFormatOptions,
   ): Promise<Record<string, any>>;
   protected async convertUserFormat(
     data: Record<string, any>,
     dependencyColumns?: Column[],
     apiVersion?: NcApiVersion,
-    options?: { skipPublicRedaction?: boolean },
+    options?: ConvertUserFormatOptions,
   ) {
     // user is stored as id within the database
     // convertUserFormat is used to convert the response in id to user object in API response
     if (!data) {
       return data;
     }
+
+    // nothing to convert or redact on an empty page
+    if (Array.isArray(data) && !data.length) {
+      return data;
+    }
+
+    const resolveNestedColumn =
+      options?.resolveNestedColumn ?? ((c) => this.getNestedColumn(c));
+
+    const rows = Array.isArray(data) ? data : [data];
+
+    // Only columns carrying a truthy value in at least one returned row can be
+    // affected: `_convertUserFormat` skips falsy/empty values and redaction
+    // only touches object values. Checking every row (not just the first)
+    // keeps sparse columns whose value appears only in later rows.
+    const hasReturnedValue = (col: Column) => {
+      for (const row of rows) {
+        if (!row || typeof row !== 'object') continue;
+        const value = row[col.id] !== undefined ? row[col.id] : row[col.title];
+        if (value) return true;
+      }
+      return false;
+    };
 
     const columns = this.model?.columns.concat(dependencyColumns ?? []);
 
@@ -7892,6 +7967,16 @@ class BaseModelSqlv2 implements IBaseModelSqlV2 {
     const lookupColumns = [];
 
     for (const col of columns) {
+      if (
+        (col.uidt === UITypes.Lookup ||
+          [UITypes.User, UITypes.CreatedBy, UITypes.LastModifiedBy].includes(
+            col.uidt,
+          )) &&
+        !hasReturnedValue(col)
+      ) {
+        continue;
+      }
+
       if (col.uidt === UITypes.Lookup) {
         lookupColumns.push(col);
       } else if (
@@ -7909,7 +7994,7 @@ class BaseModelSqlv2 implements IBaseModelSqlV2 {
         ? await Promise.all(
             lookupColumns.map(async (col) => {
               try {
-                const nestedCol = await this.getNestedColumn(col);
+                const nestedCol = await resolveNestedColumn(col);
                 return [
                   UITypes.User,
                   UITypes.CreatedBy,
@@ -8335,6 +8420,24 @@ class BaseModelSqlv2 implements IBaseModelSqlV2 {
     return d;
   }
 
+  /**
+   * Returns a `getNestedColumn` that memoizes by column object for the lifetime
+   * of the returned function. Use it for a single read/parse pass only, so
+   * metadata changes between requests are still picked up.
+   */
+  public createNestedColumnResolver(): NestedColumnResolver {
+    const memo = new Map<Column, Promise<any>>();
+    return (column: Column) => {
+      if (!column) return this.getNestedColumn(column);
+      let pending = memo.get(column);
+      if (!pending) {
+        pending = this.getNestedColumn(column);
+        memo.set(column, pending);
+      }
+      return pending;
+    };
+  }
+
   public async getNestedColumn(column: Column, _context = this.context) {
     if (!column)
       return {
@@ -8362,14 +8465,17 @@ class BaseModelSqlv2 implements IBaseModelSqlV2 {
   public async convertJsonTypes(
     data: Record<string, any>[],
     dependencyColumns?: Column[],
+    resolveNestedColumn?: NestedColumnResolver,
   ): Promise<Record<string, any>[]>;
   public async convertJsonTypes(
     data: Record<string, any>,
     dependencyColumns?: Column[],
+    resolveNestedColumn?: NestedColumnResolver,
   ): Promise<Record<string, any>>;
   public async convertJsonTypes(
     data: Record<string, any>,
     dependencyColumns?: Column[],
+    resolveNestedColumn: NestedColumnResolver = (c) => this.getNestedColumn(c),
   ) {
     // buttons & AI result are stringified json in Sqlite and need to be parsed
     // converJsonTypes is used to convert the response in string to object in API response
@@ -8397,7 +8503,7 @@ class BaseModelSqlv2 implements IBaseModelSqlV2 {
         ? await Promise.all(
             lookupColumns.map(async (col) => {
               try {
-                const lookupNestedCol = await this.getNestedColumn(col);
+                const lookupNestedCol = await resolveNestedColumn(col);
                 return JSON_COLUMN_TYPES.includes(lookupNestedCol.uidt) ||
                   isAIPromptCol(lookupNestedCol)
                   ? col
@@ -8466,14 +8572,17 @@ class BaseModelSqlv2 implements IBaseModelSqlV2 {
   public async convertAttachmentType(
     data: Record<string, any>[],
     dependencyColumns?: Column[],
+    resolveNestedColumn?: NestedColumnResolver,
   ): Promise<Record<string, any>[]>;
   public async convertAttachmentType(
     data: Record<string, any>,
     dependencyColumns?: Column[],
+    resolveNestedColumn?: NestedColumnResolver,
   ): Promise<Record<string, any>>;
   public async convertAttachmentType(
     data: Record<string, any>,
     dependencyColumns?: Column[],
+    resolveNestedColumn: NestedColumnResolver = (c) => this.getNestedColumn(c),
   ) {
     // attachment is stored in text and parse in UI
     // convertAttachmentType is used to convert the response in string to array of object in API response
@@ -8512,7 +8621,7 @@ class BaseModelSqlv2 implements IBaseModelSqlV2 {
         ? await Promise.all(
             lookupColumns.map(async (col) => {
               try {
-                const nestedCol = await this.getNestedColumn(col);
+                const nestedCol = await resolveNestedColumn(col);
                 return nestedCol?.uidt === UITypes.Attachment ? col : null;
               } catch (error) {
                 // Log error but continue processing
@@ -8546,23 +8655,35 @@ class BaseModelSqlv2 implements IBaseModelSqlV2 {
   }
 
   // TODO(timezone): retrieve the format from the corresponding column meta
+  // Per-batch state for `_convertDateFormat`: the server timezone (SQLite
+  // only) and regex instances. Created once per `convertDateFormat` call so a
+  // page of rows doesn't rebuild an Intl formatter and three regexes per row.
+  // The global regexes carry a mutable `lastIndex`, so the state must stay
+  // batch-scoped (conversion is synchronous) rather than module-global.
+  protected _createDateConversionState(): DateConversionState {
+    return {
+      timeZone: this.isSqlite
+        ? Intl.DateTimeFormat().resolvedOptions().timeZone
+        : null,
+      isoRegex: /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/g,
+      datetimeRegex: /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(?:[+-]\d{2}:\d{2})?/g,
+      noTimezoneRegex: /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/,
+    };
+  }
+
   protected _convertDateFormat(
     dateTimeColumns: Record<string, any>[],
     d: Record<string, any>,
+    state: DateConversionState = this._createDateConversionState(),
   ) {
     if (!d) return d;
 
-    // Cache timezone and regex patterns at the method level for better performance
-    const cachedTimeZone = this.isSqlite
-      ? Intl.DateTimeFormat().resolvedOptions().timeZone
-      : null;
-
-    // Pre-compile regex patterns to avoid repeated compilation
-    // the pre-compiled patterns have mutable `lastIndex` property that we use below, so it cannot be made global to avoid race condition
-    const isoRegex = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/g;
-    const datetimeRegex =
-      /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(?:[+-]\d{2}:\d{2})?/g;
-    const noTimezoneRegex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
+    const {
+      timeZone: cachedTimeZone,
+      isoRegex,
+      datetimeRegex,
+      noTimezoneRegex,
+    } = state;
 
     for (const col of dateTimeColumns) {
       if (!d[col.id]) continue;
@@ -8648,7 +8769,7 @@ class BaseModelSqlv2 implements IBaseModelSqlV2 {
             // then we convert to UTC from server timezone
             // e.g. 2023-04-27 10:00:00 (IST) -> 2023-04-27 04:30:00+00:00
             d[col.id] = dayjs(d[col.id])
-              .tz(Intl.DateTimeFormat().resolvedOptions().timeZone)
+              .tz(cachedTimeZone)
               .utc()
               .format('YYYY-MM-DD HH:mm:ssZ');
             continue;
@@ -8720,10 +8841,13 @@ class BaseModelSqlv2 implements IBaseModelSqlV2 {
           c.uidt === UITypes.Formula,
       );
       if (dateTimeColumns.length) {
+        const state = this._createDateConversionState();
         if (Array.isArray(data)) {
-          data = data.map((d) => this._convertDateFormat(dateTimeColumns, d));
+          data = data.map((d) =>
+            this._convertDateFormat(dateTimeColumns, d, state),
+          );
         } else {
-          data = this._convertDateFormat(dateTimeColumns, data);
+          data = this._convertDateFormat(dateTimeColumns, data, state);
         }
       }
     }

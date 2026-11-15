@@ -1,4 +1,5 @@
-import { dirname, resolve } from 'node:path'
+import { createRequire } from 'node:module'
+import { dirname, join, resolve } from 'node:path'
 import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
@@ -7,6 +8,10 @@ import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
 import { FileSystemIconLoader } from 'unplugin-icons/loaders'
 
 import PurgeIcons from 'vite-plugin-purge-icons'
+
+const requireFromHere = createRequire(import.meta.url)
+/** Absolute path to a file inside an installed package (resolved via its package.json). */
+const pkgFile = (pkg: string, file: string) => join(dirname(requireFromHere.resolve(`${pkg}/package.json`)), file)
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   future: {
@@ -243,9 +248,15 @@ export default defineNuxtConfig({
     },
     resolve: {
       alias: {
-        querystring: 'rollup-plugin-node-polyfills/polyfills/qs',
-        util: 'rollup-plugin-node-polyfills/polyfills/util',
-        url: 'rollup-plugin-node-polyfills/polyfills/url',
+        'querystring': 'rollup-plugin-node-polyfills/polyfills/qs',
+        'util': 'rollup-plugin-node-polyfills/polyfills/util',
+        'url': 'rollup-plugin-node-polyfills/polyfills/url',
+        // Both packages otherwise resolve to UMD builds (vuedraggable's `module` field, and the
+        // `browser` field for v3-infinite-loading) whose `require('vue')` lands on vue/index.js →
+        // vue.cjs.prod.js, which drags @vue/compiler-dom + compiler-core into the grid bundle.
+        // Their ESM builds import the regular `vue` runtime instead.
+        'vuedraggable': pkgFile('vuedraggable', 'src/vuedraggable.js'),
+        'v3-infinite-loading': pkgFile('v3-infinite-loading', 'lib/v3-infinite-loading.es.js'),
       },
       // Collaborative editing: TipTap (via @tiptap/pm/* → bare prosemirror-*) and
       // y-prosemirror both import the same bare prosemirror-*/yjs packages. pnpm

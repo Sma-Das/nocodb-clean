@@ -205,6 +205,7 @@ function triggerToolbarControl(selector: string) {
           class="nc-toolbar-btn !border-0 !h-7 !px-1.5 !min-w-7"
           size="small"
           type="secondary"
+          :aria-label="$t('general.more')"
           data-testid="nc-calendar-mobile-more-btn"
         >
           <GeneralIcon icon="threeDotVertical" class="!h-4 !w-4" />

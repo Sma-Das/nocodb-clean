@@ -1,6 +1,7 @@
 import { isBoxHovered, renderIconButton, roundedRect } from '../utils/canvas'
 import { pxToRowHeight } from '../../../../../utils/cell'
 import type { RenderRectangleProps } from '../utils/types'
+import { memoRenderValue } from '../utils/renderValueCache'
 import { isAudio, isExcel, isPdf, isPresentation, isVideo, isWord, isZip } from '../../../../../utils/fileUtils'
 import useAttachment from '../../../../../composables/useAttachment'
 
@@ -124,7 +125,10 @@ export const AttachmentCellRenderer: CellRenderer = {
     const verticalPadding = rowHeight === 1 ? 4 : 8
 
     try {
-      attachments = (typeof value === 'string' ? JSON.parse(value) : value) || []
+      // String values (e.g. SQLite/MySQL text columns) are parsed once per distinct value rather than
+      // on every repaint; the parsed array is only read below. Parse errors are not cached.
+      attachments =
+        (typeof value === 'string' ? memoRenderValue(`attachment\u0000${value}`, () => JSON.parse(value) ?? null) : value) || []
 
       if (!ncIsArray(attachments)) {
         attachments = []

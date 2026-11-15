@@ -13,7 +13,7 @@ import {
   ViewLockType,
   WorkspaceUserRoles,
 } from 'nocodb-sdk';
-import { map } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import RowColorCondition from 'src/models/RowColorCondition';
 import {
   checkIsPersonalViewOwner,
@@ -24,7 +24,6 @@ import {
   VIEW_KEY,
 } from './extract-ids.helpers';
 import type { ViewTypes } from 'nocodb-sdk';
-import type { Observable } from 'rxjs';
 import type {
   CallHandler,
   CanActivate,
@@ -65,6 +64,7 @@ import { GlobalGuard } from '~/guards/global/global.guard';
 import { JwtStrategy } from '~/strategies/jwt.strategy';
 import { RootScopes } from '~/utils/globals';
 import MCPToken from '~/models/MCPToken';
+import { runWithMetaReadScope } from '~/cache/metaReadScope';
 import Noco from '~/Noco';
 // Re-export VIEW_KEY for external consumers (previously defined here)
 export { VIEW_KEY };
@@ -1410,11 +1410,22 @@ export class AclMiddleware implements NestInterceptor {
       req,
     );
 
-    return next.handle().pipe(
+    const handled = next.handle().pipe(
       map((data) => {
         return data;
       }),
     );
+
+    // Read requests share hydrated metadata (e.g. Column.list) across the
+    // handler's repeated lookups. Subscribing inside the scope makes the
+    // handler's whole async tree — and only this request's — see it.
+    if (req?.method === 'GET') {
+      return new Observable((subscriber) =>
+        runWithMetaReadScope(() => handled.subscribe(subscriber)),
+      );
+    }
+
+    return handled;
   }
 }
 

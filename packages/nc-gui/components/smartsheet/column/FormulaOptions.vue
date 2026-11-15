@@ -246,7 +246,7 @@ watch(
           </div>
         </template>
         <div class="px-0.5">
-          <SmartsheetColumnFormulaInputHelper
+          <LazySmartsheetColumnFormulaInputHelper
             v-model:value="vModel.formula_raw"
             :error="validateInfos.formula_raw?.validateStatus === 'error'"
             :editor-error="editorError"

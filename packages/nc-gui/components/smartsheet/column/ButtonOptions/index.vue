@@ -543,7 +543,7 @@ if (isEdit.value) {
       </a-col>
     </a-row>
     <div v-if="vModel?.type === buttonActionsType.Url">
-      <SmartsheetColumnFormulaInputHelper
+      <LazySmartsheetColumnFormulaInputHelper
         v-model:value="vModel.formula_raw"
         suggestion-height="medium"
         editor-height="50px"

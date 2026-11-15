@@ -1,6 +1,7 @@
 import RedisCacheMgr from './RedisCacheMgr';
 import RedisMockCacheMgr from './RedisMockCacheMgr';
 import { isCacheBypassed } from './cacheBypassScope';
+import { bumpMetaWriteEpoch } from './metaReadScope';
 import type { NcContext } from 'nocodb-sdk';
 import type CacheMgr from './CacheMgr';
 import { CACHE_PREFIX, CacheGetType } from '~/utils/globals';
@@ -235,6 +236,8 @@ export default class NocoCache {
   }
 
   public static async del(context: CacheContext, key): Promise<boolean> {
+    // invalidation of any key also drops request-scoped meta memoization
+    bumpMetaWriteEpoch();
     if (this.cacheDisabled) return Promise.resolve(true);
     if (Array.isArray(key))
       return this.client.del(
@@ -289,6 +292,7 @@ export default class NocoCache {
     key: string,
     direction: string,
   ): Promise<boolean> {
+    bumpMetaWriteEpoch();
     if (this.cacheDisabled) return Promise.resolve(true);
     return this.client.deepDel(
       `${this.prefix}:${cacheContext(context)}:${key}`,
@@ -316,6 +320,7 @@ export default class NocoCache {
     key: string,
     updateObj: Record<string, any>,
   ): Promise<boolean> {
+    bumpMetaWriteEpoch();
     if (this.cacheDisabled || isCacheBypassed()) return Promise.resolve(true);
     return this.client.update(
       `${this.prefix}:${cacheContext(context)}:${key}`,
@@ -446,6 +451,7 @@ export default class NocoCache {
   }
 
   public static async clear(context: CacheContext): Promise<void> {
+    bumpMetaWriteEpoch();
     if (this.cacheDisabled) return Promise.resolve();
     return this.client.processPattern(
       `${this.prefix}:${cacheContext(context)}:*`,

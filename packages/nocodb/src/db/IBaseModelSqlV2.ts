@@ -404,6 +404,7 @@ export interface IBaseModelSqlV2 {
   getProto(param?: {
     apiVersion?: NcApiVersion;
     linksAsLtar?: boolean;
+    columns?: Column[];
   }): Promise<
     {
       __proto__?: {

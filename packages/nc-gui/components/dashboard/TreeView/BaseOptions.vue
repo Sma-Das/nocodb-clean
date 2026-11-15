@@ -58,7 +58,7 @@ function openAirtableImportDialog(baseId?: string, sourceId?: string) {
 
   const isOpen = ref(true)
 
-  const { close } = useDialog(resolveComponent('DlgAirtableImport'), {
+  const { close } = useDialog(resolveComponent('LazyDlgAirtableImport'), {
     'modelValue': isOpen,
     'baseId': baseId,
     'sourceId': sourceId,
@@ -80,7 +80,7 @@ function openQuickImportDialog(type: string) {
 
   const isOpen = ref(true)
 
-  const { close } = useDialog(resolveComponent('DlgQuickImport'), {
+  const { close } = useDialog(resolveComponent('LazyDlgQuickImport'), {
     'modelValue': isOpen,
     'importType': type,
     'baseId': source.value.base_id,

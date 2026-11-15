@@ -199,7 +199,7 @@ useEventListener(NcButton, 'mousedown', () => {
 
   .nc-button.ant-btn-text.focused {
     &.theme-default {
-      @apply text-nc-content-brand;
+      @apply text-nc-content-gray-emphasis bg-nc-bg-gray-light;
     }
 
     &.theme-ai {
@@ -210,10 +210,15 @@ useEventListener(NcButton, 'mousedown', () => {
 
 .nc-button.ant-btn {
   @apply rounded-lg font-medium;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .nc-button.ant-btn.small {
-  @apply py-1 px-1.75 h-8 min-w-8;
+  @apply py-1 px-2 h-8 min-w-8;
+
+  & > .nc-btn-inner {
+    @apply gap-x-1.5;
+  }
 }
 
 .nc-button.ant-btn.medium {
@@ -242,7 +247,7 @@ useEventListener(NcButton, 'mousedown', () => {
   @apply border-0 !cursor-not-allowed;
 
   &.theme-default {
-    @apply bg-nc-bg-gray-extralight text-nc-content-brand-hover md:(hover:bg-nc-bg-gray-extralight);
+    @apply bg-nc-bg-gray-light text-nc-content-gray-disabled md:(hover:bg-nc-bg-gray-light);
   }
 
   &.theme-ai {
@@ -261,7 +266,7 @@ useEventListener(NcButton, 'mousedown', () => {
   @apply border-0;
 
   &.theme-default {
-    @apply bg-nc-bg-gray-extralight text-nc-content-brand-hover md:(hover:bg-nc-bg-gray-extralight);
+    @apply bg-nc-bg-gray-light text-nc-content-gray-disabled md:(hover:bg-nc-bg-gray-light);
   }
 
   &.theme-ai {
@@ -297,7 +302,7 @@ useEventListener(NcButton, 'mousedown', () => {
   }
 
   &.theme-default {
-    @apply bg-nc-bg-default hover:bg-nc-bg-default border-nc-border-gray-light text-nc-content-brand-hover;
+    @apply bg-nc-bg-default hover:bg-nc-bg-default border-nc-border-gray-light text-nc-content-gray-disabled;
 
     &.bordered {
       @apply border-nc-border-gray-light;

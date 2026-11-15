@@ -22,6 +22,7 @@ import {
 } from '~/utils/globals';
 import { NcError } from '~/helpers/catchError';
 import { isWorker } from '~/utils';
+import { bumpMetaWriteEpoch } from '~/cache/metaReadScope';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -382,6 +383,7 @@ export class MetaService {
     this.logHelper(workspace_id, base_id, target, qb);
 
     await qb;
+    bumpMetaWriteEpoch();
 
     return insertObj;
   }
@@ -467,6 +469,7 @@ export class MetaService {
         insertObj.slice(i, i + BATCH_SIZE),
       );
     }
+    bumpMetaWriteEpoch();
 
     return insertObj;
   }
@@ -552,7 +555,9 @@ export class MetaService {
 
     this.contextCondition(query, workspace_id, base_id, target);
 
-    return query;
+    const res = await query;
+    bumpMetaWriteEpoch();
+    return res;
   }
 
   /***
@@ -626,7 +631,10 @@ export class MetaService {
 
     this.logHelper(workspace_id, base_id, target, query);
 
-    return query.del();
+    const res = await query.del();
+    bumpMetaWriteEpoch();
+    // runtime value (deleted row count) kept as before despite the void type
+    return res as unknown as void;
   }
 
   /***
@@ -995,7 +1003,9 @@ export class MetaService {
 
     this.logHelper(workspace_id, base_id, target, query);
 
-    return await query;
+    const res = await query;
+    bumpMetaWriteEpoch();
+    return res;
   }
 
   /***
@@ -1074,6 +1084,7 @@ export class MetaService {
     if (this.trx && this.nested === 0) {
       await this.trx.commit();
       this.trx = null;
+      bumpMetaWriteEpoch();
     }
   }
 

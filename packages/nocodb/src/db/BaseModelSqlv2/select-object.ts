@@ -38,6 +38,19 @@ import {
   logFormulaBuildError,
 } from '~/db/formulav2/formulaQueryBuilderv2';
 
+export const buildSuppliedColumnMap = (
+  columns?: Column[] | null,
+): Map<string, Column> => {
+  const map = new Map<string, Column>();
+  for (const column of columns ?? []) {
+    // only fully hydrated, live Column instances can stand in for Column.get
+    if (column instanceof Column && column.id && !column.deleted) {
+      if (!map.has(column.id)) map.set(column.id, column);
+    }
+  }
+  return map;
+};
+
 export const selectObject = (baseModel: IBaseModelSqlV2, logger: Logger) => {
   return async ({
     qb,
@@ -85,15 +98,24 @@ export const selectObject = (baseModel: IBaseModelSqlV2, logger: Logger) => {
       viewOrTableColumns =
         viewColumns || _columns || (await baseModel.model.getColumns());
     }
+    // View column rows only carry `fk_column_id`; resolve them from the
+    // already-hydrated columns the caller supplied instead of a serial
+    // `Column.get` per field. Ids missing from the supplied set (or deleted
+    // ones, which `Column.get` would not return either) still fall back.
+    const suppliedColumnsById = buildSuppliedColumnMap(_columns);
+
     for (const viewOrTableColumn of viewOrTableColumns) {
-      const column =
-        viewOrTableColumn instanceof Column
-          ? viewOrTableColumn
-          : await Column.get(baseModel.context, {
-              colId:
-                (viewOrTableColumn as GridViewColumn).fk_column_id ??
-                (viewOrTableColumn as ColumnType).id,
-            });
+      let column: Column;
+      if (viewOrTableColumn instanceof Column) {
+        column = viewOrTableColumn;
+      } else {
+        const colId =
+          (viewOrTableColumn as GridViewColumn).fk_column_id ??
+          (viewOrTableColumn as ColumnType).id;
+        column =
+          suppliedColumnsById.get(colId) ??
+          (await Column.get(baseModel.context, { colId }));
+      }
 
       if (!column) {
         logger.warn(

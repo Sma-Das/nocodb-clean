@@ -137,19 +137,22 @@ export function useGridViewData(
     const targetGroup = findGroupByPath(cachedGroups.value, path)
     if (!targetGroup) return
 
-    const groupsToUpdate = collectChildGroups(targetGroup)
-    updateGroupAggregations(groupsToUpdate, fields)
+    // Same scope as before (the target's subtree plus every ancestor's subtree), but as a
+    // single union: each ancestor subtree contains the target's, so separate calls re-sent the
+    // nested groups once per level.
+    const groupsToUpdate = new Set<CanvasGroup>(collectChildGroups(targetGroup))
 
     if (path.length > 1) {
       for (let i = path.length - 1; i > 0; i--) {
         const parentPath = path.slice(0, i)
         const parentGroup = findGroupByPath(cachedGroups.value, parentPath)
         if (parentGroup) {
-          const parentAndChildren = collectChildGroups(parentGroup)
-          updateGroupAggregations(parentAndChildren, fields)
+          for (const group of collectChildGroups(parentGroup)) groupsToUpdate.add(group)
         }
       }
     }
+
+    updateGroupAggregations(Array.from(groupsToUpdate), fields)
   }
 
   const reloadAggregateListener = (v: Record<string, any> = {}) => {
@@ -404,9 +407,15 @@ export function useGridViewData(
 
       triggerAggregateReload({ fields: props.map((p) => ({ title: p })), path })
 
+      // pk -> rowIndex, first occurrence wins (as `.find` did) — avoids rows × rows on large pastes.
+      const rowIndexByPk = new Map<string, number>()
+      for (const pkIndex of pksIndex) {
+        if (!rowIndexByPk.has(pkIndex.pk)) rowIndexByPk.set(pkIndex.pk, pkIndex.rowIndex)
+      }
+
       newRows.forEach((newRow: Record<string, any>) => {
         const pk = extractPkFromRow(newRow, metaValue?.columns as ColumnType[])
-        const rowIndex = pksIndex.find((pkIndex) => pkIndex.pk === pk)?.rowIndex
+        const rowIndex = rowIndexByPk.get(pk as string)
 
         if (rowIndex !== undefined && rowIndex !== null) {
           const row = dataCache.cachedRows.value.get(rowIndex)
@@ -535,27 +544,35 @@ export function useGridViewData(
       }
 
       const existingPks = new Set(Array.from(dataCache.cachedRows.value.values()).map((row) => getPk(row)))
-      const [insertedRows, updatedRows] = bulkUpsertedRows.reduce(
-        ([inserted, updated], row) => {
-          const isPkExisting = existingPks.has(extractPkFromRow(row, metaValue?.columns as ColumnType[]))
-          return isPkExisting
-            ? [inserted, [...updated, { row, rowMeta: {}, oldRow: row }]]
-            : [[...inserted, { row, rowMeta: {}, oldRow: {} }], updated]
-        },
-        [[], []] as [Row[], Row[]],
-      )
+      // Push instead of re-spreading both arrays per row (was O(n²) on large pastes).
+      const insertedRows: Row[] = []
+      const updatedRows: Row[] = []
+      for (const row of bulkUpsertedRows) {
+        const isPkExisting = existingPks.has(extractPkFromRow(row, metaValue?.columns as ColumnType[]))
+        if (isPkExisting) updatedRows.push({ row, rowMeta: {}, oldRow: row })
+        else insertedRows.push({ row, rowMeta: {}, oldRow: {} })
+      }
 
       insertedRows.forEach((row: Row, index: number) => {
         const newIndex = dataCache.totalRows.value + index
         row.rowMeta.rowIndex = newIndex
         dataCache.cachedRows.value.set(newIndex, { ...row, rowMeta: { ...row.rowMeta, rowIndex: newIndex } })
       })
+      // pk -> first cached index (Map order, as `.find` over entries did), built once instead of
+      // scanning the whole cache per updated row. Overwrites below keep each pk at its index.
+      const cachedIndexByPk = new Map<string | null, number>()
+      if (updatedRows.length) {
+        for (const [index, r] of dataCache.cachedRows.value) {
+          const pk = getPk(r)
+          if (!cachedIndexByPk.has(pk)) cachedIndexByPk.set(pk, index)
+        }
+      }
       updatedRows.forEach((row: Row) => {
-        const existingRow = Array.from(dataCache.cachedRows.value.entries()).find(([_, r]) => getPk(r) === getPk(row))
-        if (existingRow) {
-          dataCache.cachedRows.value.set(existingRow[0], {
+        const existingIndex = cachedIndexByPk.get(getPk(row))
+        if (existingIndex !== undefined) {
+          dataCache.cachedRows.value.set(existingIndex, {
             ...row,
-            rowMeta: { ...row.rowMeta, rowIndex: existingRow[0] },
+            rowMeta: { ...row.rowMeta, rowIndex: existingIndex },
           })
         }
       })

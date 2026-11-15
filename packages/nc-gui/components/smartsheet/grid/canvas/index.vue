@@ -3932,7 +3932,7 @@ watch(
           />
 
           <div v-if="isCreateOrEditColumnDropdownOpen" class="nc-edit-or-add-provider-wrapper">
-            <SmartsheetColumnEditOrAddProvider
+            <LazySmartsheetColumnEditOrAddProvider
               :key="editColumn?.id || 'new'"
               ref="columnEditOrAddProviderRef"
               :column="columnOrder ? null : editColumn"

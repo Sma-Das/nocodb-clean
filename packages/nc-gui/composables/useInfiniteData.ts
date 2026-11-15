@@ -29,6 +29,7 @@ import type { Row } from '#imports'
 import { validateRowFilters } from '~/utils/dataUtils'
 import { NavigateDir } from '~/lib/enums'
 import { isUniqueConstraintViolationError } from '~/utils/errorUtils'
+import { selectRowsToKeep, settleWithConcurrency } from '~/utils/infiniteCacheUtils'
 
 // Value-equality check for group-by cells. A naive `!==` reports a false change
 // for non-primitive values (Link-to-record, JSON, …) since the socket payload and
@@ -241,26 +242,40 @@ export function useInfiniteData(args: {
 
       const ltarCols = meta.value.columns.filter((c) => filterColIds.has(c.id!) && c.uidt === UITypes.LinkToAnotherRecord)
 
-      for (const col of ltarCols) {
-        const colOptions = col.colOptions as LinkToAnotherRecordType
-        const relatedModelId = colOptions?.fk_related_model_id
-        if (!relatedModelId || !meta.value.base_id) continue
+      // Snapshot before any await — `meta` may switch to another table mid-load.
+      const baseId = meta.value.base_id
+      const workspaceId = (meta.value as any)?.fk_workspace_id
+      if (!baseId) return
 
-        const existing = getMetaByKey(meta.value.base_id, relatedModelId)
-        if (!existing) {
-          // Try full meta first (user may have access); fall back to partial
-          // meta only when full meta isn't cached — same as useLTARStore.loadRelatedTableMeta
-          try {
-            await getMeta(meta.value.base_id, relatedModelId, false, false, true)
-          } catch {}
-          if (!getMetaByKey(meta.value.base_id, relatedModelId)) {
-            await getPartialMeta(meta.value.base_id, col.id!, relatedModelId, {
-              workspaceId: (meta.value as any)?.fk_workspace_id,
-              baseId: meta.value.base_id,
-            })
-          }
-        }
+      // One task per related table, all started together so the related reads share
+      // one `batch` envelope instead of costing a round trip each. Link columns to the
+      // same table are kept in order: like the serial loop, a later column only tries
+      // its partial meta if the earlier ones left the table uncached.
+      const linkColsByRelatedModel = new Map<string, ColumnType[]>()
+      for (const col of ltarCols) {
+        const relatedModelId = (col.colOptions as LinkToAnotherRecordType)?.fk_related_model_id
+        if (!relatedModelId || getMetaByKey(baseId, relatedModelId)) continue
+        const cols = linkColsByRelatedModel.get(relatedModelId)
+        if (cols) cols.push(col)
+        else linkColsByRelatedModel.set(relatedModelId, [col])
       }
+
+      await Promise.all(
+        Array.from(linkColsByRelatedModel, async ([relatedModelId, cols]) => {
+          // Try full meta first (user may have access); fall back to partial
+          // meta only when full meta isn't cached — same as useLTARStore.loadRelatedTableMeta.
+          // Steps stay sequential per table; failures are isolated per table.
+          try {
+            await getMeta(baseId, relatedModelId, false, false, true)
+          } catch {}
+          for (const col of cols) {
+            if (getMetaByKey(baseId, relatedModelId)) break
+            try {
+              await getPartialMeta(baseId, col.id!, relatedModelId, { workspaceId, baseId })
+            } catch {}
+          }
+        }),
+      )
     },
     { immediate: true },
   )
@@ -508,36 +523,68 @@ export function useInfiniteData(args: {
     }
   }
 
+  // Interface-page chunk loads each hit the database separately, so cap how many run at once
+  // instead of firing a whole 50-chunk batch in parallel.
+  const INTERFACE_CHUNK_CONCURRENCY = 4
+
   /**
    * Interface-page adapter has no bulk list op — emulate the bulk chunk load
-   * with parallel `fetchList` calls, returning the alias-keyed shape the bulk
+   * with a bounded pool of `fetchList` calls, returning the alias-keyed shape the bulk
    * response consumers expect.
+   *
+   * Each chunk settles on its own: failures are returned in `failed` (keyed by alias) so only
+   * those chunks fall back to an individual retry, instead of one rejection discarding and
+   * re-requesting every sibling. A cancellation still fails the whole batch (thrown), which the
+   * caller handles like an aborted bulk request; no new chunks start once one is cancelled.
+   * Chunks for which `shouldStart` is false (e.g. stale group requests) are not fetched.
    */
   async function fetchInterfaceBulkChunks(
     dataApi: InterfacePageDataApi,
     requests: Array<{ alias: string; offset: number; limit: number; where?: string }>,
     filterArrs: FilterType[][],
+    shouldStart: (index: number) => boolean = () => true,
   ) {
-    const chunkResults = await Promise.all(
-      requests.map(async (request, i) => ({
-        alias: request.alias,
-        result: await dataApi.fetchList({
-          offset: request.offset,
-          limit: request.limit,
-          where: request.where,
-          sortsArr: sorts.value,
-          filtersArr: nestedFilters.value ?? [],
-          // group-nesting predicate — must ride apart from `filtersArr` (the
-          // server gates that on the Filter action; nesting always applies)
-          nestedFiltersArr: filterArrs[i] ?? [],
-        }),
-      })),
+    let cancelError: unknown
+    let cancelled = false
+
+    const settled = await settleWithConcurrency(
+      requests,
+      INTERFACE_CHUNK_CONCURRENCY,
+      async (request, i) => {
+        try {
+          return await dataApi.fetchList({
+            offset: request.offset,
+            limit: request.limit,
+            where: request.where,
+            sortsArr: sorts.value,
+            filtersArr: nestedFilters.value ?? [],
+            // group-nesting predicate — must ride apart from `filtersArr` (the
+            // server gates that on the Filter action; nesting always applies)
+            nestedFiltersArr: filterArrs[i] ?? [],
+          })
+        } catch (e) {
+          if (axios.isCancel(e) && !cancelled) {
+            cancelled = true
+            cancelError = e
+          }
+          throw e
+        }
+      },
+      (_request, i) => shouldStart(i),
+      () => cancelled,
     )
 
-    return chunkResults.reduce((acc, { alias, result }) => {
-      acc[alias] = result
-      return acc
-    }, {} as Record<string, { list: Record<string, any>[]; pageInfo: PaginatedType }>)
+    if (cancelled) throw cancelError
+
+    const results = {} as Record<string, { list: Record<string, any>[]; pageInfo: PaginatedType }>
+    const failed = new Map<string, unknown>()
+    settled.forEach((outcome, i) => {
+      const alias = requests[i]!.alias
+      if (outcome.status === 'fulfilled') results[alias] = outcome.value
+      else if (outcome.status === 'rejected') failed.set(alias, outcome.reason)
+    })
+
+    return { results, failed }
   }
 
   async function processBatch() {
@@ -583,24 +630,35 @@ export function useInfiniteData(args: {
         bulkFilterArrs.push(filterArrJson)
       }
 
-      const bulkResponse = interfaceDataApi
-        ? await fetchInterfaceBulkChunks(interfaceDataApi, bulkRequests, bulkFilterArrs)
-        : !isPublic?.value
-        ? await $api.internal.postOperation(
-            (meta.value as any).fk_workspace_id!,
-            meta.value.base_id!,
-            {
-              operation: 'bulkDataList',
-              tableId: meta.value.id!,
-              viewId: viewMeta.value?.id,
-              baseId: meta.value.base_id!,
-            },
-            bulkRequests,
-            { signal: searchAbortSignal.value },
-          )
-        : await fetchBulkListData({}, bulkRequests)
+      // Interface chunks that failed on their own — retried individually below, siblings kept.
+      let failedInterfaceChunks: Map<string, unknown> | undefined
+      let bulkResponse: Record<string, any>
+      if (interfaceDataApi) {
+        const interfaceResponse = await fetchInterfaceBulkChunks(interfaceDataApi, bulkRequests, bulkFilterArrs, (i) =>
+          // A group reload while queued in the pool — the result would be dropped anyway.
+          batch[i] ? !isStaleChunkRequest(batch[i]!) : true,
+        )
+        bulkResponse = interfaceResponse.results
+        failedInterfaceChunks = interfaceResponse.failed
+      } else {
+        bulkResponse = !isPublic?.value
+          ? await $api.internal.postOperation(
+              (meta.value as any).fk_workspace_id!,
+              meta.value.base_id!,
+              {
+                operation: 'bulkDataList',
+                tableId: meta.value.id!,
+                viewId: viewMeta.value?.id,
+                baseId: meta.value.base_id!,
+              },
+              bulkRequests,
+              { signal: searchAbortSignal.value },
+            )
+          : await fetchBulkListData({}, bulkRequests)
+      }
 
       const allFormattedRows: Array<{ rows: Array<Row>; path: Array<number> }> = []
+      const retryRequests: typeof batch = []
 
       for (const request of batch) {
         // A reload landed while the request was in flight — the rows belong to the old group layout.
@@ -611,6 +669,16 @@ export function useInfiniteData(args: {
 
         try {
           const alias = `chunk_${request.chunkId}_${request.path.join('_')}`
+
+          if (failedInterfaceChunks?.has(alias)) {
+            const error = failedInterfaceChunks.get(alias)
+            if ((error as any)?.response?.data?.error !== 'ERR_INVALID_OFFSET_VALUE') {
+              console.error(`Chunk ${request.chunkId} request failed, retrying individually:`, error)
+            }
+            retryRequests.push(request)
+            continue
+          }
+
           const chunkData = bulkResponse[alias]
           const dataCache = getDataCache(request.path)
 
@@ -647,6 +715,9 @@ export function useInfiniteData(args: {
       // loadBulkAggCommentsCount mutates through the reactive cache and emits TRIGGER_RE_RENDER.
       loadBulkAggCommentsCount(allFormattedRows).catch(() => {})
 
+      if (retryRequests.length) {
+        await Promise.allSettled(retryRequests.map(retryChunkRequestIndividually))
+      }
     } catch (error) {
       // Superseded by a newer search term. The individual fallback would only re-issue every chunk
       // against the same aborted signal, so reset them for the new term's fetch and stop here.
@@ -667,29 +738,30 @@ export function useInfiniteData(args: {
         console.error('Bulk chunk request failed, falling back to individual requests:', error)
       }
 
-      const promises = batch.map((request) => {
-        if (isStaleChunkRequest(request)) {
-          request.resolve(undefined)
-          return Promise.resolve()
-        }
-
-        const dataCache = getDataCache(request.path)
-
-        // Don't re-issue a request for a chunk already known to be past the data
-        // (it would just fail again) — mark it loaded (empty) and resolve.
-        if (request.chunkId > 0 && dataCache.totalRows.value && request.chunkId * CHUNK_SIZE >= dataCache.totalRows.value) {
-          dataCache.chunkStates.value[request.chunkId] = 'loaded'
-          request.resolve(undefined)
-          return Promise.resolve()
-        }
-
-        return fetchChunkIndividually(request.chunkId, request.path)
-          .then(() => request.resolve(undefined))
-          .catch((err) => request.reject(err))
-      })
-
-      await Promise.allSettled(promises)
+      await Promise.allSettled(batch.map(retryChunkRequestIndividually))
     }
+  }
+
+  // Fallback for a chunk whose bulk load failed: settle it via an individual request.
+  async function retryChunkRequestIndividually(request: (typeof pendingChunkRequests)[number]): Promise<void> {
+    if (isStaleChunkRequest(request)) {
+      request.resolve(undefined)
+      return Promise.resolve()
+    }
+
+    const dataCache = getDataCache(request.path)
+
+    // Don't re-issue a request for a chunk already known to be past the data
+    // (it would just fail again) — mark it loaded (empty) and resolve.
+    if (request.chunkId > 0 && dataCache.totalRows.value && request.chunkId * CHUNK_SIZE >= dataCache.totalRows.value) {
+      dataCache.chunkStates.value[request.chunkId] = 'loaded'
+      request.resolve(undefined)
+      return Promise.resolve()
+    }
+
+    return fetchChunkIndividually(request.chunkId, request.path)
+      .then(() => request.resolve(undefined))
+      .catch((err) => request.reject(err))
   }
 
   const fetchChunk = async (chunkId: number, path: Array<number> = [], forceFetch = false) => {
@@ -767,29 +839,13 @@ export function useInfiniteData(args: {
     const safeStartChunk = getChunkIndex(safeStartIndex)
     const safeEndChunk = getChunkIndex(safeEndIndex)
 
-    const importantChunks = new Set<number>()
-    let maxChunk = 0
-    for (const index of dataCache.cachedRows.value.keys()) {
-      const chunkIndex = getChunkIndex(index)
-      maxChunk = Math.max(maxChunk, chunkIndex)
-      const row = dataCache.cachedRows.value.get(index)
-      if (row && (row.rowMeta?.selected || row.rowMeta?.new || row.rowMeta?.isDragging)) {
-        importantChunks.add(chunkIndex)
-      }
-    }
-
-    const newCachedRows = new Map<number, Row>()
-    for (let chunk = 0; chunk <= maxChunk; chunk++) {
-      const isVisibleChunk = chunk >= safeStartChunk && chunk <= safeEndChunk
-      if (isVisibleChunk || importantChunks.has(chunk)) {
-        const chunkStart = chunk * CHUNK_SIZE
-        const chunkEnd = chunkStart + CHUNK_SIZE
-        for (let i = chunkStart; i < chunkEnd; i++) {
-          const row = dataCache.cachedRows.value.get(i)
-          if (row) newCachedRows.set(i, row)
-        }
-      }
-    }
+    // Visits cached entries only — see selectRowsToKeep (utils/infiniteCacheUtils.ts).
+    const { rows: newCachedRows, importantChunks } = selectRowsToKeep(
+      dataCache.cachedRows.value,
+      safeStartChunk,
+      safeEndChunk,
+      CHUNK_SIZE,
+    )
 
     dataCache.cachedRows.value = newCachedRows
     dataCache.chunkStates.value = dataCache.chunkStates.value.map((state, chunkIndex) =>
@@ -821,14 +877,23 @@ export function useInfiniteData(args: {
             ids,
           })
 
+      // Index once instead of scanning the whole cache / count list per row (rows × cache).
+      // First match wins, as `.find` did.
+      const cachedRowByRowIndex = new Map<number | undefined, Row>()
+      for (const cachedRow of dataCache.cachedRows.value.values()) {
+        if (!cachedRowByRowIndex.has(cachedRow.rowMeta.rowIndex)) cachedRowByRowIndex.set(cachedRow.rowMeta.rowIndex, cachedRow)
+      }
+      const countByRowId = new Map<unknown, any>()
+      for (const c of (aggCommentCount ?? []) as Array<Record<string, any>>) {
+        if (!countByRowId.has(c.row_id)) countByRowId.set(c.row_id, c.count)
+      }
+
       formattedData.forEach((row) => {
-        const cachedRow = Array.from(dataCache.cachedRows.value.values()).find(
-          (cachedRow) => cachedRow.rowMeta.rowIndex === row.rowMeta.rowIndex,
-        )
+        const cachedRow = cachedRowByRowIndex.get(row.rowMeta.rowIndex)
         if (!cachedRow) return
 
         const id = extractPkFromRow(row.row, meta.value?.columns as ColumnType[])
-        const count = aggCommentCount?.find((c: Record<string, any>) => c.row_id === id)?.count || 0
+        const count = countByRowId.get(id) || 0
         cachedRow.rowMeta.commentCount = +count
       })
 
@@ -2205,7 +2270,7 @@ export function useInfiniteData(args: {
     // returns them in another shape. Everything else, e.g. formulas over the link, is refreshed.
     const refreshed = Object.fromEntries(
       Object.entries(record).filter(([title]) => {
-        const col = meta.value?.columns?.find((c) => c.title === title)
+        const col = columnsByAlias.value[title]
         return col && !isLinksOrLTAR(col)
       }),
     )

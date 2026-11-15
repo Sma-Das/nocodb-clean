@@ -134,8 +134,9 @@ const _ = (window as any).ResizeObserver
       <!-- Page Loading Indicator -->
       <NcNuxtLoadingIndicator />
 
-      <!-- Command Menu -->
-      <CmdK
+      <!-- Command Menu. Lazy: keeps it (and the view/table stores it pulls in) off the startup bundle;
+           it mounts right after boot, and `commandPalette.value?.open?.()` no-ops until then. -->
+      <LazyCmdK
         ref="commandPalette"
         v-model:open="cmdK"
         :scope="activeScope.scope"
@@ -146,8 +147,8 @@ const _ = (window as any).ResizeObserver
         @scope="onScope"
       />
       <!-- Recent Views. Cycles through recently visited Views -->
-      <CmdL v-model:open="cmdL" :set-active-cmd-view="setActiveCmdView" />
-      <DashboardFeatureExperimentation v-model:value="isExperimentalFeatureModalOpen" />
+      <LazyCmdL v-model:open="cmdL" :set-active-cmd-view="setActiveCmdView" />
+      <LazyDashboardFeatureExperimentation v-model:value="isExperimentalFeatureModalOpen" />
     </div>
   </ErrorBoundary>
 

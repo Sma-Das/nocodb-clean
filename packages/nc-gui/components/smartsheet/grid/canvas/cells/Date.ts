@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
 import { defaultOffscreen2DContext, isBoxHovered, renderSingleLineText, renderTagLabel, truncateText } from '../utils/canvas'
+import { dateCacheKey, memoRenderValue } from '../utils/renderValueCache'
 import { parseFlexibleDate } from '~/utils/datetimeUtils'
 const defaultDateFormat = 'YYYY-MM-DD'
 
@@ -34,15 +35,17 @@ export const DateCellRenderer: CellRenderer = {
     }
 
     if (value) {
-      const date = dayjs(/^\d+$/.test(value) ? +value : value, defaultDateFormat)
-      if (date.isValid()) {
-        formattedDate = date.format(dateFormat)
-      } else {
+      const formatValue = () => {
+        const date = dayjs(/^\d+$/.test(value) ? +value : value, defaultDateFormat)
+        if (date.isValid()) return date.format(dateFormat)
         const parsedDate = parseFlexibleDate(value)
-        if (parsedDate) {
-          formattedDate = parsedDate.format(dateFormat)
-        }
+        return parsedDate ? parsedDate.format(dateFormat) : ''
       }
+      // Pure in (value, format, locale) — memoised so repaints skip the custom-format parse
+      formattedDate =
+        typeof value === 'string' || typeof value === 'number'
+          ? memoRenderValue(dateCacheKey('date', value, dateFormat), formatValue)
+          : formatValue()
     }
 
     if (!formattedDate) {
