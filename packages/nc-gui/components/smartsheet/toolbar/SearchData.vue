@@ -297,7 +297,8 @@ watch(
       <NcButton
         size="small"
         type="text"
-        class="nc-toolbar-btn !rounded-lg !h-7 !px-1.5 relative"
+        class="nc-toolbar-btn !rounded-md !h-7 !px-1.5 relative"
+        :aria-label="$t('general.search')"
         data-testid="nc-global-search-show-input"
         @click="handleShowSearchInput"
       >
@@ -414,7 +415,7 @@ watch(
 
 <style scoped>
 :deep(input::placeholder) {
-  @apply !text-gray-400;
+  @apply !text-nc-content-gray-muted;
   line-height: 0.8rem !important;
   font-size: 0.8rem !important;
 }
