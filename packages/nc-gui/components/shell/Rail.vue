@@ -193,13 +193,18 @@ const onSearchEnter = () => {
           v-e="[`${eventPrefix}${item.ev ?? item.slug}`]"
           class="nc-shell-rail-item"
           :class="{ active: active === item.slug }"
+          role="button"
+          tabindex="0"
+          :aria-current="active === item.slug ? 'page' : undefined"
           :data-testid="item.testId ?? `${testidPrefix}-item-${item.slug}`"
           @click="onSelect(item.slug)"
+          @keydown.enter.prevent="onSelect(item.slug)"
+          @keydown.space.prevent="onSelect(item.slug)"
         >
           <GeneralIcon
             :icon="item.icon"
             class="!h-4 !w-4 flex-none"
-            :class="active === item.slug ? 'text-nc-content-brand' : 'text-nc-content-gray-subtle2'"
+            :class="active === item.slug ? 'text-nc-content-gray-emphasis' : 'text-nc-content-gray-subtle2'"
           />
           <span class="truncate flex-1">{{ item.title }}</span>
 
@@ -231,7 +236,7 @@ const onSearchEnter = () => {
 }
 
 .nc-shell-rail-item {
-  @apply flex items-center gap-2.5 px-2.5 py-2 mb-0.5 rounded-lg text-bodyDefaultSm font-normal text-nc-content-gray-emphasis cursor-pointer;
+  @apply flex items-center gap-2.5 px-2.5 py-2 mb-0.5 rounded-lg text-bodyDefaultSm font-normal text-nc-content-gray-subtle cursor-pointer transition-colors duration-150;
   // Pinned to the text line's row height: the client-mark chips (22px) and the
   // upgrade badge (20px) overshoot it and would otherwise grow their rows.
   height: 34px;
@@ -240,17 +245,18 @@ const onSearchEnter = () => {
     @apply bg-nc-bg-gray-light;
   }
 
+  // Neutral, like the sidebar tree: the brand colour is kept for accents.
   &.active {
-    @apply bg-nc-bg-brand text-nc-content-brand font-medium;
+    @apply bg-nc-bg-gray-medium text-nc-content-gray-emphasis font-medium;
 
     &:hover {
-      @apply bg-nc-bg-brand;
+      @apply bg-nc-bg-gray-medium;
     }
   }
 }
 
 .nc-shell-rail-group {
-  @apply px-2 pt-2.5 pb-1.5 text-[10px] font-bold tracking-wide text-nc-content-gray-muted uppercase;
+  @apply px-2.5 pt-2.5 pb-1.5 text-[11px] font-semibold tracking-wide text-nc-content-gray-muted uppercase;
 }
 
 // A foldable heading is a control, so it takes the whole row as its hit target.
@@ -306,12 +312,8 @@ const onSearchEnter = () => {
   }
 
   &.active {
-    --nc-shell-chip-surface: var(--color-brand-50);
+    --nc-shell-chip-surface: var(--color-gray-200);
   }
-}
-
-[theme='dark'] .nc-shell-rail-item.active {
-  --nc-shell-chip-surface: var(--color-gray-200);
 }
 
 // 22px chip around a 16px mark leaves 3px each side, and the overlap has to stay
