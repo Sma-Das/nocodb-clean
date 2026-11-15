@@ -642,7 +642,7 @@ const onChangeToDynamic = async () => {
                             class="w-4 h-4 text-primary"
                           />
                         </div>
-                        <div class="flex flex-row text-xs text-nc-content-gray-disabled">
+                        <div class="flex flex-row text-xs text-nc-content-gray-muted">
                           {{ $t('labels.filterBasedOnStaticValue') }}
                         </div>
                       </div>
@@ -666,7 +666,7 @@ const onChangeToDynamic = async () => {
                             class="w-4 h-4 text-primary"
                           />
                         </div>
-                        <div class="flex flex-row text-xs text-nc-content-gray-disabled">
+                        <div class="flex flex-row text-xs text-nc-content-gray-muted">
                           {{ $t('labels.filterBasedOnDynamicValue') }}
                         </div>
                       </div>
@@ -728,7 +728,7 @@ const onChangeToDynamic = async () => {
 
 <style lang="scss" scoped>
 .nc-filter-where-label {
-  @apply text-nc-content-gray-disabled;
+  @apply text-nc-content-gray-muted;
 }
 
 .nc-filter-item-remove-btn,
@@ -843,7 +843,7 @@ const onChangeToDynamic = async () => {
 }
 
 .nc-filter-where-label {
-  @apply text-nc-content-gray-disabled;
+  @apply text-nc-content-gray-muted;
 }
 
 :deep(.ant-select-disabled.ant-select:not(.ant-select-customize-input) .ant-select-selector) {

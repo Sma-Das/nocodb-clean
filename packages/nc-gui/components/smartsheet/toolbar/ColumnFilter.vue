@@ -1741,7 +1741,7 @@ defineExpose({
                                   class="w-4 h-4 text-primary"
                                 />
                               </div>
-                              <div class="flex flex-row text-xs text-nc-content-gray-disabled">
+                              <div class="flex flex-row text-xs text-nc-content-gray-muted">
                                 {{ $t('labels.filterBasedOnStaticValue') }}
                               </div>
                             </div>
@@ -1760,7 +1760,7 @@ defineExpose({
                                   class="w-4 h-4 text-primary"
                                 />
                               </div>
-                              <div class="flex flex-row text-xs text-nc-content-gray-disabled">
+                              <div class="flex flex-row text-xs text-nc-content-gray-muted">
                                 {{ $t('labels.filterBasedOnDynamicValue') }}
                               </div>
                             </div>
@@ -1800,7 +1800,7 @@ defineExpose({
                                   class="w-4 h-4 text-primary"
                                 />
                               </div>
-                              <div class="flex flex-row text-xs text-nc-content-gray-disabled">
+                              <div class="flex flex-row text-xs text-nc-content-gray-muted">
                                 {{ $t('labels.filterBasedOnStaticValue') }}
                               </div>
                             </div>
@@ -1824,7 +1824,7 @@ defineExpose({
                                   class="w-4 h-4 text-primary"
                                 />
                               </div>
-                              <div class="flex flex-row text-xs text-nc-content-gray-disabled">
+                              <div class="flex flex-row text-xs text-nc-content-gray-muted">
                                 {{ $t('labels.filterBasedOnDynamicValue') }}
                               </div>
                             </div>
@@ -2036,7 +2036,7 @@ defineExpose({
     </template>
     <div
       v-if="showEmptyPlaceholder && (!visibleFilters || !visibleFilters.length)"
-      class="flex flex-row text-nc-content-gray-disabled mt-2"
+      class="flex flex-row text-sm text-nc-content-gray-muted mt-2"
       :class="{
         'ml-1': nested,
         'ml-0.5': !nested,
@@ -2157,7 +2157,7 @@ defineExpose({
 }
 
 .nc-filter-where-label {
-  @apply text-nc-content-gray-disabled;
+  @apply text-nc-content-gray-muted;
 }
 
 :deep(.ant-select-disabled.ant-select:not(.ant-select-customize-input) .ant-select-selector) {

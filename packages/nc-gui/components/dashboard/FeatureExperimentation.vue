@@ -244,12 +244,8 @@ onUnmounted(() => {
           </template>
         </div>
       </div>
-      <div v-else class="px-2 py-6 text-center text-nc-content-gray-muted flex flex-col items-center gap-6">
-        <img
-          src="~assets/img/placeholder/no-search-result-found.png"
-          class="!w-[164px] flex-none"
-          alt="No search results found"
-        />
+      <div v-else class="px-2 py-6 text-center text-nc-content-gray-muted flex flex-col items-center gap-3">
+        <GeneralEmptyGlyph />
 
         {{ features?.length ? $t('title.noResultsMatchedYourSearch') : 'The list is empty' }}
       </div>

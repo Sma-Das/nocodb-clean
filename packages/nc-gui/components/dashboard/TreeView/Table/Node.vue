@@ -564,7 +564,9 @@ const isMmTable = computed(() => !!table.value?.mm)
                   v-e="['c:table:toggle-expand']"
                   type="text"
                   size="xxsmall"
-                  class="nc-table-chevron-btn !absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-10 text-nc-content-gray-subtle2 hover:text-nc-content-gray !rounded-md !xs:hidden"
+                  class="nc-table-chevron-btn !absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity duration-150 z-10 text-nc-content-gray-subtle2 hover:text-nc-content-gray !rounded-md !xs:hidden"
+                  :aria-label="isExpanded ? $t('general.collapse') : $t('general.expand')"
+                  :aria-expanded="isExpanded"
                   @click.stop="onExpand"
                 >
                   <GeneralIcon
@@ -668,6 +670,7 @@ const isMmTable = computed(() => !!table.value?.mm)
                   '!opacity-100 !inline-block': isOptionsOpen || isCreateViewMenuOpen,
                 }"
                 data-testid="nc-sidebar-table-context-menu"
+                :aria-label="$t('labels.tableOptions')"
                 type="text"
                 size="xxsmall"
                 @click.stop
@@ -932,6 +935,7 @@ const isMmTable = computed(() => !!table.value?.mm)
                   '!opacity-100 !visible': isOptionsOpen || isCreateViewMenuOpen,
                 }"
                 data-testid="nc-sidebar-table-create-view-btn"
+                :aria-label="$t('activity.createView')"
                 @click.stop
               >
                 <NcTooltip :title="$t('activity.createView')" hide-on-click :placement="isMobileMode ? 'topRight' : undefined">

@@ -30,15 +30,13 @@ watch(isReloading, () => {
   <NcTooltip placement="bottom">
     <template #title> {{ $t('general.reload') }} </template>
 
-    <div
-      class="flex ml-1 items-center justify-center select-none cursor-pointer text-gray-500 w-5.5 h-5.5 hover:(bg-nc-bg-gray-light text-nc-content-gray-extreme) rounded"
+    <button
+      type="button"
+      class="nc-reload-btn flex ml-1 p-0 border-0 bg-transparent items-center justify-center select-none cursor-pointer text-nc-content-gray-muted w-6 h-6 hover:(bg-nc-bg-gray-light text-nc-content-gray-extreme) rounded-md transition-colors duration-150"
+      :aria-label="$t('general.reload')"
+      @click="onClick"
     >
-      <component
-        :is="iconMap.reload"
-        class="group-hover:(text-primary) h-4 nc-icon-reload text-gray-400"
-        :class="isReloading ? 'animate-spin' : ''"
-        @click="onClick"
-      />
-    </div>
+      <component :is="iconMap.reload" class="h-4 nc-icon-reload" :class="isReloading ? 'animate-spin' : ''" />
+    </button>
   </NcTooltip>
 </template>

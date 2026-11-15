@@ -29,6 +29,7 @@ const emits = defineEmits<{
     type="text"
     class="nc-shell-close !absolute top-4 sm:top-8 -mt-0.5 right-3 z-20"
     :data-testid="testid"
+    :aria-label="$t('general.close')"
     @click="emits('close')"
   >
     <GeneralIcon icon="close" class="!h-4 !w-4" />

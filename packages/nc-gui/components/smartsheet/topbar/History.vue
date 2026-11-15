@@ -73,7 +73,8 @@ function onTrashClick() {
         type="text"
         size="small"
         class="nc-topbar-history-btn"
-        :class="{ '!bg-nc-bg-brand !text-nc-content-brand': visible }"
+        :class="{ '!bg-nc-bg-gray-medium !text-nc-content-gray-emphasis': visible }"
+        :aria-label="$t('labels.history')"
         data-testid="nc-topbar-history-btn"
       >
         <GeneralIcon icon="ncHistory" class="w-4 h-4 !stroke-transparent" />

@@ -68,11 +68,12 @@ const copySharedBase = async () => {
       :size="isMobileMode ? 'medium' : 'small'"
       class="z-10 !rounded-lg"
       :class="{
-        '!px-2': !isMobileMode,
+        '!px-2.5': !isMobileMode,
         '!px-0 !max-w-8.5 !min-w-8.5': isMobileMode,
       }"
       type="primary"
       :disabled="disabled"
+      :aria-label="$t('activity.share')"
       @click="showShareModal = true"
     >
       <div v-if="!isMobileMode" class="flex flex-row items-center w-full gap-x-1.5">
@@ -84,7 +85,7 @@ const copySharedBase = async () => {
         <GeneralIcon v-else icon="ncSend" class="flex-none h-3.5 w-3.5 rotate-45" />
         <div class="flex">{{ $t('activity.share') }}</div>
       </div>
-      <GeneralIcon v-else icon="mobileShare" />
+      <GeneralIcon v-else icon="mobileShare" aria-hidden="true" />
     </NcButton>
   </div>
 

@@ -652,12 +652,8 @@ const attachmentUrl = computed(() => getPossibleAttachmentSrc(arrValue.value[0])
           </template>
         </a-input>
         <div class="flex flex-wrap gap-2 items-start overflow-y-auto px-3 py-2">
-          <div v-if="search && !filteredArrValues.length" class="px-2 text-gray-500 flex flex-col items-center gap-6 text-center">
-            <img
-              src="~assets/img/placeholder/no-search-result-found.png"
-              class="!w-[164px] flex-none"
-              alt="No search results found"
-            />
+          <div v-if="search && !filteredArrValues.length" class="px-2 text-gray-500 flex flex-col items-center gap-3 text-center">
+            <GeneralEmptyGlyph />
 
             {{ $t('title.noResultsMatchedYourSearch') }}
           </div>

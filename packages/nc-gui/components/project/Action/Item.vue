@@ -6,6 +6,11 @@ defineProps<{
   isLoading?: boolean
   icon?: IconMapKey
 }>()
+
+// The card is a div, so the keyboard has to be taught what a button already knows.
+const onKeyActivate = (e: KeyboardEvent) => {
+  ;(e.currentTarget as HTMLElement | null)?.click()
+}
 </script>
 
 <template>
@@ -17,6 +22,11 @@ defineProps<{
       'loading cursor-wait': isLoading,
       'cursor-pointer': !isLoading,
     }"
+    :tabindex="disabled || isLoading ? -1 : 0"
+    :aria-disabled="disabled || undefined"
+    :aria-busy="isLoading || undefined"
+    @keydown.enter.self.prevent="onKeyActivate"
+    @keydown.space.self.prevent="onKeyActivate"
   >
     <div class="icon-wrapper">
       <a-skeleton-avatar v-if="isLoading" active shape="square" class="!h-full !w-full !children:(rounded-md w-8 h-8)" />

@@ -32,6 +32,13 @@ const emits = defineEmits<{
 
 const slots = useSlots()
 
+// A real click, not just our emit: a rail item is often the trigger of a
+// dropdown, which listens for the DOM event on this element.
+const onKeyActivate = (e: KeyboardEvent) => {
+  if (props.disabled) return
+  ;(e.currentTarget as HTMLElement | null)?.click()
+}
+
 /**
  * Experiment: rail labels off — icons only, tooltips carry the names.
  * TODO: cleanup — drop this flag and the label path (span, `label` slot,
@@ -61,7 +68,14 @@ const isTooltipDisabled = computed(() => {
       class="nc-rail-item"
       :class="{ active, disabled, 'is-dropdown': isDropdown, 'plain-active': plainActive }"
       :data-panel="panelKey"
+      role="button"
+      :tabindex="disabled ? -1 : 0"
+      :aria-label="tooltipText || undefined"
+      :aria-disabled="disabled || undefined"
+      :aria-current="active && !isDropdown ? 'page' : undefined"
       @click="!disabled && emits('click')"
+      @keydown.enter.self.prevent="onKeyActivate"
+      @keydown.space.self.prevent="onKeyActivate"
     >
       <span class="nc-rail-item-chip">
         <slot v-if="$slots.default" />
@@ -163,6 +177,16 @@ const isTooltipDisabled = computed(() => {
 
   &.disabled {
     @apply opacity-40 cursor-not-allowed;
+  }
+
+  // The item is a 40px column around a 32px chip; ring the chip, not the column.
+  &:focus-visible {
+    outline: none;
+
+    .nc-rail-item-chip {
+      outline: 2px solid var(--nc-brand-accent);
+      outline-offset: 1px;
+    }
   }
 
   // Touch primary input: the 40x32 target clears WCAG 2.5.8 (AA, 24px) but not

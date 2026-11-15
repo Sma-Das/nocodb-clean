@@ -502,12 +502,8 @@ defineExpose({
           <div v-if="searchedActionList.length === 0 && cmdLoading" class="w-full h-[250px] flex justify-center items-center">
             <GeneralLoader :size="30" />
           </div>
-          <div v-else-if="searchedActionList.length === 0" class="flex flex-col p-4 gap-4 items-center justify-center text-sm">
-            <img
-              src="~assets/img/placeholder/no-search-result-found.png"
-              class="!w-[240px] flex-none"
-              :alt="$t('placeholder.noResultsFoundForYourSearch')"
-            />
+          <div v-else-if="searchedActionList.length === 0" class="flex flex-col p-4 gap-3 items-center justify-center text-sm">
+            <GeneralEmptyGlyph />
             <div class="text-nc-content-gray-muted">{{ $t('placeholder.noResultsFoundForYourSearch') }}</div>
           </div>
           <template v-else>

@@ -222,8 +222,12 @@ watch(
       <div v-if="showPane" class="flex-1 flex flex-col min-w-0 min-h-0">
         <ShellHeader :title="meta?.title ?? ''" :description="meta?.description" :leading-inset="isMobileMode" />
 
-        <div v-if="!isPaneAllowed" class="flex-1 min-h-0 flex items-center justify-center">
-          <GeneralLoader size="xlarge" />
+        <!-- A skeleton in the shape of a pane (toolbar row, then list rows) rather
+             than a spinner in the middle of an empty one: the layout holds still
+             when the real pane lands. -->
+        <div v-if="!isPaneAllowed" class="flex-1 min-h-0 nc-shell-gutter pt-3 flex flex-col gap-4" aria-busy="true">
+          <a-skeleton-input active class="!h-8 !w-60 !rounded-lg overflow-hidden" />
+          <a-skeleton active :title="false" :paragraph="{ rows: 5, width: '100%' }" />
         </div>
 
         <div v-else class="flex-1 min-h-0">
@@ -241,7 +245,11 @@ watch(
 
           <DashboardSettingsDataSources v-else-if="tab === 'data-source' && baseId" :base-id="baseId" class="max-h-full" />
 
-          <LazyDashboardSettingsSourceAnalytics v-else-if="tab === 'source-analytics' && baseId" :key="baseId" :base-id="baseId" />
+          <LazyDashboardSettingsSourceAnalytics
+            v-else-if="tab === 'source-analytics' && baseId"
+            :key="baseId"
+            :base-id="baseId"
+          />
 
           <DashboardSettingsBaseIntegrations v-else-if="tab === 'integrations' && baseId" :base-id="baseId" />
 

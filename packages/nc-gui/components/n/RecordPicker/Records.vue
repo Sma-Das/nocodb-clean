@@ -305,9 +305,9 @@ defineExpose({
 <template>
   <div
     v-if="where && !visibleRows.length"
-    class="px-2 py-6 pt-24 text-nc-content-gray-muted flex flex-col items-center gap-6 text-center"
+    class="px-2 py-6 pt-24 text-nc-content-gray-muted flex flex-col items-center gap-3 text-center"
   >
-    <img src="~assets/img/placeholder/no-search-result-found.png" class="!w-[164px] flex-none" alt="No search results found" />
+    <GeneralEmptyGlyph />
 
     {{ $t('title.noResultsMatchedYourSearch') }}
   </div>
