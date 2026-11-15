@@ -1,4 +1,5 @@
-import { isBoxHovered, renderBarcode, renderCellError } from '../utils/canvas'
+import { isBoxHovered, renderCellError } from '../utils/canvas'
+import { renderBarcode } from '../utils/barcode'
 import { validateBarcode } from '../utils/cell'
 
 export const BarcodeCellRenderer: CellRenderer = {

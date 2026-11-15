@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import 'leaflet/dist/leaflet.css'
-import L from 'leaflet'
+import type * as Leaflet from 'leaflet'
 import { type GeoLocationType, convertGeoNumberToString, latLongToJoinedString } from 'nocodb-sdk'
 import { useDebounceFn } from '@vueuse/core'
+import { loadLeaflet } from './geo/loadLeaflet'
 
 interface Props {
   modelValue?: string | null
@@ -36,8 +36,10 @@ const isLoading = ref(false)
 
 // --- Map picker state ---
 const mapContainerRef = ref<HTMLElement>()
-const mapInstanceRef = ref<L.Map>()
-const markerRef = ref<L.Marker>()
+const mapInstanceRef = ref<Leaflet.Map>()
+const markerRef = ref<Leaflet.Marker>()
+// Leaflet is loaded on first map open (initMap); every other use is guarded by mapInstanceRef.
+let L: typeof Leaflet | undefined
 const isUpdatingFromMap = ref(false)
 
 const DEFAULT_CENTER: [number, number] = [20, 0]
@@ -61,7 +63,7 @@ function syncToFormState(lat: number, lng: number) {
   })
 }
 
-function setupMarkerDrag(marker: L.Marker) {
+function setupMarkerDrag(marker: Leaflet.Marker) {
   marker.on('dragend', () => {
     const pos = marker.getLatLng()
     syncToFormState(pos.lat, pos.lng)
@@ -69,7 +71,7 @@ function setupMarkerDrag(marker: L.Marker) {
 }
 
 function updateMarkerPosition(lat: number, lng: number) {
-  if (!mapInstanceRef.value) return
+  if (!mapInstanceRef.value || !L) return
   if (markerRef.value) {
     markerRef.value.setLatLng([lat, lng])
   } else {
@@ -79,15 +81,25 @@ function updateMarkerPosition(lat: number, lng: number) {
   }
 }
 
-function onMapClick(e: L.LeafletMouseEvent) {
+function onMapClick(e: Leaflet.LeafletMouseEvent) {
   if (readonly.value) return
   const { lat, lng } = e.latlng
   updateMarkerPosition(lat, lng)
   syncToFormState(lat, lng)
 }
 
-function initMap() {
+async function initMap() {
   if (!mapContainerRef.value || mapInstanceRef.value) return
+
+  try {
+    L = await loadLeaflet()
+  } catch (e) {
+    console.error('Failed to load map', e)
+    return
+  }
+
+  // The overlay may have closed, or another call may have created the map, while loading
+  if (!isExpanded.value || !mapContainerRef.value || mapInstanceRef.value) return
 
   const hasCoords = formState.latitude && formState.longitude
   const lat = parseFloat(formState.latitude)
@@ -519,8 +531,8 @@ watch(isExpanded, async (expanded) => {
   if (expanded) {
     await nextTick()
     // Leaflet needs the container to be fully rendered and sized
-    setTimeout(() => {
-      initMap()
+    setTimeout(async () => {
+      await initMap()
       mapInstanceRef.value?.invalidateSize()
     }, 150)
   } else {

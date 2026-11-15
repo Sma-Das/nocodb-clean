@@ -1,3 +1,4 @@
+import { memoRenderValue } from '../utils/renderValueCache'
 import { isBoxHovered, renderIconButton, renderMultiLineText, renderTagLabel } from '../utils/canvas'
 
 export const JsonCellRenderer: CellRenderer = {
@@ -58,13 +59,17 @@ export const JsonCellRenderer: CellRenderer = {
 
     let text = typeof value === 'string' ? value : JSON.stringify(value)
 
-    // if invalid json string then stringify the value
-    if (typeof text === 'string') {
-      try {
-        JSON.parse(text)
-      } catch (e) {
-        text = JSON.stringify(text)
-      }
+    // if invalid json string then stringify the value. Only raw strings need the check
+    // (JSON.stringify output always parses), and the result is memoised per distinct value.
+    if (typeof value === 'string') {
+      text = memoRenderValue(`json\u0000${value}`, () => {
+        try {
+          JSON.parse(value)
+          return value
+        } catch (e) {
+          return JSON.stringify(value)
+        }
+      })
     }
 
     if (props.tag?.renderAsTag) {

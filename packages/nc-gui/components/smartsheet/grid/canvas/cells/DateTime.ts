@@ -4,6 +4,7 @@ import { type TimeZone } from '@vvo/tzdb'
 import { isCreatedOrLastModifiedTimeCol } from 'nocodb-sdk'
 import { defaultOffscreen2DContext, isBoxHovered, truncateText } from '../utils/canvas'
 import { timeCellMaxWidthMap, timeFormatsObj } from '../utils/cell'
+import { dateCacheKey, memoRenderValue } from '../utils/renderValueCache'
 
 dayjs.extend(utc)
 
@@ -20,7 +21,32 @@ export const DateTimeCellRenderer: CellRenderer = {
     const isDisplayTimezone = column?.extra?.isDisplayTimezone as TimeZone
 
     const is12hrFormat = columnMeta?.is12hrFormat
-    const isValueValid = value && dayjs(value).isValid()
+    const resolvedTimeFormat = is12hrFormat ? timeFormatsObj[timeFormat] : timeFormat
+
+    // Parsing + timezone conversion + formatting is the costly part and is a pure function of
+    // these inputs; memoised so repaints (scroll/hover) don't redo it for every visible cell.
+    const computeDisplay = () => {
+      if (!value || !dayjs(value).isValid()) return { isValid: false, dateStr: '', timeStr: '' }
+      let dateTimeValue
+      if (timezone) {
+        const { timezonize: timezonizeDayjs } = withTimezone(timezone.name)
+
+        dateTimeValue = timezonizeDayjs(dayjs(value))
+      } else {
+        dateTimeValue = dayjs(value).utc().local()
+      }
+      return {
+        isValid: true,
+        dateStr: dateTimeValue?.format(dateFormat) ?? '',
+        timeStr: dateTimeValue?.format(resolvedTimeFormat) ?? '',
+      }
+    }
+    const display =
+      typeof value === 'string' || typeof value === 'number'
+        ? memoRenderValue(dateCacheKey('datetime', value, timezone?.name, dateFormat, resolvedTimeFormat), computeDisplay)
+        : computeDisplay()
+
+    const isValueValid = display.isValid
     const timezoneWidth =
       isValueValid && isDisplayTimezone && timezone?.abbreviation ? ctx.measureText(timezone.abbreviation).width + 8 : 0
 
@@ -43,24 +69,13 @@ export const DateTimeCellRenderer: CellRenderer = {
       return
     }
 
-    let dateTimeValue
-    if (isValueValid) {
-      if (timezone) {
-        const { timezonize: timezonizeDayjs } = withTimezone(timezone.name)
-
-        dateTimeValue = timezonizeDayjs(dayjs(value))
-      } else {
-        dateTimeValue = dayjs(value).utc().local()
-      }
-    }
-
-    const dateStr = dateTimeValue?.format(dateFormat) ?? ''
+    const dateStr = display.dateStr
     const truncatedDate = truncateText(ctx, dateStr, dateWidth - 4 * 2)
 
     ctx.fillStyle = pv ? getColor(themeV4Colors.brand['500']) : getColor(themeV4Colors.gray['600'])
     ctx.fillText(truncatedDate, x + padding, textY)
 
-    const timeStr = dateTimeValue?.format(is12hrFormat ? timeFormatsObj[timeFormat] : timeFormat) ?? ''
+    const timeStr = display.timeStr
     const truncatedTime = truncateText(ctx, timeStr, timeWidth)
     ctx.fillText(truncatedTime, x + dateWidth + padding * 2, textY)
     if (timezoneWidth && timezoneWidth > 0 && timezone?.abbreviation) {

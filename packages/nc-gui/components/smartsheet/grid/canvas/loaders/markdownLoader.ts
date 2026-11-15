@@ -1,12 +1,10 @@
-import { LRUCache } from 'lru-cache'
 import type { UserType } from 'nocodb-sdk'
 import type { Block } from '../utils/markdownUtils'
 import { parseMarkdown } from '../utils/markdownUtils'
+import { markdownTextCache } from './markdownTextCache'
 import { NcMarkdownParser } from '~/helpers/tiptap'
 
-export const markdownTextCache: LRUCache<string, { blocks: Block[]; width: number }> = new LRUCache({
-  max: 1000,
-})
+export { markdownTextCache }
 
 export interface MarkdownParserOptions {
   text: string
