@@ -36,6 +36,7 @@ import {
   MetaTable,
 } from '~/utils/globals';
 import NocoCache from '~/cache/NocoCache';
+import { memoizeInMetaReadScope } from '~/cache/metaReadScope';
 import {
   parseMetaProp,
   prepareForDb,
@@ -699,6 +700,36 @@ export default class Column<T = any> implements ColumnType {
       }`,
   })
   public static async list(
+    context: NcContext,
+    {
+      fk_model_id,
+      fk_default_view_id,
+      includeDeleted,
+    }: {
+      fk_model_id: string;
+      fk_default_view_id?: string;
+      includeDeleted?: boolean;
+    },
+    ncMeta = Noco.ncMeta,
+  ): Promise<Column[]> {
+    const params = { fk_model_id, fk_default_view_id, includeDeleted };
+    // Transactions (non-default ncMeta) must read their own snapshot.
+    if (ncMeta !== Noco.ncMeta) {
+      return this.listUncached(context, params, ncMeta);
+    }
+    // Inside a request-scoped meta read scope (see metaReadScope), identical
+    // calls share one hydrated load. The key carries every result-affecting
+    // option; a copy of the array is returned so callers can reorder freely.
+    const columns = await memoizeInMetaReadScope(
+      `Column.list:${context.workspace_id}:${context.base_id}:${fk_model_id}:${
+        fk_default_view_id ?? ''
+      }:${includeDeleted ? 'd' : ''}`,
+      () => this.listUncached(context, params, ncMeta),
+    );
+    return [...columns];
+  }
+
+  private static async listUncached(
     context: NcContext,
     {
       fk_model_id,

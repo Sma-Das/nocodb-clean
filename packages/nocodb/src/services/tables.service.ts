@@ -671,8 +671,17 @@ export class TablesService {
       }
     } else {
       // todo: optimise
-      const viewList = <View[]>(
-        await this.xcVisibilityMetaGet(context, table.base_id, [table])
+      // getWithInfo above already loaded table.views (listWithInfo) in this
+      // call — reuse them instead of a second View.list + per-view
+      // getViewWithInfo round.
+      const viewList = <View[]>await this.xcVisibilityMetaGet(
+        context,
+        table.base_id,
+        [table],
+        true,
+        {
+          reuseLoadedViews: true,
+        },
       );
       //await View.list(param.tableId)
       table.views = viewList.filter((view: any) => {
@@ -694,6 +703,12 @@ export class TablesService {
     baseId,
     _models: Model[] = null,
     includeM2M = true,
+    {
+      reuseLoadedViews = false,
+    }: {
+      // reuse `model.views` when the caller just loaded them with info
+      reuseLoadedViews?: boolean;
+    } = {},
     // type: 'table' | 'tableAndViews' | 'views' = 'table'
   ) {
     // todo: move to
@@ -719,7 +734,12 @@ export class TablesService {
 
     const [modelViews, disabledList] = await Promise.all([
       NcConcurrent(
-        models.map((model) => () => model.getViews()),
+        models.map(
+          (model) => () =>
+            reuseLoadedViews && model.views
+              ? Promise.resolve(model.views)
+              : model.getViews(),
+        ),
         { concurrency: 3 },
       ),
       ModelRoleVisibility.list(context, baseId),
